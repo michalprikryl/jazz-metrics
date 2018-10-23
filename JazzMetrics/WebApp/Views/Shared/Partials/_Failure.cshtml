@@ -1,0 +1,7 @@
+﻿@{
+    string message = ViewData["message"].ToString();
+}
+
+<span class="color-red">
+    <span class="fas fa-times" title="@Html.Raw(message)"></span>
+</span>

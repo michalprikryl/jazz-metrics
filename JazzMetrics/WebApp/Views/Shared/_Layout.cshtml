@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewBag.Title - JM</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/js")
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            @*navbar-dark bg-dark*@
+
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Domů</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <a class="navbar-brand" href="#">
+                <img src="~/Content/img/logo.png" alt="Logo" class="logo">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        @if (Request.IsAuthenticated)
+                        {
+                            <a href="/User/Logout" class="navbar-text float-right">Odhlásit se</a>
+                        }
+                        else if (!Request.Path.ToUpper().StartsWith("/USER/LOGIN"))
+                        {
+                            <a href="/User/Login" class="navbar-text float-right">Přihlásit se</a>
+                        }
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+    </div>
+
+    <div class="container body-content">
+        <hr />
+        @RenderBody()
+        <hr />
+
+        <footer>
+            <p>
+                &copy; @DateTime.Now.Year - Michal Přikryl
+                @if (!Request.Path.ToUpper().StartsWith("/TEST"))
+                {
+                    <a class="float-right color-dark-grey" href="/Test">test připojení</a>
+                }
+            </p>
+        </footer>
+    </div>
+
+    @RenderSection("scripts", required: false) @* https://stackoverflow.com/questions/23327578/what-is-rendersection-in-asp-net-mvc *@ 
+</body>
+</html>
