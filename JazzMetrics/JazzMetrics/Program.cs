@@ -12,6 +12,8 @@ namespace JazzMetrics
             string generatedPassword = PasswordHelper.EncodePassword(password, salt);
             Console.WriteLine("passwd => {0} \nsalt => {1}", salt, generatedPassword);
 
+            EmailSender.SendEmail("dbvsd", "ahoj", "m.p.from.h@seznam.cz");
+
             Console.WriteLine("END");
             Console.ReadKey();
         }

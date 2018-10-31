@@ -11,7 +11,7 @@ namespace WebAPI.Classes.Helpers
     public static class EmailSender
     {
         /// <summary>
-        /// samotna metoda pro odesilani emailu
+        /// samotna metoda pro odesilani emailu - nutne byt ve skolni siti
         /// </summary>
         /// <param name="subject">predmet emailu</param>
         /// <param name="text">text emailu</param>
@@ -28,7 +28,7 @@ namespace WebAPI.Classes.Helpers
                     Subject = subject,
                     Body = text,
                     IsBodyHtml = Regex.IsMatch(text, @"<[^>]*>"),
-                    From = new MailAddress("michal.prikryl.st2@vsb.cz", "Michal")
+                    From = new MailAddress("michal.prikryl.st2@vsb.cz", "JazzMetrics")
                 };
 
                 foreach (var item in to)
