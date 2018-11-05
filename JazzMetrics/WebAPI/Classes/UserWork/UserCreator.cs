@@ -1,19 +1,22 @@
 ﻿using WebAPI.Models.User;
 using Database;
+using WebAPI.Classes.Database;
+using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace WebAPI.Classes.UserWork
 {
     /// <summary>
     /// vytvari uzivatelsky kontext pro uzivatele
     /// </summary>
-    public static class UserCreator
+    public class UserCreator : BaseDatabase
     {
         /// <summary>
         /// samotna metoda vracejici uzivatele dle informaci z databaze
         /// </summary>
         /// <param name="user">uzivatel z databaze</param>
         /// <returns></returns>
-        public static UserModel CreateUserModel(User user)
+        public UserModel CreateUserModel(User user)
         {
             return new UserModel
             {
@@ -23,6 +26,22 @@ namespace WebAPI.Classes.UserWork
                 Email = user.Email,
                 Role = user.Role.Name
             };
+        }
+
+        public async Task<UserModel> GetUserById(int id)
+        {
+            using (DatabaseContext = new JazzMetricsEntities())
+            {
+                User user = await DatabaseContext.Users.FirstOrDefaultAsync(u => u.ID == id);
+                if (user != null)
+                {
+                    return CreateUserModel(user);
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
     }
 }

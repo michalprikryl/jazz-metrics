@@ -4,6 +4,7 @@ using WebAPI.Classes.Error;
 using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
+using System.Web.Http.Cors;
 
 namespace WebAPI
 {
@@ -12,6 +13,8 @@ namespace WebAPI
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.EnableCors(new EnableCorsAttribute("http://localhost:3000", "*", "*"));
+
             config.Formatters.Clear(); //smaze vsechny navratove formaty dat z API - defaultne vraci podle typu zaslanych dat XML/JSON
             config.Formatters.Add(new JsonMediaTypeFormatter()); //ja vracim pouze JSON
 

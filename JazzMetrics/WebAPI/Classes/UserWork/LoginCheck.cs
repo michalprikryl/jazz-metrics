@@ -73,7 +73,7 @@ namespace WebAPI.Classes.UserWork
                 else
                 {
                     result.ProperUser = false;
-                    result.Message = "Váš účet se nenachází v centrální databázi, kontaktujte prosím správce!";
+                    result.Message = "Neznámé přihlašovací jméno!";
                 }
             }
 
@@ -83,7 +83,7 @@ namespace WebAPI.Classes.UserWork
         private static void CreateUserSession(User user, UserContainerModel result)
         {
             result.ProperUser = true;
-            result.User = UserCreator.CreateUserModel(user);
+            result.User = new UserCreator().CreateUserModel(user);
             result.Token = JwtManager.GenerateToken(user.Email);
         }
 

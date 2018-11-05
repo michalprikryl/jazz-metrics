@@ -11,5 +11,10 @@ namespace WebAPI.Controllers
         {
             return await LoginCheck.CheckByDb(value);
         }
+
+        public async Task<UserModel> Get(int id)
+        {
+            return await new UserCreator().GetUserById(id);
+        }
     }
 }

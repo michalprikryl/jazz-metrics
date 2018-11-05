@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("WebAPI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TP+ s.r.o.")]
+[assembly: AssemblyCompany("Michal Prikryl")]
 [assembly: AssemblyProduct("WebAPI")]
-[assembly: AssemblyCopyright("Copyright © 2018")]
+[assembly: AssemblyCopyright("Copyright © 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
