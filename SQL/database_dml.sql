@@ -1,12 +1,38 @@
 USE JazzMetrics
-go
+GO
 
-/*USE pri0115;
-go*/
+/*
+USE pri0115;
+GO
+*/
 
-INSERT INTO [Role] ([Name]) VALUES ('admin')
+INSERT INTO [UserRole] ([Name], [Description]) VALUES ('super-admin', 'Administrator of the application, he has full rights - he can do everything.')
+INSERT INTO [UserRole] ([Name], [Description]) VALUES ('admin', 'Administrator of projects, he can create projects, users etc.')
 
 INSERT INTO [Language] ([ISO639_1Code], [ISO639_3Code], [Name]) VALUES ('cs', 'cze', 'Czech')
 INSERT INTO [Language] ([ISO639_1Code], [ISO639_3Code], [Name]) VALUES ('en', 'eng', 'English')
 
-INSERT INTO [User] ([Name], LastName, Email, [Password], [Salt], [RoleID], LanguageID) VALUES ('Franta', 'Novak', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1)
+INSERT INTO [User] ([FirstName], LastName, Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
+    ('Franta', 'Novak', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 2, 2, 0)
+INSERT INTO [User] ([FirstName], LastName, Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
+    ('Michal', 'Prikryl', 'm.p.from.h@sezmam.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0)
+
+INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Number', 'Metric values are numbers of value/type groups of artefact.')
+INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage', 'Metric is percentage - coverage of some artefact with another artefact etc.')
+INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage (test)', 'Metric is percentage - coverage of some artefact with test case or if artefact was tested etc.')
+
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('PM', '')
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Traceability', '')
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Quality', '')
+
+INSERT INTO [AspiceVersion] ([VersionNumber], [ReleaseDate], [Description]) VALUES ('3.1', '2017-11-30', 'Automotive SPICE 3.1')
+
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.1', 'REQUIREMENTS ELICITATION', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.2', 'SYSTEM REQUIREMENTS ANALYSIS', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.3', 'SYSTEM ARCHITECTURAL DESIGN', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.4', 'SYSTEM INTERGRATION AND INTEGRAGTION TEST', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.5', 'SYSTEM QUALIFICATION TEST', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SWE.1', 'SOFTWARE REQUIREMENTS ANALYSIS', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SWE.2', 'SOFTWARE ARCHITECTURAL DESIGN', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SWE.6', 'SOFTWARE QUALIFICATION TEST', '', 1)
+INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('HW', 'HARDWARE PROCESSES', '', 1)

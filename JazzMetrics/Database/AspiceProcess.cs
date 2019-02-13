@@ -12,18 +12,22 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Role
+    public partial class AspiceProcess
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Role()
+        public AspiceProcess()
         {
-            this.Users = new HashSet<User>();
+            this.Metrics = new HashSet<Metric>();
         }
     
         public int ID { get; set; }
+        public string Shortcut { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
+        public int AspiceVersionID { get; set; }
     
+        public virtual AspiceVersion AspiceVersion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Metric> Metrics { get; set; }
     }
 }

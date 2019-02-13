@@ -5,12 +5,20 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="JazzMetricsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="CustomError">
+        <EntityType Name="AffectedField">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AppError">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Time" Type="datetime2" Precision="3" Nullable="false" />
           <Property Name="Module" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Function" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Exception" Type="nvarchar(max)" Nullable="false" />
@@ -18,37 +26,206 @@
           <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Solved" Type="bit" Nullable="false" />
           <Property Name="Deleted" Type="bit" Nullable="false" />
-          <Property Name="User" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AppInfo" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspiceProcess">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Shortcut" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="AspiceVersionID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspiceVersion">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VersionNumber" Type="numeric" Precision="2" Scale="1" Nullable="false" />
+          <Property Name="ReleaseDate" Type="date" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="Language">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
           <Property Name="ISO639_1Code" Type="nvarchar" MaxLength="2" Nullable="false" />
           <Property Name="ISO639_3Code" Type="nvarchar" MaxLength="3" Nullable="false" />
         </EntityType>
-        <EntityType Name="Role">
+        <EntityType Name="Metric">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Identificator" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="MetricTypeID" Type="int" Nullable="false" />
+          <Property Name="AspiceProcessID" Type="int" Nullable="false" />
+          <Property Name="AffectedFieldID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MetricType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime2" Precision="3" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectMetric">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="MetricID" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime2" Precision="3" Nullable="false" />
+          <Property Name="LastUpdateDate" Type="datetime2" Precision="3" Nullable="false" />
+          <Property Name="DataURL" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Warning" Type="bit" Nullable="false" />
+          <Property Name="MinimalWarningValue" Type="numeric" Precision="18" Scale="3" />
+        </EntityType>
+        <EntityType Name="ProjectMetricValue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InsertionDate" Type="datetime2" Precision="3" Nullable="false" />
+          <Property Name="ProjectMetricID" Type="int" Nullable="false" />
+          <Property Name="FirstValue" Type="int" />
+          <Property Name="SecondValue" Type="int" />
+          <Property Name="Ratio" Type="numeric" Precision="18" Scale="3" />
+          <Property Name="Values" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="Salt" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Email" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="Salt" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserRoleID" Type="int" Nullable="false" />
           <Property Name="LanguageID" Type="int" Nullable="false" />
+          <Property Name="UseLDAPLogin" Type="bit" Nullable="false" />
+          <Property Name="LDAP_URL" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="UserProject">
+          <Key>
+            <PropertyRef Name="ProjectID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="JoinDate" Type="datetime2" Precision="3" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="128" />
+          <Property Name="Description" Type="nvarchar" MaxLength="512" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ASPICEPROCESS_ASPICEVERSION">
+          <End Role="AspiceVersion" Type="Self.AspiceVersion" Multiplicity="1" />
+          <End Role="AspiceProcess" Type="Self.AspiceProcess" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspiceVersion">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AspiceProcess">
+              <PropertyRef Name="AspiceVersionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRIC_AFFECTEDFIELD">
+          <End Role="AffectedField" Type="Self.AffectedField" Multiplicity="1" />
+          <End Role="Metric" Type="Self.Metric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AffectedField">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Metric">
+              <PropertyRef Name="AffectedFieldID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRIC_ASPICEPROCESS">
+          <End Role="AspiceProcess" Type="Self.AspiceProcess" Multiplicity="1" />
+          <End Role="Metric" Type="Self.Metric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspiceProcess">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Metric">
+              <PropertyRef Name="AspiceProcessID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRIC_METRICTYPE">
+          <End Role="MetricType" Type="Self.MetricType" Multiplicity="1" />
+          <End Role="Metric" Type="Self.Metric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetricType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Metric">
+              <PropertyRef Name="MetricTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRIC_METRIC">
+          <End Role="Metric" Type="Self.Metric" Multiplicity="1" />
+          <End Role="ProjectMetric" Type="Self.ProjectMetric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Metric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetric">
+              <PropertyRef Name="MetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRIC_PROJECT">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="ProjectMetric" Type="Self.ProjectMetric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetric">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+          <End Role="ProjectMetric" Type="Self.ProjectMetric" Multiplicity="1" />
+          <End Role="ProjectMetricValue" Type="Self.ProjectMetricValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectMetric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricValue">
+              <PropertyRef Name="ProjectMetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_USER_LANGUAGE">
           <End Role="Language" Type="Self.Language" Multiplicity="1" />
           <End Role="User" Type="Self.User" Multiplicity="*" />
@@ -62,65 +239,174 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_USER_ROLE">
-          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="UserRole" Type="Self.UserRole" Multiplicity="1" />
           <End Role="User" Type="Self.User" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Role">
+            <Principal Role="UserRole">
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="User">
-              <PropertyRef Name="RoleID" />
+              <PropertyRef Name="UserRoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USERPROJECT_PROJECT">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="UserProject" Type="Self.UserProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserProject">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USERPROJECT_USER">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="UserProject" Type="Self.UserProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserProject">
+              <PropertyRef Name="UserID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="JazzMetricsModelStoreContainer">
-          <EntitySet Name="CustomError" EntityType="Self.CustomError" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AffectedField" EntityType="Self.AffectedField" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AppError" EntityType="Self.AppError" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspiceProcess" EntityType="Self.AspiceProcess" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspiceVersion" EntityType="Self.AspiceVersion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Language" EntityType="Self.Language" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Metric" EntityType="Self.Metric" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MetricType" EntityType="Self.MetricType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectMetric" EntityType="Self.ProjectMetric" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectMetricValue" EntityType="Self.ProjectMetricValue" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserProject" EntityType="Self.UserProject" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRole" EntityType="Self.UserRole" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ASPICEPROCESS_ASPICEVERSION" Association="Self.FK_ASPICEPROCESS_ASPICEVERSION">
+            <End Role="AspiceVersion" EntitySet="AspiceVersion" />
+            <End Role="AspiceProcess" EntitySet="AspiceProcess" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRIC_AFFECTEDFIELD" Association="Self.FK_METRIC_AFFECTEDFIELD">
+            <End Role="AffectedField" EntitySet="AffectedField" />
+            <End Role="Metric" EntitySet="Metric" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRIC_ASPICEPROCESS" Association="Self.FK_METRIC_ASPICEPROCESS">
+            <End Role="AspiceProcess" EntitySet="AspiceProcess" />
+            <End Role="Metric" EntitySet="Metric" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRIC_METRICTYPE" Association="Self.FK_METRIC_METRICTYPE">
+            <End Role="MetricType" EntitySet="MetricType" />
+            <End Role="Metric" EntitySet="Metric" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRIC_METRIC" Association="Self.FK_PROJECTMETRIC_METRIC">
+            <End Role="Metric" EntitySet="Metric" />
+            <End Role="ProjectMetric" EntitySet="ProjectMetric" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRIC_PROJECT" Association="Self.FK_PROJECTMETRIC_PROJECT">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="ProjectMetric" EntitySet="ProjectMetric" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC" Association="Self.FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+            <End Role="ProjectMetric" EntitySet="ProjectMetric" />
+            <End Role="ProjectMetricValue" EntitySet="ProjectMetricValue" />
+          </AssociationSet>
           <AssociationSet Name="FK_USER_LANGUAGE" Association="Self.FK_USER_LANGUAGE">
             <End Role="Language" EntitySet="Language" />
             <End Role="User" EntitySet="User" />
           </AssociationSet>
           <AssociationSet Name="FK_USER_ROLE" Association="Self.FK_USER_ROLE">
-            <End Role="Role" EntitySet="Role" />
+            <End Role="UserRole" EntitySet="UserRole" />
             <End Role="User" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USERPROJECT_PROJECT" Association="Self.FK_USERPROJECT_PROJECT">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="UserProject" EntitySet="UserProject" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USERPROJECT_USER" Association="Self.FK_USERPROJECT_USER">
+            <End Role="User" EntitySet="User" />
+            <End Role="UserProject" EntitySet="UserProject" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="JazzMetricsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="User">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LanguageID" Type="Int32" Nullable="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Salt" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="RoleID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Role" Relationship="JazzMetricsModel.FK_USER_ROLE" FromRole="User" ToRole="Role" />
-          <NavigationProperty Name="Language" Relationship="JazzMetricsModel.FK_USER_LANGUAGE" FromRole="User" ToRole="Language" />
-        </EntityType>
         <EntityContainer Name="JazzMetricsEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Users" EntityType="Self.User" />
-          <EntitySet Name="CustomErrors" EntityType="JazzMetricsModel.CustomError" />
-          <EntitySet Name="Roles" EntityType="JazzMetricsModel.Role" />
-          <AssociationSet Name="FK_USER_ROLE" Association="JazzMetricsModel.FK_USER_ROLE">
-            <End Role="Role" EntitySet="Roles" />
-            <End Role="User" EntitySet="Users" />
-          </AssociationSet>
           <EntitySet Name="Languages" EntityType="JazzMetricsModel.Language" />
+          <EntitySet Name="AppErrors" EntityType="JazzMetricsModel.AppError" />
+          <EntitySet Name="Metrics" EntityType="JazzMetricsModel.Metric" />
+          <EntitySet Name="MetricTypes" EntityType="JazzMetricsModel.MetricType" />
+          <EntitySet Name="Projects" EntityType="JazzMetricsModel.Project" />
+          <EntitySet Name="ProjectMetrics" EntityType="JazzMetricsModel.ProjectMetric" />
+          <EntitySet Name="UserProjects" EntityType="JazzMetricsModel.UserProject" />
+          <EntitySet Name="UserRoles" EntityType="JazzMetricsModel.UserRole" />
+          <AssociationSet Name="FK_METRIC_METRICTYPE" Association="JazzMetricsModel.FK_METRIC_METRICTYPE">
+            <End Role="MetricType" EntitySet="MetricTypes" />
+            <End Role="Metric" EntitySet="Metrics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRIC_METRIC" Association="JazzMetricsModel.FK_PROJECTMETRIC_METRIC">
+            <End Role="Metric" EntitySet="Metrics" />
+            <End Role="ProjectMetric" EntitySet="ProjectMetrics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRIC_PROJECT" Association="JazzMetricsModel.FK_PROJECTMETRIC_PROJECT">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="ProjectMetric" EntitySet="ProjectMetrics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USERPROJECT_PROJECT" Association="JazzMetricsModel.FK_USERPROJECT_PROJECT">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="UserProject" EntitySet="UserProjects" />
+          </AssociationSet>
+          <EntitySet Name="Users" EntityType="JazzMetricsModel.User" />
           <AssociationSet Name="FK_USER_LANGUAGE" Association="JazzMetricsModel.FK_USER_LANGUAGE">
             <End Role="Language" EntitySet="Languages" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="FK_USER_ROLE" Association="JazzMetricsModel.FK_USER_ROLE">
+            <End Role="UserRole" EntitySet="UserRoles" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USERPROJECT_USER" Association="JazzMetricsModel.FK_USERPROJECT_USER">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UserProject" EntitySet="UserProjects" />
+          </AssociationSet>
+          <EntitySet Name="AffectedFields" EntityType="JazzMetricsModel.AffectedField" />
+          <EntitySet Name="AspiceProcesses" EntityType="JazzMetricsModel.AspiceProcess" />
+          <EntitySet Name="AspiceVersions" EntityType="JazzMetricsModel.AspiceVersion" />
+          <AssociationSet Name="FK_METRIC_AFFECTEDFIELD" Association="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD">
+            <End Role="AffectedField" EntitySet="AffectedFields" />
+            <End Role="Metric" EntitySet="Metrics" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ASPICEPROCESS_ASPICEVERSION" Association="JazzMetricsModel.FK_ASPICEPROCESS_ASPICEVERSION">
+            <End Role="AspiceVersion" EntitySet="AspiceVersions" />
+            <End Role="AspiceProcess" EntitySet="AspiceProcesses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRIC_ASPICEPROCESS" Association="JazzMetricsModel.FK_METRIC_ASPICEPROCESS">
+            <End Role="AspiceProcess" EntitySet="AspiceProcesses" />
+            <End Role="Metric" EntitySet="Metrics" />
+          </AssociationSet>
+          <EntitySet Name="ProjectMetricValues" EntityType="JazzMetricsModel.ProjectMetricValue" />
+          <AssociationSet Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC" Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+            <End Role="ProjectMetric" EntitySet="ProjectMetrics" />
+            <End Role="ProjectMetricValue" EntitySet="ProjectMetricValues" />
+          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="CustomError">
+        <EntityType Name="Language">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="ISO639_1Code" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="ISO639_3Code" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Users" Relationship="JazzMetricsModel.FK_USER_LANGUAGE" FromRole="Language" ToRole="User" />
+        </EntityType>
+        <EntityType Name="AppError">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -133,37 +419,145 @@
           <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Solved" Type="Boolean" Nullable="false" />
           <Property Name="Deleted" Type="Boolean" Nullable="false" />
-          <Property Name="User" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AppInfo" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Role">
+        <EntityType Name="Metric">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Users" Relationship="JazzMetricsModel.FK_USER_ROLE" FromRole="Role" ToRole="User" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MetricTypeID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MetricType" Relationship="JazzMetricsModel.FK_METRIC_METRICTYPE" FromRole="Metric" ToRole="MetricType" />
+          <NavigationProperty Name="ProjectMetrics" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_METRIC" FromRole="Metric" ToRole="ProjectMetric" />
+          <Property Name="Identificator" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="AspiceProcessID" Type="Int32" Nullable="false" />
+          <Property Name="AffectedFieldID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AffectedField" Relationship="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD" FromRole="Metric" ToRole="AffectedField" />
+          <NavigationProperty Name="AspiceProcess" Relationship="JazzMetricsModel.FK_METRIC_ASPICEPROCESS" FromRole="Metric" ToRole="AspiceProcess" />
         </EntityType>
-        <Association Name="FK_USER_ROLE">
-          <End Type="JazzMetricsModel.Role" Role="Role" Multiplicity="1" />
-          <End Type="JazzMetricsModel.User" Role="User" Multiplicity="*" />
+        <EntityType Name="MetricType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Metrics" Relationship="JazzMetricsModel.FK_METRIC_METRICTYPE" FromRole="MetricType" ToRole="Metric" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="ProjectMetrics" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_PROJECT" FromRole="Project" ToRole="ProjectMetric" />
+          <NavigationProperty Name="UserProjects" Relationship="JazzMetricsModel.FK_USERPROJECT_PROJECT" FromRole="Project" ToRole="UserProject" />
+        </EntityType>
+        <EntityType Name="ProjectMetric">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="MetricID" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastUpdateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DataURL" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Warning" Type="Boolean" Nullable="false" />
+          <Property Name="MinimalWarningValue" Type="Decimal" Precision="18" Scale="3" />
+          <NavigationProperty Name="Metric" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_METRIC" FromRole="ProjectMetric" ToRole="Metric" />
+          <NavigationProperty Name="Project" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_PROJECT" FromRole="ProjectMetric" ToRole="Project" />
+          <NavigationProperty Name="ProjectMetricValues" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" FromRole="ProjectMetric" ToRole="ProjectMetricValue" />
+        </EntityType>
+        <EntityType Name="UserProject">
+          <Key>
+            <PropertyRef Name="ProjectID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="JoinDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Project" Relationship="JazzMetricsModel.FK_USERPROJECT_PROJECT" FromRole="UserProject" ToRole="Project" />
+          <NavigationProperty Name="User" Relationship="JazzMetricsModel.FK_USERPROJECT_USER" FromRole="UserProject" ToRole="User" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Users" Relationship="JazzMetricsModel.FK_USER_ROLE" FromRole="UserRole" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_METRIC_METRICTYPE">
+          <End Type="JazzMetricsModel.MetricType" Role="MetricType" Multiplicity="1" />
+          <End Type="JazzMetricsModel.Metric" Role="Metric" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Role">
+            <Principal Role="MetricType">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="User">
-              <PropertyRef Name="RoleID" />
+            <Dependent Role="Metric">
+              <PropertyRef Name="MetricTypeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Language">
+        <Association Name="FK_PROJECTMETRIC_METRIC">
+          <End Type="JazzMetricsModel.Metric" Role="Metric" Multiplicity="1" />
+          <End Type="JazzMetricsModel.ProjectMetric" Role="ProjectMetric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Metric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetric">
+              <PropertyRef Name="MetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRIC_PROJECT">
+          <End Type="JazzMetricsModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="JazzMetricsModel.ProjectMetric" Role="ProjectMetric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetric">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USERPROJECT_PROJECT">
+          <End Type="JazzMetricsModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="JazzMetricsModel.UserProject" Role="UserProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserProject">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ISO639_1Code" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="true" />
-          <Property Name="ISO639_3Code" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Users" Relationship="JazzMetricsModel.FK_USER_LANGUAGE" FromRole="Language" ToRole="User" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Salt" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserRoleID" Type="Int32" Nullable="false" />
+          <Property Name="LanguageID" Type="Int32" Nullable="false" />
+          <Property Name="UseLDAPLogin" Type="Boolean" Nullable="false" />
+          <Property Name="LDAP_URL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Language" Relationship="JazzMetricsModel.FK_USER_LANGUAGE" FromRole="User" ToRole="Language" />
+          <NavigationProperty Name="UserRole" Relationship="JazzMetricsModel.FK_USER_ROLE" FromRole="User" ToRole="UserRole" />
+          <NavigationProperty Name="UserProjects" Relationship="JazzMetricsModel.FK_USERPROJECT_USER" FromRole="User" ToRole="UserProject" />
         </EntityType>
         <Association Name="FK_USER_LANGUAGE">
           <End Type="JazzMetricsModel.Language" Role="Language" Multiplicity="1" />
@@ -177,30 +571,142 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_USER_ROLE">
+          <End Type="JazzMetricsModel.UserRole" Role="UserRole" Multiplicity="1" />
+          <End Type="JazzMetricsModel.User" Role="User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserRole">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="User">
+              <PropertyRef Name="UserRoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USERPROJECT_USER">
+          <End Type="JazzMetricsModel.User" Role="User" Multiplicity="1" />
+          <End Type="JazzMetricsModel.UserProject" Role="UserProject" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserProject">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AffectedField">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Metrics" Relationship="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD" FromRole="AffectedField" ToRole="Metric" />
+        </EntityType>
+        <EntityType Name="AspiceProcess">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Shortcut" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AspiceVersionID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AspiceVersion" Relationship="JazzMetricsModel.FK_ASPICEPROCESS_ASPICEVERSION" FromRole="AspiceProcess" ToRole="AspiceVersion" />
+          <NavigationProperty Name="Metrics" Relationship="JazzMetricsModel.FK_METRIC_ASPICEPROCESS" FromRole="AspiceProcess" ToRole="Metric" />
+        </EntityType>
+        <EntityType Name="AspiceVersion">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VersionNumber" Type="Decimal" Nullable="false" Precision="2" Scale="1" />
+          <Property Name="ReleaseDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspiceProcesses" Relationship="JazzMetricsModel.FK_ASPICEPROCESS_ASPICEVERSION" FromRole="AspiceVersion" ToRole="AspiceProcess" />
+        </EntityType>
+        <Association Name="FK_METRIC_AFFECTEDFIELD">
+          <End Type="JazzMetricsModel.AffectedField" Role="AffectedField" Multiplicity="1" />
+          <End Type="JazzMetricsModel.Metric" Role="Metric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AffectedField">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Metric">
+              <PropertyRef Name="AffectedFieldID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ASPICEPROCESS_ASPICEVERSION">
+          <End Type="JazzMetricsModel.AspiceVersion" Role="AspiceVersion" Multiplicity="1" />
+          <End Type="JazzMetricsModel.AspiceProcess" Role="AspiceProcess" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspiceVersion">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AspiceProcess">
+              <PropertyRef Name="AspiceVersionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRIC_ASPICEPROCESS">
+          <End Type="JazzMetricsModel.AspiceProcess" Role="AspiceProcess" Multiplicity="1" />
+          <End Type="JazzMetricsModel.Metric" Role="Metric" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspiceProcess">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Metric">
+              <PropertyRef Name="AspiceProcessID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ProjectMetricValue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InsertionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ProjectMetricID" Type="Int32" Nullable="false" />
+          <Property Name="FirstValue" Type="Int32" />
+          <Property Name="SecondValue" Type="Int32" />
+          <Property Name="Ratio" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Values" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ProjectMetric" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" FromRole="ProjectMetricValue" ToRole="ProjectMetric" />
+        </EntityType>
+        <Association Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+          <End Type="JazzMetricsModel.ProjectMetric" Role="ProjectMetric" Multiplicity="1" />
+          <End Type="JazzMetricsModel.ProjectMetricValue" Role="ProjectMetricValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectMetric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricValue">
+              <PropertyRef Name="ProjectMetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="JazzMetricsModelStoreContainer" CdmEntityContainer="JazzMetricsEntities">
-          <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="JazzMetricsModel.User">
-              <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-                <ScalarProperty Name="Salt" ColumnName="Salt" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+          <EntitySetMapping Name="Languages">
+            <EntityTypeMapping TypeName="JazzMetricsModel.Language">
+              <MappingFragment StoreEntitySet="Language">
+                <ScalarProperty Name="ISO639_3Code" ColumnName="ISO639_3Code" />
+                <ScalarProperty Name="ISO639_1Code" ColumnName="ISO639_1Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="LanguageID" ColumnName="LanguageID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CustomErrors">
-            <EntityTypeMapping TypeName="JazzMetricsModel.CustomError">
-              <MappingFragment StoreEntitySet="CustomError">
-                <ScalarProperty Name="User" ColumnName="User" />
+          <EntitySetMapping Name="AppErrors">
+            <EntityTypeMapping TypeName="JazzMetricsModel.AppError">
+              <MappingFragment StoreEntitySet="AppError">
+                <ScalarProperty Name="AppInfo" ColumnName="AppInfo" />
                 <ScalarProperty Name="Deleted" ColumnName="Deleted" />
                 <ScalarProperty Name="Solved" ColumnName="Solved" />
                 <ScalarProperty Name="Message" ColumnName="Message" />
@@ -213,20 +719,125 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Roles">
-            <EntityTypeMapping TypeName="JazzMetricsModel.Role">
-              <MappingFragment StoreEntitySet="Role">
+          <EntitySetMapping Name="Metrics">
+            <EntityTypeMapping TypeName="JazzMetricsModel.Metric">
+              <MappingFragment StoreEntitySet="Metric">
+                <ScalarProperty Name="AffectedFieldID" ColumnName="AffectedFieldID" />
+                <ScalarProperty Name="AspiceProcessID" ColumnName="AspiceProcessID" />
+                <ScalarProperty Name="Identificator" ColumnName="Identificator" />
+                <ScalarProperty Name="MetricTypeID" ColumnName="MetricTypeID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Languages">
-            <EntityTypeMapping TypeName="JazzMetricsModel.Language">
-              <MappingFragment StoreEntitySet="Language">
-                <ScalarProperty Name="ISO639_3Code" ColumnName="ISO639_3Code" />
-                <ScalarProperty Name="ISO639_1Code" ColumnName="ISO639_1Code" />
+          <EntitySetMapping Name="MetricTypes">
+            <EntityTypeMapping TypeName="JazzMetricsModel.MetricType">
+              <MappingFragment StoreEntitySet="MetricType">
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="JazzMetricsModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectMetrics">
+            <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetric">
+              <MappingFragment StoreEntitySet="ProjectMetric">
+                <ScalarProperty Name="MinimalWarningValue" ColumnName="MinimalWarningValue" />
+                <ScalarProperty Name="Warning" ColumnName="Warning" />
+                <ScalarProperty Name="DataURL" ColumnName="DataURL" />
+                <ScalarProperty Name="LastUpdateDate" ColumnName="LastUpdateDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="MetricID" ColumnName="MetricID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserProjects">
+            <EntityTypeMapping TypeName="JazzMetricsModel.UserProject">
+              <MappingFragment StoreEntitySet="UserProject">
+                <ScalarProperty Name="JoinDate" ColumnName="JoinDate" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="JazzMetricsModel.UserRole">
+              <MappingFragment StoreEntitySet="UserRole">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="JazzMetricsModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="LDAP_URL" ColumnName="LDAP_URL" />
+                <ScalarProperty Name="UseLDAPLogin" ColumnName="UseLDAPLogin" />
+                <ScalarProperty Name="LanguageID" ColumnName="LanguageID" />
+                <ScalarProperty Name="UserRoleID" ColumnName="UserRoleID" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Salt" ColumnName="Salt" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AffectedFields">
+            <EntityTypeMapping TypeName="JazzMetricsModel.AffectedField">
+              <MappingFragment StoreEntitySet="AffectedField">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspiceProcesses">
+            <EntityTypeMapping TypeName="JazzMetricsModel.AspiceProcess">
+              <MappingFragment StoreEntitySet="AspiceProcess">
+                <ScalarProperty Name="AspiceVersionID" ColumnName="AspiceVersionID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Shortcut" ColumnName="Shortcut" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspiceVersions">
+            <EntityTypeMapping TypeName="JazzMetricsModel.AspiceVersion">
+              <MappingFragment StoreEntitySet="AspiceVersion">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ReleaseDate" ColumnName="ReleaseDate" />
+                <ScalarProperty Name="VersionNumber" ColumnName="VersionNumber" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectMetricValues">
+            <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetricValue">
+              <MappingFragment StoreEntitySet="ProjectMetricValue">
+                <ScalarProperty Name="Values" ColumnName="Values" />
+                <ScalarProperty Name="Ratio" ColumnName="Ratio" />
+                <ScalarProperty Name="SecondValue" ColumnName="SecondValue" />
+                <ScalarProperty Name="FirstValue" ColumnName="FirstValue" />
+                <ScalarProperty Name="ProjectMetricID" ColumnName="ProjectMetricID" />
+                <ScalarProperty Name="InsertionDate" ColumnName="InsertionDate" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

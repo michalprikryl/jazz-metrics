@@ -35,13 +35,10 @@ namespace WebAPI.Classes.UserWork
         /// <returns></returns>
         public static async Task<bool> CheckByFileAsync(UserModelRequest model)
         {
-            string fileContent;
             using (StreamReader reader = File.OpenText(_file))
             {
-                fileContent = await reader.ReadToEndAsync();
+                return CompareCredentials(model, await reader.ReadToEndAsync());
             }
-
-            return CompareCredentials(model, fileContent);
         }
 
         /// <summary>
@@ -49,7 +46,7 @@ namespace WebAPI.Classes.UserWork
         /// </summary>
         /// <param name="model">prijate informace o uzivateli</param>
         /// <returns></returns>
-        public static async Task<UserContainerModel> CheckByDb(UserModelRequest model)
+        public static async Task<UserContainerModel> CheckUser(UserModelRequest model)
         {
             UserContainerModel result = new UserContainerModel();
 
@@ -61,13 +58,20 @@ namespace WebAPI.Classes.UserWork
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Username);
                 if (user != null)
                 {
-                    if (ComparePasswords(user, model.Password))
+                    if (user.UseLDAPLogin)
                     {
-                        CreateUserSession(user, result);
+                        //TODO LDAP
                     }
                     else
                     {
-                        result.Message = "Nesprávné přihlašovací údaje!";
+                        if (ComparePasswords(user, model.Password))
+                        {
+                            CreateUserSession(user, result);
+                        }
+                        else
+                        {
+                            result.Message = "Nesprávné přihlašovací údaje!";
+                        }
                     }
                 }
                 else
@@ -83,8 +87,8 @@ namespace WebAPI.Classes.UserWork
         private static void CreateUserSession(User user, UserContainerModel result)
         {
             result.ProperUser = true;
-            result.User = new UserCreator().CreateUserModel(user);
             result.Token = JwtManager.GenerateToken(user.Email);
+            result.User = new UserCreator().CreateUserModel(user);
         }
 
         private static bool ComparePasswords(User user, string sentPasswd)

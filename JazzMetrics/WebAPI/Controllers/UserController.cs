@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     {
         public async Task<UserContainerModel> Post([FromBody]UserModelRequest value)
         {
-            return await LoginCheck.CheckByDb(value);
+            return await LoginCheck.CheckUser(value);
         }
 
         public async Task<UserModel> Get(int id)

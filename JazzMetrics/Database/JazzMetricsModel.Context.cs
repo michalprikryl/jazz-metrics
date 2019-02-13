@@ -25,9 +25,18 @@ namespace Database
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<CustomError> CustomErrors { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<AppError> AppErrors { get; set; }
+        public virtual DbSet<Metric> Metrics { get; set; }
+        public virtual DbSet<MetricType> MetricTypes { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<ProjectMetric> ProjectMetrics { get; set; }
+        public virtual DbSet<UserProject> UserProjects { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<AffectedField> AffectedFields { get; set; }
+        public virtual DbSet<AspiceProcess> AspiceProcesses { get; set; }
+        public virtual DbSet<AspiceVersion> AspiceVersions { get; set; }
+        public virtual DbSet<ProjectMetricValue> ProjectMetricValues { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using WebApp.Models.User;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using JazzMetricsLibrary;
 
 namespace WebApp.Classes.User
 {
@@ -24,9 +25,9 @@ namespace WebApp.Classes.User
         {
             IdentityAPI result = new IdentityAPI();
 
-            await PostToAPI(SerializeObjectToJSON(model), (task) =>
+            await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
             {
-                result = JsonConvert.DeserializeObject<IdentityAPI>(task.Result.Content.ReadAsStringAsync().Result);
+                result = JsonConvert.DeserializeObject<IdentityAPI>(await httpResult.Content.ReadAsStringAsync());
             });
 
             return result;

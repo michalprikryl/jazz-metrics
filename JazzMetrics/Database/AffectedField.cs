@@ -12,28 +12,19 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class AffectedField
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
+        public AffectedField()
         {
-            this.UserProjects = new HashSet<UserProject>();
+            this.Metrics = new HashSet<Metric>();
         }
     
         public int ID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Password { get; set; }
-        public string Salt { get; set; }
-        public string Email { get; set; }
-        public int UserRoleID { get; set; }
-        public int LanguageID { get; set; }
-        public bool UseLDAPLogin { get; set; }
-        public string LDAP_URL { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     
-        public virtual Language Language { get; set; }
-        public virtual UserRole UserRole { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserProject> UserProjects { get; set; }
+        public virtual ICollection<Metric> Metrics { get; set; }
     }
 }

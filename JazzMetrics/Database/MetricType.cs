@@ -12,17 +12,19 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class CustomError
+    public partial class MetricType
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MetricType()
+        {
+            this.Metrics = new HashSet<Metric>();
+        }
+    
         public int ID { get; set; }
-        public System.DateTime Time { get; set; }
-        public string Module { get; set; }
-        public string Function { get; set; }
-        public string Exception { get; set; }
-        public string InnerException { get; set; }
-        public string Message { get; set; }
-        public bool Solved { get; set; }
-        public bool Deleted { get; set; }
-        public string User { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Metric> Metrics { get; set; }
     }
 }

@@ -28,8 +28,8 @@ namespace WebAPI.Classes.Error
             {
                 try
                 {
-                    db.CustomErrors.Add(
-                        new CustomError
+                    db.AppErrors.Add(
+                        new AppError
                         {
                             Deleted = false,
                             Exception = value.ExceptionMessage ?? "unknown",
@@ -39,7 +39,7 @@ namespace WebAPI.Classes.Error
                             Module = value.Module ?? "unknown",
                             Solved = false,
                             Time = value.Time ?? DateTime.Now,
-                            User = value.User ?? "unknown"
+                            AppInfo = value.User ?? "unknown"
                         });
 
                     await db.SaveChangesAsync();

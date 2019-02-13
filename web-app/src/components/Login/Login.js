@@ -32,7 +32,10 @@ class Login extends Component {
           } else {
             const path = localStorage.getItem("path");
             localStorage.removeItem("path");
-            this.props.history.push(path.toLowerCase() === "/login" ? "/" : path || "/");
+            console.log(path);
+            this.props.history.push(
+              path.toLowerCase() === "/login" ? "/" : path || "/"
+            );
           }
         });
     } else {
@@ -95,7 +98,7 @@ class Login extends Component {
                 value="Přihlášení"
                 onClick={this.doLogin}
                 disabled={this.state.isSubmitting}
-                className="btn btn-default"
+                className="btn btn-dark"
               />
             </div>
           </div>

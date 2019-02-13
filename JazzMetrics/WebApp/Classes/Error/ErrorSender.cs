@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using JazzMetricsLibrary;
 
 namespace WebApp.Classes.Error
 {
@@ -30,7 +31,7 @@ namespace WebApp.Classes.Error
                 ExceptionMessage = model.Message,
                 InnerExceptionMessage = model.InnerMessage,
                 Function = model.Function,
-                Module = $"MA-{model.Module}",
+                Module = $"JazzWeb-{model.Module}",
                 Time = DateTime.Now,
                 User = userID,
                 ExceptionType = model.ExceptionType,
@@ -49,9 +50,9 @@ namespace WebApp.Classes.Error
         {
             BaseAPIResult result = new BaseAPIResult();
 
-            await PostToAPI(SerializeObjectToJSON(model), (task) =>
+            await PostToAPI(SerializeObjectToJSON(model), async (httpResult) =>
             {
-                result = JsonConvert.DeserializeObject<BaseAPIResult>(task.Result.Content.ReadAsStringAsync().Result);
+                result = JsonConvert.DeserializeObject<BaseAPIResult>(await httpResult.Content.ReadAsStringAsync());
             });
 
             return result;

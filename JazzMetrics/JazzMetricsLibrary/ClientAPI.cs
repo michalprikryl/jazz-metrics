@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,7 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApp.Classes
+namespace JazzMetricsLibrary
 {
     /// <summary>
     /// abstraktni trida, ktera nabizi metody, ktere je mozne pouzit pro praci s HTTP API
@@ -18,7 +19,7 @@ namespace WebApp.Classes
     {
         protected readonly string URL;
 
-        private AuthenticationHeaderValue _authHeader;
+        private readonly AuthenticationHeaderValue _authHeader;
 
         /// <summary>
         /// na jaky controller se pozadavky posilaji
@@ -28,6 +29,10 @@ namespace WebApp.Classes
         /// znaci, zda pri pozadavku na vzdaleny zdroj pouzit autentifikacni hlavicku (defaultne se pouziva)
         /// </summary>
         public bool UseAuthetificationHeader { get; set; }
+        /// <summary>
+        /// jestli se pozadavek posila na JazzAPI
+        /// </summary>
+        public bool UseJazzHeader { get; set; }
         /// <summary>
         /// vysledek posledniho volani vzdalene sluzby
         /// </summary>
@@ -43,12 +48,13 @@ namespace WebApp.Classes
         /// <param name="controller">na jaky controller API se maji data zaslat</param>
         /// <param name="useAuthetificationHeader">zda se ma pouzit autentifikacni hlavicka</param>
         /// <param name="jwt">JSON Web token, ktery urcuje druh autentifikacni hlavicky (pokud se pouzije - dle parametru vyse)</param>
-        public ClientAPI(string controller, bool useAuthetificationHeader, string jwt)
+        public ClientAPI(string controller, bool useAuthetificationHeader, string jwt, bool useJazzHeader = false)
         {
             Controller = controller;
 
-            _authHeader = SetHttpAuthHeader(jwt);
+            UseJazzHeader = useJazzHeader;
 
+            _authHeader = SetHttpAuthHeader(jwt);
             UseAuthetificationHeader = useAuthetificationHeader;
 
             URL = ConfigurationManager.AppSettings["API"];
@@ -60,20 +66,17 @@ namespace WebApp.Classes
         /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
         /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
-        protected async Task PostToAPI(string content, Action<Task<HttpResponseMessage>> method, string mediaType = "application/json")
+        protected async Task PostToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
             using (HttpClient client = new HttpClient())
             {
-                AuthetificatonHeader(client);
+                AdditionalHeaders(client);
 
-                await client.PostAsync(URLWithController, httpContent).ContinueWith(task =>
-                {
-                    SetResult(task.Result);
+                HttpResponseMessage response = await client.PostAsync(URLWithController, httpContent);
 
-                    method(task);
-                });
+                await SetResult(response, method);
             }
         }
 
@@ -83,20 +86,17 @@ namespace WebApp.Classes
         /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
         /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
-        protected async Task PutToAPI(string content, Action<Task<HttpResponseMessage>> method, string mediaType = "application/json")
+        protected async Task PutToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
             using (HttpClient client = new HttpClient())
             {
-                AuthetificatonHeader(client);
+                AdditionalHeaders(client);
 
-                await client.PutAsync(URLWithController, httpContent).ContinueWith(task =>
-                {
-                    SetResult(task.Result);
+                HttpResponseMessage response = await client.PutAsync(URLWithController, httpContent);
 
-                    method(task);
-                });
+                await SetResult(response, method);
             }
         }
 
@@ -105,20 +105,17 @@ namespace WebApp.Classes
         /// </summary>
         /// <param name="id">id entity, kterou chci smazat</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task DeleteToAPI(int? id, Action<Task<HttpResponseMessage>> method)
+        protected async Task DeleteToAPI(int? id, Func<HttpResponseMessage, Task> method)
         {
             string requestUri = id.HasValue ? $"{URLWithController}/{id.Value}" : $"{URL}/{Controller}";
 
             using (HttpClient client = new HttpClient())
             {
-                AuthetificatonHeader(client);
+                AdditionalHeaders(client);
 
-                await client.DeleteAsync(requestUri).ContinueWith(task =>
-                {
-                    SetResult(task.Result);
+                HttpResponseMessage response = await client.DeleteAsync(requestUri);
 
-                    method(task);
-                });
+                await SetResult(response, method);
             }
         }
 
@@ -127,13 +124,13 @@ namespace WebApp.Classes
         /// </summary>
         /// <param name="id">id entity, kterou chci smazat</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task DeleteToAPI(string content, Action<Task<HttpResponseMessage>> method, string mediaType = "application/json")
+        protected async Task DeleteToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
             using (HttpClient client = new HttpClient())
             {
-                AuthetificatonHeader(client);
+                AdditionalHeaders(client);
 
                 HttpRequestMessage request = new HttpRequestMessage
                 {
@@ -142,12 +139,9 @@ namespace WebApp.Classes
                     RequestUri = new Uri(URLWithController)
                 };
 
-                await client.SendAsync(request).ContinueWith(task =>
-                {
-                    SetResult(task.Result);
+                HttpResponseMessage response = await client.SendAsync(request);
 
-                    method(task);
-                });
+                await SetResult(response, method);
             }
         }
 
@@ -156,7 +150,7 @@ namespace WebApp.Classes
         /// </summary>
         /// <param name="id">id</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task GetToAPI(List<Tuple<string, string>> parameters, Action<Task<HttpResponseMessage>> method)
+        protected async Task GetToAPI(List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method)
         {
             StringBuilder builder = new StringBuilder($"{URLWithController}");
 
@@ -165,29 +159,21 @@ namespace WebApp.Classes
                 if (parameters.Count > 0)
                 {
                     builder.Append("?");
-                }
-
-                foreach (var item in parameters)
-                {
-                    builder.Append($"{item.Item1}={item.Item2}&");
-                }
-
-                if (parameters.Count > 0)
-                {
+                    foreach (var item in parameters)
+                    {
+                        builder.Append($"{item.Item1}={item.Item2}&");
+                    }
                     builder.Remove(builder.Length - 1, 1);
                 }
             }
 
             using (HttpClient client = new HttpClient())
             {
-                AuthetificatonHeader(client);
+                AdditionalHeaders(client);
 
-                await client.GetAsync(builder.ToString()).ContinueWith(task =>
-                {
-                    SetResult(task.Result);
+                HttpResponseMessage response = await client.GetAsync(builder.ToString());
 
-                    method(task);
-                });
+                await SetResult(response, method);
             }
         }
 
@@ -216,16 +202,26 @@ namespace WebApp.Classes
             return JsonConvert.SerializeObject(obj);
         }
 
-        private void AuthetificatonHeader(HttpClient client)
+        /// <summary>
+        /// prida dalsi hlavicky
+        /// </summary>
+        /// <param name="client"></param>
+        private void AdditionalHeaders(HttpClient client)
         {
             if (UseAuthetificationHeader)
             {
                 client.DefaultRequestHeaders.Authorization = _authHeader;
             }
+
+            if (UseJazzHeader)
+            {
+                client.DefaultRequestHeaders.Add("DoorsRP-Request-Type", "public 2.0");
+            }
         }
 
-        private void SetResult(HttpResponseMessage result)
+        private async Task SetResult(HttpResponseMessage result, Func<HttpResponseMessage, Task> method)
         {
+            await method(result);
             HTTPResultOfLastReques = $"{(int)result.StatusCode} - {Enum.GetName(typeof(HttpStatusCode), result.StatusCode)}";
         }
 
@@ -233,8 +229,8 @@ namespace WebApp.Classes
         {
             if (string.IsNullOrEmpty(jwt))
             {
-                string username = ConfigurationManager.AppSettings["txt"].DecodeFromBase64();
-                string password = ConfigurationManager.AppSettings["setting"].DecodeFromBase64();
+                string username = DecodeFromBase64(ConfigurationManager.AppSettings["txt"]);
+                string password = DecodeFromBase64(ConfigurationManager.AppSettings["setting"]);
 
                 byte[] byteArray = Encoding.ASCII.GetBytes($"{username}:{password}");
                 return new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -243,6 +239,17 @@ namespace WebApp.Classes
             {
                 return new AuthenticationHeaderValue("Bearer", jwt);
             }
+        }
+
+        /// <summary>
+        /// 'dekoduje' retezec z non-human readable retezce (base64)
+        /// </summary>
+        /// <param name="base64EncodedData">string 'zakodovany' v base64</param>
+        /// <returns></returns>
+        private string DecodeFromBase64(string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

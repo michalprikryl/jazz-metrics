@@ -5,12 +5,30 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="1bf7d6c5ebd44ff2a06b7a9ea1e6601e" Name="Diagram1">
-        <EntityTypeShape EntityType="JazzMetricsModel.User" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="JazzMetricsModel.CustomError" Width="1.5" PointX="0.75" PointY="4.75" />
-        <EntityTypeShape EntityType="JazzMetricsModel.Role" Width="1.5" PointX="3.375" PointY="4.875" />
-        <AssociationConnector Association="JazzMetricsModel.FK_USER_ROLE" />
         <EntityTypeShape EntityType="JazzMetricsModel.Language" Width="1.5" PointX="0.75" PointY="1.375" />
+        <EntityTypeShape EntityType="JazzMetricsModel.AppError" Width="1.5" PointX="7.375" PointY="9.75" />
+        <EntityTypeShape EntityType="JazzMetricsModel.Metric" Width="1.5" PointX="5.375" PointY="8" />
+        <EntityTypeShape EntityType="JazzMetricsModel.MetricType" Width="1.5" PointX="3.125" PointY="8.125" />
+        <EntityTypeShape EntityType="JazzMetricsModel.Project" Width="1.5" PointX="5.375" PointY="3" />
+        <EntityTypeShape EntityType="JazzMetricsModel.ProjectMetric" Width="1.5" PointX="7.625" PointY="5.5" />
+        <EntityTypeShape EntityType="JazzMetricsModel.UserProject" Width="1.5" PointX="7.625" PointY="2" />
+        <EntityTypeShape EntityType="JazzMetricsModel.UserRole" Width="1.5" PointX="0.75" PointY="9" />
+        <AssociationConnector Association="JazzMetricsModel.FK_METRIC_METRICTYPE" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRIC_METRIC" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRIC_PROJECT" />
+        <AssociationConnector Association="JazzMetricsModel.FK_USERPROJECT_PROJECT" />
+        <EntityTypeShape EntityType="JazzMetricsModel.User" Width="1.5" PointX="3" PointY="3.375" />
         <AssociationConnector Association="JazzMetricsModel.FK_USER_LANGUAGE" />
+        <AssociationConnector Association="JazzMetricsModel.FK_USER_ROLE" />
+        <AssociationConnector Association="JazzMetricsModel.FK_USERPROJECT_USER" />
+        <EntityTypeShape EntityType="JazzMetricsModel.AffectedField" Width="1.5" PointX="3.125" PointY="15.25" />
+        <EntityTypeShape EntityType="JazzMetricsModel.AspiceProcess" Width="1.5" PointX="3.125" PointY="12.125" />
+        <EntityTypeShape EntityType="JazzMetricsModel.AspiceVersion" Width="1.5" PointX="0.875" PointY="12.25" />
+        <AssociationConnector Association="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD" />
+        <AssociationConnector Association="JazzMetricsModel.FK_ASPICEPROCESS_ASPICEVERSION" />
+        <AssociationConnector Association="JazzMetricsModel.FK_METRIC_ASPICEPROCESS" />
+        <EntityTypeShape EntityType="JazzMetricsModel.ProjectMetricValue" Width="1.5" PointX="9.875" PointY="5.75" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -12,28 +12,26 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class ProjectMetric
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
+        public ProjectMetric()
         {
-            this.UserProjects = new HashSet<UserProject>();
+            this.ProjectMetricValues = new HashSet<ProjectMetricValue>();
         }
     
         public int ID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Password { get; set; }
-        public string Salt { get; set; }
-        public string Email { get; set; }
-        public int UserRoleID { get; set; }
-        public int LanguageID { get; set; }
-        public bool UseLDAPLogin { get; set; }
-        public string LDAP_URL { get; set; }
+        public int ProjectID { get; set; }
+        public int MetricID { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public System.DateTime LastUpdateDate { get; set; }
+        public string DataURL { get; set; }
+        public bool Warning { get; set; }
+        public Nullable<decimal> MinimalWarningValue { get; set; }
     
-        public virtual Language Language { get; set; }
-        public virtual UserRole UserRole { get; set; }
+        public virtual Metric Metric { get; set; }
+        public virtual Project Project { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserProject> UserProjects { get; set; }
+        public virtual ICollection<ProjectMetricValue> ProjectMetricValues { get; set; }
     }
 }

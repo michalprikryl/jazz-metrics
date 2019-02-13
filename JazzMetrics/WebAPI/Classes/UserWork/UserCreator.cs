@@ -21,10 +21,10 @@ namespace WebAPI.Classes.UserWork
             return new UserModel
             {
                 UserId = user.ID,
-                FirstName = user.Name,
+                FirstName = user.FirstName,
                 Lastname = user.LastName,
                 Email = user.Email,
-                Role = user.Role.Name
+                Role = user.UserRole.Name
             };
         }
 

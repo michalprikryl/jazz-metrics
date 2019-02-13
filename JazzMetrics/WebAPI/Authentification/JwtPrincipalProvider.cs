@@ -1,6 +1,5 @@
 ﻿using WebAPI.Classes.Database;
 using WebAPI.Classes.Helpers;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -14,8 +13,6 @@ namespace WebAPI.Authentification
     /// </summary>
     public class JwtPrincipalProvider : BaseDatabase
     {
-        private string _username;
-
         /// <summary>
         /// vrati user principals
         /// </summary>
@@ -23,17 +20,7 @@ namespace WebAPI.Authentification
         /// <returns></returns>
         public async Task<IPrincipal> CreatePrincipal(string token)
         {
-            if (await ValidateToken(token))
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, _username)
-                };
-
-                return new ClaimsPrincipal(new ClaimsIdentity(claims, "Jwt"));
-            }
-
-            return null;
+            return await ValidateToken(token);
         }
 
         /// <summary>
@@ -41,27 +28,27 @@ namespace WebAPI.Authentification
         /// </summary>
         /// <param name="token">JWT token urceny k validaci</param>
         /// <returns></returns>
-        private async Task<bool> ValidateToken(string token)
+        private async Task<ClaimsPrincipal> ValidateToken(string token)
         {
             ClaimsPrincipal simplePrinciple = await JwtManager.GetPrincipal(token);
-            ClaimsIdentity identity = simplePrinciple?.Identity as ClaimsIdentity;
-
-            if (identity == null || !identity.IsAuthenticated)
+            if (!(simplePrinciple?.Identity is ClaimsIdentity identity) || !identity.IsAuthenticated)
             {
-                return false;
+                return null;
             }
 
-            _username = identity.GetUsername();
-
-            if (string.IsNullOrEmpty(_username))
+            string username = identity.GetUsername();
+            if (string.IsNullOrEmpty(username))
             {
-                return false;
+                return null;
             }
 
+            bool correct = false;
             using (DatabaseContext = new JazzMetricsEntities())
             {
-                return await DatabaseContext.Users.FirstOrDefaultAsync(p => p.Email == _username) != null;
+                correct = await DatabaseContext.Users.FirstOrDefaultAsync(p => p.Email == username) != null;
             }
+
+            return correct ? simplePrinciple : null;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JazzMetricsLibrary;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace WebApp.Classes.Test
     /// trida pro testovani pripojeni na API a DB  (kdyz nejde API, tak nejde ani DB, ale pokud jde API, tak nemusi jit DB)
     /// </summary>
     public class TestConnection : ClientAPI
-    { 
+    {
         public TestConnection(string controller = "test", bool useAuthetificationHeader = true, string jwt = null) : base(controller, useAuthetificationHeader, jwt) { }
 
         /// <summary>
@@ -20,12 +21,11 @@ namespace WebApp.Classes.Test
         {
             TestResult result = new TestResult();
 
-            await GetToAPI(null, (task) =>
+            await GetToAPI(null, async (httpResult) =>
             {
-                var httpResult = task.Result;
                 if (httpResult.StatusCode == HttpStatusCode.OK)
                 {
-                    TestResultAPI resultAPI = JsonConvert.DeserializeObject<TestResultAPI>(httpResult.Content.ReadAsStringAsync().Result);
+                    TestResultAPI resultAPI = JsonConvert.DeserializeObject<TestResultAPI>(await httpResult.Content.ReadAsStringAsync());
                     result.ConnectionDB = resultAPI.ConnectionDB;
                     result.MessageDB = resultAPI.MessageDB ?? "Připojení je v pořádku.";
                     result.ConnectionAPI = true;
