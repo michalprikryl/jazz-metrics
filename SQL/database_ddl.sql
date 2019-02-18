@@ -88,20 +88,18 @@ CREATE TABLE [ProjectMetric]
 	[CreateDate] datetime2(3) NOT NULL,
 	[LastUpdateDate] datetime2(3) NOT NULL,
 	[DataURL] nvarchar(MAX) NOT NULL,
+	[DataUsername] nvarchar(256) NOT NULL,
+	[DataPassword] nvarchar(1024) NOT NULL,
 	[Warning] bit NOT NULL DEFAULT 0,
 	[MinimalWarningValue] numeric(18,3) NULL,
 	PRIMARY KEY ([ID])
 )
 GO
-CREATE TABLE [ProjectMetricValue]
+CREATE TABLE [ProjectMetricSnapshot]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
 	[InsertionDate] datetime2(3) NOT NULL,
 	[ProjectMetricID] int NOT NULL,
-	[FirstValue] int NULL,
-	[SecondValue] int NULL,
-	[Ratio] numeric(18,3) NULL,
-	[Values] nvarchar(MAX) NULL,
 	PRIMARY KEY ([ID])
 )
 GO
@@ -141,6 +139,24 @@ CREATE TABLE [AspiceVersion]
 	PRIMARY KEY ([ID])
 )
 GO
+CREATE TABLE [ProjectMetricColumnValue]
+(
+	[ID] int NOT NULL IDENTITY(1,1),
+	[Value] numeric(18,3) NOT NULL,
+	[ProjectMetricSnapshotID] int NOT NULL,
+	[MetricColumnID] int NOT NULL,
+	PRIMARY KEY ([ID])
+)
+GO
+CREATE TABLE [MetricColumn]
+(
+	[ID] int NOT NULL IDENTITY(1,1),
+	[Name] nvarchar(512) NOT NULL,
+	[MetricID] int NOT NULL,
+	[PairMetricColumnID] int NULL,
+	PRIMARY KEY ([ID])
+)
+GO
 
 ALTER TABLE [User] ADD CONSTRAINT [FK_USER_LANGUAGE] FOREIGN KEY ([LanguageID]) REFERENCES [Language] ([ID])
 GO
@@ -154,7 +170,7 @@ ALTER TABLE [ProjectMetric] ADD CONSTRAINT [FK_PROJECTMETRIC_PROJECT] FOREIGN KE
 GO
 ALTER TABLE [ProjectMetric] ADD CONSTRAINT [FK_PROJECTMETRIC_METRIC] FOREIGN KEY ([MetricID]) REFERENCES [Metric] ([ID])
 GO
-ALTER TABLE [ProjectMetricValue] ADD CONSTRAINT [FK_PROJECTMETRICVALUES_PROJECTMETRIC] FOREIGN KEY ([ProjectMetricID]) REFERENCES [ProjectMetric] ([ID])
+ALTER TABLE [ProjectMetricSnapshot] ADD CONSTRAINT [FK_PROJECTMETRICVALUES_PROJECTMETRIC] FOREIGN KEY ([ProjectMetricID]) REFERENCES [ProjectMetric] ([ID])
 GO
 ALTER TABLE [Metric] ADD CONSTRAINT [FK_METRIC_METRICTYPE] FOREIGN KEY ([MetricTypeID]) REFERENCES [MetricType] ([ID])
 GO
@@ -164,4 +180,11 @@ ALTER TABLE [Metric] ADD CONSTRAINT [FK_METRIC_AFFECTEDFIELD] FOREIGN KEY ([Affe
 GO
 ALTER TABLE [AspiceProcess] ADD CONSTRAINT [FK_ASPICEPROCESS_ASPICEVERSION] FOREIGN KEY ([AspiceVersionID]) REFERENCES [AspiceVersion] ([ID])
 GO
-
+ALTER TABLE [ProjectMetricColumnValue] ADD CONSTRAINT [FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT] FOREIGN KEY ([ProjectMetricSnapshotID]) REFERENCES [ProjectMetricSnapshot] ([ID])
+GO
+ALTER TABLE [MetricColumn] ADD CONSTRAINT [FK_METRICCOLUMN_METRIC] FOREIGN KEY ([MetricID]) REFERENCES [Metric] ([ID])
+GO
+ALTER TABLE [ProjectMetricColumnValue] ADD CONSTRAINT [FK_PROJECTMETRICVALUE_METRICCOLUMN] FOREIGN KEY ([MetricColumnID]) REFERENCES [MetricColumn] ([ID])
+GO
+ALTER TABLE [MetricColumn] ADD CONSTRAINT [FK_METRICCOLUMN_METRICCOLUMN] FOREIGN KEY ([PairMetricColumnID]) REFERENCES [MetricColumn] ([ID])
+GO
