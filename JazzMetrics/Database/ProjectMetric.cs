@@ -17,7 +17,7 @@ namespace Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ProjectMetric()
         {
-            this.ProjectMetricValues = new HashSet<ProjectMetricValue>();
+            this.ProjectMetricSnapshots = new HashSet<ProjectMetricSnapshot>();
         }
     
         public int ID { get; set; }
@@ -28,10 +28,12 @@ namespace Database
         public string DataURL { get; set; }
         public bool Warning { get; set; }
         public Nullable<decimal> MinimalWarningValue { get; set; }
+        public string DataUsername { get; set; }
+        public string DataPassword { get; set; }
     
         public virtual Metric Metric { get; set; }
         public virtual Project Project { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectMetricValue> ProjectMetricValues { get; set; }
+        public virtual ICollection<ProjectMetricSnapshot> ProjectMetricSnapshots { get; set; }
     }
 }

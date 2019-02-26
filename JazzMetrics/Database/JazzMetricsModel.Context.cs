@@ -37,6 +37,8 @@ namespace Database
         public virtual DbSet<AffectedField> AffectedFields { get; set; }
         public virtual DbSet<AspiceProcess> AspiceProcesses { get; set; }
         public virtual DbSet<AspiceVersion> AspiceVersions { get; set; }
-        public virtual DbSet<ProjectMetricValue> ProjectMetricValues { get; set; }
+        public virtual DbSet<MetricColumn> MetricColumns { get; set; }
+        public virtual DbSet<ProjectMetricColumnValue> ProjectMetricColumnValues { get; set; }
+        public virtual DbSet<ProjectMetricSnapshot> ProjectMetricSnapshots { get; set; }
     }
 }
