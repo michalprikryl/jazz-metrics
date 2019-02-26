@@ -27,8 +27,14 @@
         <AssociationConnector Association="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD" />
         <AssociationConnector Association="JazzMetricsModel.FK_ASPICEPROCESS_ASPICEVERSION" />
         <AssociationConnector Association="JazzMetricsModel.FK_METRIC_ASPICEPROCESS" />
-        <EntityTypeShape EntityType="JazzMetricsModel.ProjectMetricValue" Width="1.5" PointX="9.875" PointY="5.75" />
-        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" />
+        <EntityTypeShape EntityType="JazzMetricsModel.MetricColumn" Width="1.5" PointX="7.625" PointY="14.375" />
+        <EntityTypeShape EntityType="JazzMetricsModel.ProjectMetricColumnValue" Width="1.5" PointX="12.125" PointY="12.125" />
+        <EntityTypeShape EntityType="JazzMetricsModel.ProjectMetricSnapshot" Width="1.5" PointX="9.875" PointY="9.375" />
+        <AssociationConnector Association="JazzMetricsModel.FK_METRICCOLUMN_METRIC" />
+        <AssociationConnector Association="JazzMetricsModel.FK_METRICCOLUMN_METRICCOLUMN" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRICVALUE_METRICCOLUMN" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC1" />
+        <AssociationConnector Association="JazzMetricsModel.FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

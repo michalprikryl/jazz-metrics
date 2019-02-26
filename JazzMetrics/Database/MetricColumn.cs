@@ -12,29 +12,25 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Metric
+    public partial class MetricColumn
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Metric()
+        public MetricColumn()
         {
-            this.ProjectMetrics = new HashSet<ProjectMetric>();
-            this.MetricColumns = new HashSet<MetricColumn>();
+            this.MetricColumn1 = new HashSet<MetricColumn>();
+            this.ProjectMetricColumnValues = new HashSet<ProjectMetricColumnValue>();
         }
     
         public int ID { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int MetricTypeID { get; set; }
-        public string Identificator { get; set; }
-        public int AspiceProcessID { get; set; }
-        public int AffectedFieldID { get; set; }
+        public int MetricID { get; set; }
+        public Nullable<int> PairMetricColumnID { get; set; }
     
-        public virtual MetricType MetricType { get; set; }
+        public virtual Metric Metric { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectMetric> ProjectMetrics { get; set; }
-        public virtual AffectedField AffectedField { get; set; }
-        public virtual AspiceProcess AspiceProcess { get; set; }
+        public virtual ICollection<MetricColumn> MetricColumn1 { get; set; }
+        public virtual MetricColumn MetricColumn2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MetricColumn> MetricColumns { get; set; }
+        public virtual ICollection<ProjectMetricColumnValue> ProjectMetricColumnValues { get; set; }
     }
 }

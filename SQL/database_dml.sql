@@ -25,7 +25,7 @@ INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('PM', '')
 INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Traceability', '')
 INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Quality', '')
 
-INSERT INTO [AspiceVersion] ([VersionNumber], [ReleaseDate], [Description]) VALUES ('3.1', '2017-11-30', 'Automotive SPICE 3.1')
+INSERT INTO [AspiceVersion] ([VersionNumber], [ReleaseDate], [Description]) VALUES ('3.1', '2017-11-01', 'Automotive SPICE 3.1')
 
 INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.1', 'REQUIREMENTS ELICITATION', '', 1)
 INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SYS.2', 'SYSTEM REQUIREMENTS ANALYSIS', '', 1)

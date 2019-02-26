@@ -12,16 +12,20 @@ namespace Database
     using System;
     using System.Collections.Generic;
     
-    public partial class ProjectMetricValue
+    public partial class ProjectMetricSnapshot
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public ProjectMetricSnapshot()
+        {
+            this.ProjectMetricColumnValues = new HashSet<ProjectMetricColumnValue>();
+        }
+    
         public int ID { get; set; }
         public System.DateTime InsertionDate { get; set; }
         public int ProjectMetricID { get; set; }
-        public Nullable<int> FirstValue { get; set; }
-        public Nullable<int> SecondValue { get; set; }
-        public Nullable<decimal> Ratio { get; set; }
-        public string Values { get; set; }
     
         public virtual ProjectMetric ProjectMetric { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectMetricColumnValue> ProjectMetricColumnValues { get; set; }
     }
 }

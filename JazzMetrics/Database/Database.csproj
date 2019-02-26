@@ -82,6 +82,9 @@
     <Compile Include="Metric.cs">
       <DependentUpon>JazzMetricsModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="MetricColumn.cs">
+      <DependentUpon>JazzMetricsModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="MetricType.cs">
       <DependentUpon>JazzMetricsModel.tt</DependentUpon>
     </Compile>
@@ -91,7 +94,10 @@
     <Compile Include="ProjectMetric.cs">
       <DependentUpon>JazzMetricsModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ProjectMetricValue.cs">
+    <Compile Include="ProjectMetricColumnValue.cs">
+      <DependentUpon>JazzMetricsModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectMetricSnapshot.cs">
       <DependentUpon>JazzMetricsModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -68,6 +68,15 @@
           <Property Name="AspiceProcessID" Type="int" Nullable="false" />
           <Property Name="AffectedFieldID" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="MetricColumn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="MetricID" Type="int" Nullable="false" />
+          <Property Name="PairMetricColumnID" Type="int" />
+        </EntityType>
         <EntityType Name="MetricType">
           <Key>
             <PropertyRef Name="ID" />
@@ -95,20 +104,27 @@
           <Property Name="CreateDate" Type="datetime2" Precision="3" Nullable="false" />
           <Property Name="LastUpdateDate" Type="datetime2" Precision="3" Nullable="false" />
           <Property Name="DataURL" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DataUsername" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="DataPassword" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="Warning" Type="bit" Nullable="false" />
           <Property Name="MinimalWarningValue" Type="numeric" Precision="18" Scale="3" />
         </EntityType>
-        <EntityType Name="ProjectMetricValue">
+        <EntityType Name="ProjectMetricColumnValue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Value" Type="numeric" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="ProjectMetricSnapshotID" Type="int" Nullable="false" />
+          <Property Name="MetricColumnID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectMetricSnapshot">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InsertionDate" Type="datetime2" Precision="3" Nullable="false" />
           <Property Name="ProjectMetricID" Type="int" Nullable="false" />
-          <Property Name="FirstValue" Type="int" />
-          <Property Name="SecondValue" Type="int" />
-          <Property Name="Ratio" Type="numeric" Precision="18" Scale="3" />
-          <Property Name="Values" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -190,6 +206,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_METRICCOLUMN_METRIC">
+          <End Role="Metric" Type="Self.Metric" Multiplicity="1" />
+          <End Role="MetricColumn" Type="Self.MetricColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Metric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MetricColumn">
+              <PropertyRef Name="MetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRICCOLUMN_METRICCOLUMN">
+          <End Role="MetricColumn" Type="Self.MetricColumn" Multiplicity="0..1" />
+          <End Role="MetricColumn1" Type="Self.MetricColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetricColumn">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MetricColumn1">
+              <PropertyRef Name="PairMetricColumnID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PROJECTMETRIC_METRIC">
           <End Role="Metric" Type="Self.Metric" Multiplicity="1" />
           <End Role="ProjectMetric" Type="Self.ProjectMetric" Multiplicity="*" />
@@ -214,14 +254,38 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PROJECTMETRICVALUE_METRICCOLUMN">
+          <End Role="MetricColumn" Type="Self.MetricColumn" Multiplicity="1" />
+          <End Role="ProjectMetricColumnValue" Type="Self.ProjectMetricColumnValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetricColumn">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricColumnValue">
+              <PropertyRef Name="MetricColumnID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT">
+          <End Role="ProjectMetricSnapshot" Type="Self.ProjectMetricSnapshot" Multiplicity="1" />
+          <End Role="ProjectMetricColumnValue" Type="Self.ProjectMetricColumnValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectMetricSnapshot">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricColumnValue">
+              <PropertyRef Name="ProjectMetricSnapshotID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC">
           <End Role="ProjectMetric" Type="Self.ProjectMetric" Multiplicity="1" />
-          <End Role="ProjectMetricValue" Type="Self.ProjectMetricValue" Multiplicity="*" />
+          <End Role="ProjectMetricSnapshot" Type="Self.ProjectMetricSnapshot" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProjectMetric">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="ProjectMetricValue">
+            <Dependent Role="ProjectMetricSnapshot">
               <PropertyRef Name="ProjectMetricID" />
             </Dependent>
           </ReferentialConstraint>
@@ -281,10 +345,12 @@
           <EntitySet Name="AspiceVersion" EntityType="Self.AspiceVersion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Language" EntityType="Self.Language" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Metric" EntityType="Self.Metric" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MetricColumn" EntityType="Self.MetricColumn" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MetricType" EntityType="Self.MetricType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectMetric" EntityType="Self.ProjectMetric" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ProjectMetricValue" EntityType="Self.ProjectMetricValue" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectMetricColumnValue" EntityType="Self.ProjectMetricColumnValue" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectMetricSnapshot" EntityType="Self.ProjectMetricSnapshot" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProject" EntityType="Self.UserProject" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRole" EntityType="Self.UserRole" Schema="dbo" store:Type="Tables" />
@@ -304,6 +370,14 @@
             <End Role="MetricType" EntitySet="MetricType" />
             <End Role="Metric" EntitySet="Metric" />
           </AssociationSet>
+          <AssociationSet Name="FK_METRICCOLUMN_METRIC" Association="Self.FK_METRICCOLUMN_METRIC">
+            <End Role="Metric" EntitySet="Metric" />
+            <End Role="MetricColumn" EntitySet="MetricColumn" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRICCOLUMN_METRICCOLUMN" Association="Self.FK_METRICCOLUMN_METRICCOLUMN">
+            <End Role="MetricColumn" EntitySet="MetricColumn" />
+            <End Role="MetricColumn1" EntitySet="MetricColumn" />
+          </AssociationSet>
           <AssociationSet Name="FK_PROJECTMETRIC_METRIC" Association="Self.FK_PROJECTMETRIC_METRIC">
             <End Role="Metric" EntitySet="Metric" />
             <End Role="ProjectMetric" EntitySet="ProjectMetric" />
@@ -312,9 +386,17 @@
             <End Role="Project" EntitySet="Project" />
             <End Role="ProjectMetric" EntitySet="ProjectMetric" />
           </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUE_METRICCOLUMN" Association="Self.FK_PROJECTMETRICVALUE_METRICCOLUMN">
+            <End Role="MetricColumn" EntitySet="MetricColumn" />
+            <End Role="ProjectMetricColumnValue" EntitySet="ProjectMetricColumnValue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT" Association="Self.FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT">
+            <End Role="ProjectMetricSnapshot" EntitySet="ProjectMetricSnapshot" />
+            <End Role="ProjectMetricColumnValue" EntitySet="ProjectMetricColumnValue" />
+          </AssociationSet>
           <AssociationSet Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC" Association="Self.FK_PROJECTMETRICVALUES_PROJECTMETRIC">
             <End Role="ProjectMetric" EntitySet="ProjectMetric" />
-            <End Role="ProjectMetricValue" EntitySet="ProjectMetricValue" />
+            <End Role="ProjectMetricSnapshot" EntitySet="ProjectMetricSnapshot" />
           </AssociationSet>
           <AssociationSet Name="FK_USER_LANGUAGE" Association="Self.FK_USER_LANGUAGE">
             <End Role="Language" EntitySet="Language" />
@@ -390,10 +472,28 @@
             <End Role="AspiceProcess" EntitySet="AspiceProcesses" />
             <End Role="Metric" EntitySet="Metrics" />
           </AssociationSet>
-          <EntitySet Name="ProjectMetricValues" EntityType="JazzMetricsModel.ProjectMetricValue" />
-          <AssociationSet Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC" Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+          <EntitySet Name="MetricColumns" EntityType="JazzMetricsModel.MetricColumn" />
+          <EntitySet Name="ProjectMetricColumnValues" EntityType="JazzMetricsModel.ProjectMetricColumnValue" />
+          <EntitySet Name="ProjectMetricSnapshots" EntityType="JazzMetricsModel.ProjectMetricSnapshot" />
+          <AssociationSet Name="FK_METRICCOLUMN_METRIC" Association="JazzMetricsModel.FK_METRICCOLUMN_METRIC">
+            <End Role="Metric" EntitySet="Metrics" />
+            <End Role="MetricColumn" EntitySet="MetricColumns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_METRICCOLUMN_METRICCOLUMN" Association="JazzMetricsModel.FK_METRICCOLUMN_METRICCOLUMN">
+            <End Role="MetricColumn" EntitySet="MetricColumns" />
+            <End Role="MetricColumn1" EntitySet="MetricColumns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUE_METRICCOLUMN" Association="JazzMetricsModel.FK_PROJECTMETRICVALUE_METRICCOLUMN">
+            <End Role="MetricColumn" EntitySet="MetricColumns" />
+            <End Role="ProjectMetricColumnValue" EntitySet="ProjectMetricColumnValues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC1" Association="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC1">
             <End Role="ProjectMetric" EntitySet="ProjectMetrics" />
-            <End Role="ProjectMetricValue" EntitySet="ProjectMetricValues" />
+            <End Role="ProjectMetricSnapshot" EntitySet="ProjectMetricSnapshots" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT" Association="JazzMetricsModel.FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT">
+            <End Role="ProjectMetricSnapshot" EntitySet="ProjectMetricSnapshots" />
+            <End Role="ProjectMetricColumnValue" EntitySet="ProjectMetricColumnValues" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Language">
@@ -436,6 +536,7 @@
           <Property Name="AffectedFieldID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="AffectedField" Relationship="JazzMetricsModel.FK_METRIC_AFFECTEDFIELD" FromRole="Metric" ToRole="AffectedField" />
           <NavigationProperty Name="AspiceProcess" Relationship="JazzMetricsModel.FK_METRIC_ASPICEPROCESS" FromRole="Metric" ToRole="AspiceProcess" />
+          <NavigationProperty Name="MetricColumns" Relationship="JazzMetricsModel.FK_METRICCOLUMN_METRIC" FromRole="Metric" ToRole="MetricColumn" />
         </EntityType>
         <EntityType Name="MetricType">
           <Key>
@@ -471,7 +572,9 @@
           <Property Name="MinimalWarningValue" Type="Decimal" Precision="18" Scale="3" />
           <NavigationProperty Name="Metric" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_METRIC" FromRole="ProjectMetric" ToRole="Metric" />
           <NavigationProperty Name="Project" Relationship="JazzMetricsModel.FK_PROJECTMETRIC_PROJECT" FromRole="ProjectMetric" ToRole="Project" />
-          <NavigationProperty Name="ProjectMetricValues" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" FromRole="ProjectMetric" ToRole="ProjectMetricValue" />
+          <Property Name="DataUsername" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DataPassword" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ProjectMetricSnapshots" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC1" FromRole="ProjectMetric" ToRole="ProjectMetricSnapshot" />
         </EntityType>
         <EntityType Name="UserProject">
           <Key>
@@ -662,28 +765,97 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ProjectMetricValue">
+        <EntityType Name="MetricColumn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="MetricID" Type="Int32" Nullable="false" />
+          <Property Name="PairMetricColumnID" Type="Int32" />
+          <NavigationProperty Name="Metric" Relationship="JazzMetricsModel.FK_METRICCOLUMN_METRIC" FromRole="MetricColumn" ToRole="Metric" />
+          <NavigationProperty Name="MetricColumn1" Relationship="JazzMetricsModel.FK_METRICCOLUMN_METRICCOLUMN" FromRole="MetricColumn" ToRole="MetricColumn1" />
+          <NavigationProperty Name="MetricColumn2" Relationship="JazzMetricsModel.FK_METRICCOLUMN_METRICCOLUMN" FromRole="MetricColumn1" ToRole="MetricColumn" />
+          <NavigationProperty Name="ProjectMetricColumnValues" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUE_METRICCOLUMN" FromRole="MetricColumn" ToRole="ProjectMetricColumnValue" />
+        </EntityType>
+        <EntityType Name="ProjectMetricColumnValue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Value" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="ProjectMetricSnapshotID" Type="Int32" Nullable="false" />
+          <Property Name="MetricColumnID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MetricColumn" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUE_METRICCOLUMN" FromRole="ProjectMetricColumnValue" ToRole="MetricColumn" />
+          <NavigationProperty Name="ProjectMetricSnapshot" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT" FromRole="ProjectMetricColumnValue" ToRole="ProjectMetricSnapshot" />
+        </EntityType>
+        <EntityType Name="ProjectMetricSnapshot">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="InsertionDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ProjectMetricID" Type="Int32" Nullable="false" />
-          <Property Name="FirstValue" Type="Int32" />
-          <Property Name="SecondValue" Type="Int32" />
-          <Property Name="Ratio" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Values" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ProjectMetric" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC" FromRole="ProjectMetricValue" ToRole="ProjectMetric" />
+          <NavigationProperty Name="ProjectMetric" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUES_PROJECTMETRIC1" FromRole="ProjectMetricSnapshot" ToRole="ProjectMetric" />
+          <NavigationProperty Name="ProjectMetricColumnValues" Relationship="JazzMetricsModel.FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT" FromRole="ProjectMetricSnapshot" ToRole="ProjectMetricColumnValue" />
         </EntityType>
-        <Association Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC">
+        <Association Name="FK_METRICCOLUMN_METRIC">
+          <End Type="JazzMetricsModel.Metric" Role="Metric" Multiplicity="1" />
+          <End Type="JazzMetricsModel.MetricColumn" Role="MetricColumn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Metric">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MetricColumn">
+              <PropertyRef Name="MetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_METRICCOLUMN_METRICCOLUMN">
+          <End Type="JazzMetricsModel.MetricColumn" Role="MetricColumn" Multiplicity="0..1" />
+          <End Type="JazzMetricsModel.MetricColumn" Role="MetricColumn1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetricColumn">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MetricColumn1">
+              <PropertyRef Name="PairMetricColumnID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRICVALUE_METRICCOLUMN">
+          <End Type="JazzMetricsModel.MetricColumn" Role="MetricColumn" Multiplicity="1" />
+          <End Type="JazzMetricsModel.ProjectMetricColumnValue" Role="ProjectMetricColumnValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MetricColumn">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricColumnValue">
+              <PropertyRef Name="MetricColumnID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRICVALUES_PROJECTMETRIC1">
           <End Type="JazzMetricsModel.ProjectMetric" Role="ProjectMetric" Multiplicity="1" />
-          <End Type="JazzMetricsModel.ProjectMetricValue" Role="ProjectMetricValue" Multiplicity="*" />
+          <End Type="JazzMetricsModel.ProjectMetricSnapshot" Role="ProjectMetricSnapshot" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProjectMetric">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="ProjectMetricValue">
+            <Dependent Role="ProjectMetricSnapshot">
               <PropertyRef Name="ProjectMetricID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT">
+          <End Type="JazzMetricsModel.ProjectMetricSnapshot" Role="ProjectMetricSnapshot" Multiplicity="1" />
+          <End Type="JazzMetricsModel.ProjectMetricColumnValue" Role="ProjectMetricColumnValue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectMetricSnapshot">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProjectMetricColumnValue">
+              <PropertyRef Name="ProjectMetricSnapshotID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -754,6 +926,8 @@
           <EntitySetMapping Name="ProjectMetrics">
             <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetric">
               <MappingFragment StoreEntitySet="ProjectMetric">
+                <ScalarProperty Name="DataPassword" ColumnName="DataPassword" />
+                <ScalarProperty Name="DataUsername" ColumnName="DataUsername" />
                 <ScalarProperty Name="MinimalWarningValue" ColumnName="MinimalWarningValue" />
                 <ScalarProperty Name="Warning" ColumnName="Warning" />
                 <ScalarProperty Name="DataURL" ColumnName="DataURL" />
@@ -829,13 +1003,29 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ProjectMetricValues">
-            <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetricValue">
-              <MappingFragment StoreEntitySet="ProjectMetricValue">
-                <ScalarProperty Name="Values" ColumnName="Values" />
-                <ScalarProperty Name="Ratio" ColumnName="Ratio" />
-                <ScalarProperty Name="SecondValue" ColumnName="SecondValue" />
-                <ScalarProperty Name="FirstValue" ColumnName="FirstValue" />
+          <EntitySetMapping Name="MetricColumns">
+            <EntityTypeMapping TypeName="JazzMetricsModel.MetricColumn">
+              <MappingFragment StoreEntitySet="MetricColumn">
+                <ScalarProperty Name="PairMetricColumnID" ColumnName="PairMetricColumnID" />
+                <ScalarProperty Name="MetricID" ColumnName="MetricID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectMetricColumnValues">
+            <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetricColumnValue">
+              <MappingFragment StoreEntitySet="ProjectMetricColumnValue">
+                <ScalarProperty Name="MetricColumnID" ColumnName="MetricColumnID" />
+                <ScalarProperty Name="ProjectMetricSnapshotID" ColumnName="ProjectMetricSnapshotID" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectMetricSnapshots">
+            <EntityTypeMapping TypeName="JazzMetricsModel.ProjectMetricSnapshot">
+              <MappingFragment StoreEntitySet="ProjectMetricSnapshot">
                 <ScalarProperty Name="ProjectMetricID" ColumnName="ProjectMetricID" />
                 <ScalarProperty Name="InsertionDate" ColumnName="InsertionDate" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
