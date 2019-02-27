@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -85,9 +84,12 @@ namespace WebAPI.Services.Users
 
             string issuer = _config["Jwt:Issuer"];
 
-            List<Claim> claims = new List<Claim> { new Claim(ClaimTypes.Email, username) };
+            var claims = new[] 
+            {
+                new Claim(JwtRegisteredClaimNames.Email, username)
+            };
 
-            var token = new JwtSecurityToken(issuer, issuer, claims: claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
+            var token = new JwtSecurityToken(issuer, issuer, claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

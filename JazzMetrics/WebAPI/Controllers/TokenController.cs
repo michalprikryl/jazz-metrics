@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
 
         public async Task<ActionResult<object>> Post()
         {
-            return new { Token = await _userService.BuildToken(UserIdentity.GetUsername()) };
+            return new { Token = await _userService.BuildToken(User.GetEmail()) };
         }
     }
 }

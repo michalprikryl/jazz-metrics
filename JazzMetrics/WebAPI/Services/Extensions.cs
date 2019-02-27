@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 
 namespace WebAPI
@@ -20,7 +22,7 @@ namespace WebAPI
         /// <returns></returns>
         internal static string ParseException(this Exception e)
         {
-            return e != null ? $"{e.GetType().Name}\n{e.Message}\n{e.InnerException?.Message ?? string.Empty}" : string.Empty;
+            return e != null ? $"{e.GetType().Name}{Environment.NewLine}{e.Message}{Environment.NewLine}{e.InnerException?.Message ?? string.Empty}" : string.Empty;
         }
 
         /// <summary>
@@ -36,11 +38,11 @@ namespace WebAPI
         /// <summary>
         /// vrati username z uzivatelskych udaju
         /// </summary>
-        /// <param name="principal">uzivatelsky kontext</param>
+        /// <param name="user">uzivatelsky kontext</param>
         /// <returns></returns>
-        internal static string GetUsername(this ClaimsIdentity principal)
+        internal static string GetEmail(this ClaimsPrincipal user)
         {
-            return principal.FindFirst(ClaimTypes.Email)?.Value ?? null;
+            return user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value ?? null;
         }
     }
 }

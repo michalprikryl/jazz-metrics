@@ -34,6 +34,8 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -73,7 +75,13 @@ namespace WebAPI
             }
 
             app.UseAuthentication();
-            //app.UseHttpsRedirection(); //TODO https
+            app.UseCors(options => options
+                        //.WithOrigins("http://localhost:60001", "http://localhost:20260", "http://localhost:58771")
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            //app.UseHttpsRedirection(); //TODO https a origins
             app.UseMvc();
         }
     }
