@@ -157,6 +157,16 @@ CREATE TABLE [MetricColumn]
 	PRIMARY KEY ([ID])
 )
 GO
+CREATE TABLE [Setting]
+(
+	[ID] int NOT NULL IDENTITY(1,1),
+	[SettingScope] nvarchar(256) NOT NULL,
+	[SettingName] nvarchar(256) NOT NULL,
+	[Value] nvarchar(MAX) NOT NULL,
+	PRIMARY KEY ([ID]) ,
+	CONSTRAINT [UNIQUE_SETTINGSCOPE_SETTINGNAME] UNIQUE ([SettingScope] ASC, [SettingName] ASC)
+)
+GO
 
 ALTER TABLE [User] ADD CONSTRAINT [FK_USER_LANGUAGE] FOREIGN KEY ([LanguageID]) REFERENCES [Language] ([ID])
 GO

@@ -36,3 +36,10 @@ INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID
 INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SWE.2', 'SOFTWARE ARCHITECTURAL DESIGN', '', 1)
 INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('SWE.6', 'SOFTWARE QUALIFICATION TEST', '', 1)
 INSERT INTO [AspiceProcess] ([Shortcut], [Name], [Description], [AspiceVersionID]) VALUES ('HW', 'HARDWARE PROCESSES', '', 1)
+
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Sender', 'michal.prikryl.st2@vsb.cz')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Host', 'smtp.vsb.cz')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Port', '25')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Username', '')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Password', '')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('ErrorEmail', 'Email', 'michal.prikryl@post.cz')

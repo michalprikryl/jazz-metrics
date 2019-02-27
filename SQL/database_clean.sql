@@ -18,6 +18,7 @@ DROP TABLE [MetricType];
 DROP TABLE [AffectedField];
 DROP TABLE [AspiceProcess];
 DROP TABLE [AspiceVersion];
+DROP TABLE [Setting];
 
 /*
 USE [master];
