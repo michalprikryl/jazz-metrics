@@ -12,6 +12,8 @@ using WebAPI.Services.Email;
 using WebAPI.Services.Error;
 using WebAPI.Services.Log;
 using WebAPI.Services.Setting;
+using WebAPI.Services.Test;
+using WebAPI.Services.Users;
 
 namespace WebAPI
 {
@@ -51,6 +53,8 @@ namespace WebAPI
             services.AddDbContext<JazzMetricsContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringName)));
 
             services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITestService, TestService>();
             services.AddScoped<IErrorService, ErrorService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ISettingService, SettingService>();
@@ -69,7 +73,7 @@ namespace WebAPI
             }
 
             app.UseAuthentication();
-            //app.UseHttpsRedirection();
+            //app.UseHttpsRedirection(); //TODO https
             app.UseMvc();
         }
     }

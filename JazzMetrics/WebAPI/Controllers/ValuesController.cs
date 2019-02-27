@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using WebAPI.Services.Error;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : MainController
     {
+        public ValuesController(IErrorService errorService) : base(errorService)
+        {
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()

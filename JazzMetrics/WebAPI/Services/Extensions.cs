@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Security.Claims;
 
-namespace WebAPI.Services
+namespace WebAPI
 {
     /// <summary>
     /// rozsirujici metody
@@ -30,6 +31,16 @@ namespace WebAPI.Services
         internal static string GetDateTimeString(this DateTime date)
         {
             return date.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        /// <summary>
+        /// vrati username z uzivatelskych udaju
+        /// </summary>
+        /// <param name="principal">uzivatelsky kontext</param>
+        /// <returns></returns>
+        internal static string GetUsername(this ClaimsIdentity principal)
+        {
+            return principal.FindFirst(ClaimTypes.Email)?.Value ?? null;
         }
     }
 }

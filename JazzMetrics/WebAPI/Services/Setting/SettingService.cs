@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using WebAPI.Services.Email;
 using WebAPI.Services.Helpers;
 

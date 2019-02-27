@@ -26,13 +26,7 @@ namespace Database
         public virtual DbSet<UserProject> UserProject { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //if (!optionsBuilder.IsConfigured)
-            //{
-            //    optionsBuilder.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase"));
-            //}
-        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseLazyLoadingProxies();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
