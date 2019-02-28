@@ -7,7 +7,7 @@ namespace WebAPI.Controllers
     [Authorize]
     public class MainController : ControllerBase
     {
-        protected readonly IErrorService ErrorService;
+        public IErrorService ErrorService { get; }
 
         public MainController(IErrorService errorService)
         {

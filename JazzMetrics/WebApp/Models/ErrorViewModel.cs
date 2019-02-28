@@ -1,6 +1,6 @@
 namespace WebApp.Models
 {
-    public class ErrorViewModel
+    public class ErrorViewModelOld
     {
         public string RequestId { get; set; }
 
