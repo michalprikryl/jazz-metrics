@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using WebApp.Models;
+using WebApp.Models.User;
 using WebApp.Services.Error;
+using WebApp.Services.User;
 
 namespace WebApp.Controllers
 {
@@ -10,13 +13,32 @@ namespace WebApp.Controllers
     public class AppController : Controller
     {
         public IErrorService ErrorService { get; }
+        public IUserManager UserManager { get; }
 
         /// <summary>
-        /// vrati nazev cookie pro JWT
+        /// uzivatel nacteny v http contextu
         /// </summary>
-        public static string TokenCookieName => "JazzMetricsValue";
+        public UserModel MyUser
+        {
+            get
+            {
+                string userEmail = User.FindFirstValue(ClaimTypes.Email);
+                if (userEmail != null)
+                {
+                    return UserManager.GetUser(userEmail);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
-        public AppController(IErrorService errorService) => ErrorService = errorService;
+        public AppController(IErrorService errorService, IUserManager userManager)
+        {
+            ErrorService = errorService;
+            UserManager = userManager;
+        }
 
         /// <summary>
         /// ulozi errory z modelstate collection do messagelistu modelu

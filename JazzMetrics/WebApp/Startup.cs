@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using WebApp.Services.Error;
 using WebApp.Services.User;
 
@@ -28,8 +31,22 @@ namespace WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //services.AddIdentityCore<Models.User.UserModel>(setupAction => setupAction.User.RequireUniqueEmail = true);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(Configuration["CookieName"], options =>
+            {
+                options.Cookie.Expiration = TimeSpan.FromSeconds(10);
+                options.Cookie.Name = "JazzMetricsCookie";
+                options.Cookie.HttpOnly = true;
+                options.LoginPath = "/User/Login";
+                options.LogoutPath = "/User/Logout";
+                options.AccessDeniedPath = "/User/AccessDenied";
+            });
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IErrorService, ErrorService>();
+
+            services.AddSingleton<IUserManager, UserManager>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

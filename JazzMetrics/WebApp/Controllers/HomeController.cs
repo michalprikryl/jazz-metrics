@@ -2,17 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebApp.Models;
+using WebApp.Services.Error;
+using WebApp.Services.User;
 
 namespace WebApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AppController
     {
-        [AllowAnonymous]
+        public HomeController(IErrorService errorService, IUserManager userManager) : base(errorService, userManager)
+        {
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

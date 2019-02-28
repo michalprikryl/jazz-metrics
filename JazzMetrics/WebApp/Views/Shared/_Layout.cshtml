@@ -17,38 +17,16 @@
     </environment>
 </head>
 <body>
-    @*<nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">WebApp</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>*@
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        @*navbar-dark bg-dark*@
-
+        @{ bool logged = User.Identity?.IsAuthenticated ?? false; }
         <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul class="navbar-nav mr-auto">
-                @*@if (Request.IsAuthenticated) @Html.IsSelected("Home", "Index")
-        {*@
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Domů</a>
-                </li>
-                @*}*@
+                @if (logged)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Domů</a>
+                    </li>
+                }
             </ul>
         </div>
 
@@ -64,14 +42,14 @@
         <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    @*@if (Request.IsAuthenticated)
+                    @if (logged)
                     {
                         <a href="/User/Logout" class="navbar-text float-right">Odhlásit se</a>
                     }
-                    else if (!Request.Path.ToUpper().StartsWith("/USER/LOGIN"))
-                    {*@
+                    else if (!Context.Request.Path.ToString().ToUpper().StartsWith("/USER/LOGIN"))
+                    {
                         <a href="/User/Login" class="navbar-text float-right">Přihlásit se</a>
-                    @* } *@
+                    }
                 </li>
             </ul>
         </div>

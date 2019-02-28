@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Models.Error;
 using WebApp.Models.User;
 using WebApp.Services.Error;
 using WebApp.Services.User;
@@ -13,13 +16,13 @@ namespace WebApp.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IErrorService errorService, IUserService userService) : base(errorService) => _userService = userService;
+        public UserController(IErrorService errorService, IUserManager userManager, IUserService userService) : base(errorService, userManager) => _userService = userService;
 
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Login(string returnUrl = "")
         {
-            if (User == null)
+            if (MyUser == null)
             {
                 LoginViewModel model = new LoginViewModel();
                 ViewBag.ReturnUrl = returnUrl;
@@ -41,34 +44,24 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    UserIdentityModel identity = await _userService.AuthenticateUser(model);
-                    if (identity == null)
+                    UserIdentityModel userIdentity = await _userService.AuthenticateUser(model);
+                    if (userIdentity == null)
                     {
                         model.MessageList.Add(new Tuple<string, bool>("Nastala chyba připojení k serveru.", true));
                     }
-                    else if (identity.ProperUser && identity.User != null && !string.IsNullOrEmpty(identity.Token))
+                    else if (userIdentity.ProperUser && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
                     {
-                        UserModel user = identity.User;
-                        //CustomSerializeModel userModel = new CustomSerializeModel()
-                        //{
-                        //    UserId = user.UserId,
-                        //    FirstName = user.Firstname,
-                        //    LastName = user.Lastname,
-                        //    Email = user.Email,
-                        //    Roles = new string[] { user.Role }
-                        //};
+                        UserModel user = userIdentity.User;
 
-                        //int expireMinutes = int.Parse(ConfigurationManager.AppSettings["cookieExpirationTime"]);
-                        //DateTime expiration = DateTime.Now.AddMinutes(expireMinutes);
+                        UserManager.OnLogin(user);
 
-                        //string userData = JsonConvert.SerializeObject(userModel);
-                        //FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(1, model.UserName, DateTime.Now, expiration, false, userData);
+                        var claims = new ClaimsIdentity(new[] 
+                        {
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Role, user.Role)
+                        }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        //HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(authTicket)) { Expires = expiration };
-                        //Response.Cookies.Add(faCookie);
-
-                        //HttpCookie tokenCookie = new HttpCookie(TokenCookieName, identity.Token) { HttpOnly = true, Expires = expiration };
-                        //Response.Cookies.Add(tokenCookie);
+                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claims));
 
                         if (Url.IsLocalUrl(returnUrl))
                         {
@@ -83,14 +76,14 @@ namespace WebApp.Controllers
                     {
                         ModelState.Remove("Password");
 
-                        model.MessageList.Add(new Tuple<string, bool>(identity.Message ?? "Nesprávné uživatelské jméno nebo heslo.", true));
+                        model.MessageList.Add(new Tuple<string, bool>(userIdentity.Message ?? "Nesprávné uživatelské jméno nebo heslo.", true));
                     }
                 }
                 catch (Exception e)
                 {
                     model.MessageList.Add(new Tuple<string, bool>("Při přihlašování nastala chyba, zkuste to prosím znovu.", true));
 
-                    //await ErrorService.CreateError(new ErrorModel(e, User?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
+                    await ErrorService.CreateError(new ErrorModel(e, MyUser?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
                 }
             }
             else
@@ -102,11 +95,13 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult Logout()
+        public async Task<ActionResult> Logout()
         {
-            HttpContext.SignOutAsync();
+            UserManager.OnLogout(MyUser);
 
-            return RedirectToAction("Login");
+            await HttpContext.SignOutAsync();
+
+            return RedirectToAction("Login", "User");
         }
     }
 }

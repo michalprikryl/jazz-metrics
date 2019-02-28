@@ -15,7 +15,7 @@ namespace Library.Networking
         /// <param name="jwt">jwt</param>
         public ClientApiWithConfig(IConfiguration config, string controller, string jwt) : base(controller, jwt)
         {
-            ServerUrl = config["serverApiUrl"];
+            ServerUrl = config["ServerApiUrl"];
         }
     }
 }
