@@ -3,12 +3,10 @@
     /// <summary>
     /// trida predstavujici navratovy objekt z API - pri identifikaci uzivatele
     /// </summary>
-    public class UserIdentityModel
+    public class UserIdentityModel : BaseApiResult
     {
-        public bool ProperUser { get; set; }
         public UserModel User { get; set; }
         public string Token { get; set; }
-        public string Message { get; set; }
     }
 
     /// <summary>

@@ -3,16 +3,8 @@
     /// <summary>
     /// navratovy objekt pri prihlaseni uzivatele
     /// </summary>
-    public class LoginResponseModel
+    public class LoginResponseModel : BaseResponseModel
     {
-        /// <summary>
-        /// jestli je uzivatel prihlasen - je validni
-        /// </summary>
-        public bool ProperUser { get; set; }
-        /// <summary>
-        /// zprava pro uzivatele, pouze pri chybe
-        /// </summary>
-        public string Message { get; set; }
         /// <summary>
         /// JWT pro nasledne prihlaseni do API
         /// </summary>

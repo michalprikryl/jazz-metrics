@@ -21,14 +21,14 @@ namespace WebApp.Services.Error
         /// <param name="model">objekt s informacemi o chybe</param>
         /// <param name="userID">ID uzivatele, pod nimz nastala chyba</param>
         /// <returns>objekt s informaci o zpracovani pozadavku</returns>
-        public async Task<BaseApiResult> CreateError(ErrorViewModel model, string userID)
+        public async Task<BaseApiResult> CreateError(ErrorJsModel model, string userID)
         {
             ErrorModel modelAPI = new ErrorModel
             {
                 ExceptionMessage = model.Message,
                 InnerExceptionMessage = model.InnerMessage,
                 Function = model.Function,
-                Module = $"JazzWeb-{model.Module}",
+                Module = model.Module,
                 Time = DateTime.Now,
                 User = userID,
                 ExceptionType = model.ExceptionType,
@@ -46,6 +46,8 @@ namespace WebApp.Services.Error
         public async Task<BaseApiResult> CreateError(ErrorModel model)
         {
             BaseApiResult result = new BaseApiResult();
+
+            model.User = $"JazzMetrics - {Configuration["Version"]} -> {model.User}";
 
             await PostToAPI(SerializeObjectToJSON(model), async (httpResult) =>
             {

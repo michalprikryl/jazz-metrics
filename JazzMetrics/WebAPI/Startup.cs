@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebAPI.Middleware;
 using WebAPI.Services.Email;
 using WebAPI.Services.Error;
 using WebAPI.Services.Log;
@@ -81,6 +82,7 @@ namespace WebAPI
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             //app.UseHttpsRedirection(); //TODO https a origins
             app.UseMvc();
         }

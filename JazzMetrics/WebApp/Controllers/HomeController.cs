@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WebApp.Models;
 using WebApp.Services.Error;
-using WebApp.Services.User;
 
 namespace WebApp.Controllers
 {
@@ -21,6 +18,9 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public IActionResult About()
         {
+            int[] u = new int[] { 1 };
+            u[51] = 10;
+
             ViewData["Message"] = "Your application description page.";
 
             return View();
@@ -34,15 +34,10 @@ namespace WebApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "admin")]
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModelOld { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

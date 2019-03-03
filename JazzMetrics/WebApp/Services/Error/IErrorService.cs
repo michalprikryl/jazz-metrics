@@ -6,7 +6,7 @@ namespace WebApp.Services.Error
 {
     public interface IErrorService
     {
-        Task<BaseApiResult> CreateError(ErrorViewModel model, string userID);
+        Task<BaseApiResult> CreateError(ErrorJsModel model, string userID);
         Task<BaseApiResult> CreateError(ErrorModel model);
     }
 }

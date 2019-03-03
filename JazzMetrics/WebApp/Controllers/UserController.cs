@@ -51,7 +51,7 @@ namespace WebApp.Controllers
                     {
                         model.MessageList.Add(new Tuple<string, bool>("Nastala chyba připojení k serveru.", true));
                     }
-                    else if (userIdentity.ProperUser && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
+                    else if (userIdentity.Success && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
                     {
                         UserModel user = userIdentity.User;
 
@@ -61,7 +61,7 @@ namespace WebApp.Controllers
                             new Claim(ClaimTypes.Name, user.Firstname),
                             new Claim(LastNameClaim, user.Lastname),
                             new Claim(UserIdClaim, user.UserId.ToString()),
-                            new Claim(ClaimTypes.Role, "Administrator"),
+                            new Claim(ClaimTypes.Role, user.Role),
                         };
 
                         ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

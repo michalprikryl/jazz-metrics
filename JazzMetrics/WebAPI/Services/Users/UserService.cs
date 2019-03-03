@@ -57,13 +57,13 @@ namespace WebAPI.Services.Users
                 }
                 else
                 {
-                    result.ProperUser = false;
+                    result.Success = false;
                     result.Message = "Neznámé přihlašovací jméno!";
                 }
             }
             else
             {
-                result.ProperUser = false;
+                result.Success = false;
                 result.Message = "Zadejte přihlašovací jméno a heslo!";
             }
 
@@ -146,7 +146,7 @@ namespace WebAPI.Services.Users
 
         private async Task CreateUserSession(User user, LoginResponseModel result)
         {
-            result.ProperUser = true;
+            result.Success = true;
             result.Token = await BuildToken(user.Email);
             result.User = new UserModel
             {

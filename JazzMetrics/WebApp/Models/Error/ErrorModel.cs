@@ -53,12 +53,12 @@ namespace WebApp.Models.Error
         public ErrorModel(Exception e, string userID = null, string message = null, string module = null, string function = null)
         {
             Time = DateTime.Now;
-            Module = $"WA-{module ?? e.TargetSite.DeclaringType.Name}";
+            Module = module ?? e.TargetSite.DeclaringType.Name;
             Function = function ?? e.TargetSite.Name;
             ExceptionMessage = e.Message;
             InnerExceptionMessage = e.InnerException?.Message ?? string.Empty;
             Message = message ?? string.Empty;
-            User = userID ?? "WA";
+            User = userID ?? "--";
             ExceptionType = e.GetType().Name;
         }
     }

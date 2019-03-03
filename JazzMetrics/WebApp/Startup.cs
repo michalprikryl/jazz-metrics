@@ -35,10 +35,10 @@ namespace WebApp
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Expiration = TimeSpan.FromDays(1);
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.Name = Configuration["CookieName"];
                 options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.Expiration = TimeSpan.FromDays(1);
+                options.Cookie.Name = Configuration["CookieName"];
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
                 options.AccessDeniedPath = "/User/AccessDenied";
@@ -58,11 +58,13 @@ namespace WebApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
             //app.UseHttpsRedirection(); TODO https
+
+            app.UseStatusCodePagesWithRedirects("/error/{0}");
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
