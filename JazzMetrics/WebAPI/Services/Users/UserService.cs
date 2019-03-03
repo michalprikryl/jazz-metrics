@@ -79,7 +79,7 @@ namespace WebAPI.Services.Users
 
             if (string.IsNullOrEmpty(setting) || !int.TryParse(setting, out int minutes))
             {
-                minutes = 1440;
+                minutes = int.Parse(_config["Jwt:DefaultExp"]);
             }
 
             string issuer = _config["Jwt:Issuer"];

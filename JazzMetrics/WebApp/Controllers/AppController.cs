@@ -5,7 +5,6 @@ using System.Security.Claims;
 using WebApp.Models;
 using WebApp.Models.User;
 using WebApp.Services.Error;
-using WebApp.Services.User;
 
 namespace WebApp.Controllers
 {
@@ -13,7 +12,9 @@ namespace WebApp.Controllers
     public class AppController : Controller
     {
         public IErrorService ErrorService { get; }
-        public IUserManager UserManager { get; }
+
+        public string LastNameClaim => "LastName";
+        public string UserIdClaim => "UserId";
 
         /// <summary>
         /// uzivatel nacteny v http contextu
@@ -22,10 +23,16 @@ namespace WebApp.Controllers
         {
             get
             {
-                string userEmail = User.FindFirstValue(ClaimTypes.Email);
-                if (userEmail != null)
+                if (User.Identity.IsAuthenticated)
                 {
-                    return UserManager.GetUser(userEmail);
+                    return new UserModel
+                    {
+                        Email = User.FindFirstValue(ClaimTypes.Email),
+                        Firstname = User.FindFirstValue(ClaimTypes.Name),
+                        Lastname = User.FindFirstValue(LastNameClaim),
+                        Role = User.FindFirstValue(ClaimTypes.Role),
+                        UserId = int.Parse(User.FindFirstValue(UserIdClaim))
+                    };
                 }
                 else
                 {
@@ -34,10 +41,9 @@ namespace WebApp.Controllers
             }
         }
 
-        public AppController(IErrorService errorService, IUserManager userManager)
+        public AppController(IErrorService errorService)
         {
             ErrorService = errorService;
-            UserManager = userManager;
         }
 
         /// <summary>

@@ -7,11 +7,15 @@
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.2/css/all.css" 
+              asp-fallback-href="~/lib/font-awesome/css/all.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
@@ -61,7 +65,13 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - JazzMetrics - Michal Přikryl</p>
+            <p>
+                &copy; 2019 - JazzMetrics - Michal Přikryl
+                @if (!Context.Request.Path.ToString().ToUpper().StartsWith("/TEST"))
+                {
+                    <a class="float-right color-dark-grey" href="/Test">test připojení</a>
+                }
+            </p>
         </footer>
     </div>
 

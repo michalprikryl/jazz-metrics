@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Models.Error;
@@ -16,7 +18,7 @@ namespace WebApp.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IErrorService errorService, IUserManager userManager, IUserService userService) : base(errorService, userManager) => _userService = userService;
+        public UserController(IErrorService errorService, IUserService userService) : base(errorService) => _userService = userService;
 
         [HttpGet]
         [AllowAnonymous]
@@ -53,15 +55,28 @@ namespace WebApp.Controllers
                     {
                         UserModel user = userIdentity.User;
 
-                        UserManager.OnLogin(user);
-
-                        var claims = new ClaimsIdentity(new[] 
+                        List<Claim> claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Role, user.Role)
-                        }, CookieAuthenticationDefaults.AuthenticationScheme);
+                            new Claim(ClaimTypes.Name, user.Firstname),
+                            new Claim(LastNameClaim, user.Lastname),
+                            new Claim(UserIdClaim, user.UserId.ToString()),
+                            new Claim(ClaimTypes.Role, "Administrator"),
+                        };
 
-                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claims));
+                        ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+                        JwtSecurityToken token = handler.ReadToken(userIdentity.Token) as JwtSecurityToken;
+
+                        AuthenticationProperties authProperties = new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            IssuedUtc = DateTime.UtcNow,
+                            ExpiresUtc = DateTime.SpecifyKind(token.ValidTo, DateTimeKind.Utc)
+                        };
+
+                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                         if (Url.IsLocalUrl(returnUrl))
                         {
@@ -97,11 +112,15 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Logout()
         {
-            UserManager.OnLogout(MyUser);
-
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Login", "User");
+        }
+
+        [HttpGet]
+        public ActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

@@ -12,6 +12,11 @@
       "files": [
         "jquery.min.js"
       ]
+    },
+    {
+      "library": "font-awesome@5.7.2",
+      "destination": "wwwroot/lib/font-awesome"
+      //"files": [ "css/all.css" ] musi byt slozka webfonts a nejde specifokovat jen ta slozka
     }
   ]
 }

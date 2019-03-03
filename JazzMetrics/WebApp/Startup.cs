@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebApp.Services.Error;
+using WebApp.Services.Test;
 using WebApp.Services.User;
 
 namespace WebApp
@@ -31,12 +31,13 @@ namespace WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //services.AddIdentityCore<Models.User.UserModel>(setupAction => setupAction.User.RequireUniqueEmail = true);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(Configuration["CookieName"], options =>
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Expiration = TimeSpan.FromSeconds(10);
-                options.Cookie.Name = "JazzMetricsCookie";
+                options.Cookie.Expiration = TimeSpan.FromDays(1);
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.Name = Configuration["CookieName"];
                 options.Cookie.HttpOnly = true;
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
@@ -44,11 +45,8 @@ namespace WebApp
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITestService, TestService>();
             services.AddScoped<IErrorService, ErrorService>();
-
-            services.AddSingleton<IUserManager, UserManager>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

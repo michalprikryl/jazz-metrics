@@ -9,7 +9,7 @@ namespace WebApp.Controllers
 {
     public class HomeController : AppController
     {
-        public HomeController(IErrorService errorService, IUserManager userManager) : base(errorService, userManager)
+        public HomeController(IErrorService errorService) : base(errorService)
         {
         }
 
@@ -26,6 +26,7 @@ namespace WebApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";

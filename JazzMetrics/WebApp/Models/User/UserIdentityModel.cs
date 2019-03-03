@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApp.Models.User
+﻿namespace WebApp.Models.User
 {
     /// <summary>
     /// trida predstavujici navratovy objekt z API - pri identifikaci uzivatele
@@ -26,5 +21,6 @@ namespace WebApp.Models.User
         public string Lastname { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
+        public string FullName { get => $"{Firstname} {Lastname}"; }
     }
 }
