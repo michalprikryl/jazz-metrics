@@ -13,6 +13,7 @@ namespace WebApp.Controllers
     {
         public IErrorService ErrorService { get; }
 
+        public string TokenClaim => "JWToken";
         public string LastNameClaim => "LastName";
         public string UserIdClaim => "UserId";
 
@@ -39,6 +40,14 @@ namespace WebApp.Controllers
                     return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// vrati JWT z cookie
+        /// </summary>
+        public string Token
+        {
+            get => User.Identity.IsAuthenticated ? User.FindFirstValue(TokenClaim) : null;
         }
 
         public AppController(IErrorService errorService)

@@ -59,7 +59,7 @@ namespace WebAPI.Services.Error
             catch (Exception e)
             {
                 model.Success = false;
-                model.Message = "Chyba nebyla uložena.";
+                model.Message = "Error wasn't processed.";
 
                 if (exceptionRound < 3) //spadne to 3x? tak do emailu a pokud ani to nepujde, tak do souboru
                 {
@@ -67,8 +67,8 @@ namespace WebAPI.Services.Error
                 }
                 else
                 {
-                    await _emailService.SendEmail("Chyba při ukládání erroru v API",
-                        $"Exception při ukládání:{Environment.NewLine}{e.ParseException()}{Environment.NewLine}Původní exception (JSON):{Environment.NewLine}{JsonConvert.SerializeObject(value)}",
+                    await _emailService.SendEmail("Error occured at logging to DB",
+                        $"Exception with log:{Environment.NewLine}{e.ParseException()}{Environment.NewLine}Original exception (JSON):{Environment.NewLine}{JsonConvert.SerializeObject(value)}",
                         await _settingService.GetSettingValue(ErrorEmailScope, ErrorEmailName));
                 }
             }

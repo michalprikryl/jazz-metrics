@@ -52,19 +52,19 @@ namespace WebAPI.Services.Users
                     }
                     else
                     {
-                        result.Message = "Nesprávné přihlašovací údaje!";
+                        result.Message = "Incorrect credentials!";
                     }
                 }
                 else
                 {
                     result.Success = false;
-                    result.Message = "Neznámé přihlašovací jméno!";
+                    result.Message = "Unknown credentials!";
                 }
             }
             else
             {
                 result.Success = false;
-                result.Message = "Zadejte přihlašovací jméno a heslo!";
+                result.Message = "Enter username and password!";
             }
 
             return result;

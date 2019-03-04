@@ -73,17 +73,17 @@ namespace WebAPI
             else
             {
                 app.UseHsts();
+                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             }
 
             app.UseAuthentication();
+            //app.UseHttpsRedirection(); //TODO https a origins
             app.UseCors(options => options
                         //.WithOrigins("http://localhost:60001", "http://localhost:20260", "http://localhost:58771")
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-            //app.UseHttpsRedirection(); //TODO https a origins
             app.UseMvc();
         }
     }

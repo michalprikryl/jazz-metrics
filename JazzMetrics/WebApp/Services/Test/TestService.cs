@@ -30,24 +30,40 @@ namespace WebApp.Services.Test
                 {
                     TestModel resultAPI = JsonConvert.DeserializeObject<TestModel>(await httpResult.Content.ReadAsStringAsync());
                     result.ConnectionDB = resultAPI.ConnectionDB;
-                    result.MessageDB = resultAPI.MessageDB ?? "Připojení je v pořádku.";
+                    result.MessageDB = resultAPI.MessageDB ?? "Connection is correct.";
                     result.ConnectionApi = true;
                 }
                 else
                 {
                     result.ConnectionDB = false;
-                    result.MessageDB = "Nelze získat informace o připojení k DB.";
+                    result.MessageDB = "Cannot retrieve information about connection to Database.";
                     result.ConnectionApi = false;
                 }
 
                 result.HTTPResponseApi = (int)httpResult.StatusCode;
                 result.MessageApi = Enum.GetName(typeof(HttpStatusCode), httpResult.StatusCode);
 
-                result.DbResultMessage.Message = result.ConnectionDB ? "Připojení je funkční" : "Připojení je nedostupné";
-                result.ApiResultMessage.Message = result.ConnectionApi ? "Připojení je funkční" : "Připojení je nedostupné";
+                result.DbResultMessage = result.ConnectionDB ? GetWorkingModel() : GetNotWorkingModel();
+                result.ApiResultMessage = result.ConnectionApi ? GetWorkingModel() : GetNotWorkingModel();
             });
 
             return result;
         }
+
+        private ResultViewModel GetWorkingModel() =>
+            new ResultViewModel
+            {
+                Color = "chartreuse",
+                CssClass = "fa-check",
+                Message = "Connection is working"
+            };
+
+        private ResultViewModel GetNotWorkingModel() =>
+            new ResultViewModel
+            {
+                Color = "tomato",
+                CssClass = "fa-times",
+                Message = "Connection is not working"
+            };
     }
 }

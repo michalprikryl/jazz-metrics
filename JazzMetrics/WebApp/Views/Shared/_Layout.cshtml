@@ -28,7 +28,7 @@
                 @if (logged)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Domů</a>
+                        <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Home</a>
                     </li>
                 }
             </ul>
@@ -48,11 +48,11 @@
                 <li class="nav-item">
                     @if (logged)
                     {
-                        <a href="/User/Logout" class="navbar-text float-right">Odhlásit se</a>
+                        <a href="/User/Logout" class="navbar-text float-right">Logout</a>
                     }
                     else if (!Context.Request.Path.ToString().ToUpper().StartsWith("/USER/LOGIN"))
                     {
-                        <a href="/User/Login" class="navbar-text float-right">Přihlásit se</a>
+                        <a href="/User/Login" class="navbar-text float-right">Login</a>
                     }
                 </li>
             </ul>
@@ -69,7 +69,7 @@
                 &copy; 2019 - JazzMetrics - Michal Přikryl
                 @if (!Context.Request.Path.ToString().ToUpper().StartsWith("/TEST"))
                 {
-                    <a class="float-right color-dark-grey" href="/Test">test připojení</a>
+                    <a class="float-right color-dark-grey" href="/Test">connection test</a>
                 }
             </p>
         </footer>
@@ -97,6 +97,8 @@
         </script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
+
+    <partial name="_ValidationScriptsPartial" />
 
     @RenderSection("Scripts", required: false)
 </body>

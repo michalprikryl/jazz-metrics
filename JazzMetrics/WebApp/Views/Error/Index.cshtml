@@ -1,18 +1,18 @@
 ﻿@model ErrorViewModel
 
-<h3 class="text-danger">Chyba při načtení stránky.</h3>
+<h3 class="text-danger">Error occured.</h3>
 
 @if (Model.ShowRequestId)
 {
     <p>
-        <strong>Požadavek ID:</strong> <code>@Model.RequestId</code>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
     </p>
 }
 
 <p>
-    Při načítání stránky nastala chyba, zkuste prosím načíst stránku znovu.
+    Error occured within page loading, please try to load the page again.
 </p>
 
 <p>
-    Vývojáři byli o této chybě informování.
+    Developers was informed about this error.
 </p>

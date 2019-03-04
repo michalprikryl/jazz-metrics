@@ -31,7 +31,10 @@ namespace WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()); //prida kontrolu Antiforgery tokenu pro vsechno krome GET, HEAD, OPTIONS, TRACE
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
@@ -42,7 +45,7 @@ namespace WebApp
                 options.LoginPath = "/User/Login";
                 options.LogoutPath = "/User/Logout";
                 options.AccessDeniedPath = "/User/AccessDenied";
-            });
+            }); //globalni nastaveni cookies
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
@@ -58,13 +61,13 @@ namespace WebApp
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Error"); //endpoint, na ktery se posilaji chyby
                 app.UseHsts();
             }
 
             //app.UseHttpsRedirection(); TODO https
 
-            app.UseStatusCodePagesWithRedirects("/error/{0}");
+            app.UseStatusCodePagesWithRedirects("/error/{0}"); //http error stranky
 
             app.UseStaticFiles();
             app.UseCookiePolicy();

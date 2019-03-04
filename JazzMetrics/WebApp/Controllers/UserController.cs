@@ -49,7 +49,7 @@ namespace WebApp.Controllers
                     UserIdentityModel userIdentity = await _userService.AuthenticateUser(model);
                     if (userIdentity == null)
                     {
-                        model.MessageList.Add(new Tuple<string, bool>("Nastala chyba připojení k serveru.", true));
+                        model.MessageList.Add(new Tuple<string, bool>("Server is not accessible.", true));
                     }
                     else if (userIdentity.Success && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
                     {
@@ -62,8 +62,9 @@ namespace WebApp.Controllers
                             new Claim(LastNameClaim, user.Lastname),
                             new Claim(UserIdClaim, user.UserId.ToString()),
                             new Claim(ClaimTypes.Role, user.Role),
+                            new Claim(TokenClaim, userIdentity.Token)
                         };
-
+                        
                         ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                         JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
@@ -91,19 +92,15 @@ namespace WebApp.Controllers
                     {
                         ModelState.Remove("Password");
 
-                        model.MessageList.Add(new Tuple<string, bool>(userIdentity.Message ?? "Nesprávné uživatelské jméno nebo heslo.", true));
+                        model.MessageList.Add(new Tuple<string, bool>(userIdentity.Message ?? "Incorrect username or password.", true));
                     }
                 }
                 catch (Exception e)
                 {
-                    model.MessageList.Add(new Tuple<string, bool>("Při přihlašování nastala chyba, zkuste to prosím znovu.", true));
+                    model.MessageList.Add(new Tuple<string, bool>("Error occured during authorization, please try again.", true));
 
                     await ErrorService.CreateError(new ErrorModel(e, MyUser?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
                 }
-            }
-            else
-            {
-                AddModelStateErrors(model);
             }
 
             return View(model);
