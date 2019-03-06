@@ -2,13 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using WebApp.Models;
 using WebApp.Models.User;
 
-namespace WebApp.Services.User
+namespace WebApp.Services.Users
 {
-    public class UserService : ClientApiWithConfig, IUserService
+    public class UserService : ClientApi, IUserService
     {
-        public UserService(IConfiguration config, string controller = "user", string jwt = null) : base(config, controller, jwt) { }
+        public UserService(IConfiguration config) : base(config, "user") { }
 
         /// <summary>
         /// ziska uzivatele z API, kde jsou i overeny jeho prihlasovaci udaje
@@ -22,6 +23,18 @@ namespace WebApp.Services.User
             await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
             {
                 result = JsonConvert.DeserializeObject<UserIdentityModel>(await httpResult.Content.ReadAsStringAsync());
+            }, endpoint: "login");
+
+            return result;
+        }
+
+        public async Task<BaseApiResult> CreateUser(RegistrationViewModel model)
+        {
+            BaseApiResult result = new BaseApiResult();
+
+            await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
             });
 
             return result;

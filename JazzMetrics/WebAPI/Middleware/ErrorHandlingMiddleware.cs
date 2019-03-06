@@ -37,7 +37,7 @@ namespace WebAPI.Middleware
 
             string result = JsonConvert.SerializeObject(new BaseResponseModel
             {
-                Message = "Při zpracování požadavku nastala chyba.",
+                Message = "Error occured on server within request processing.",
                 Success = false
             });
 

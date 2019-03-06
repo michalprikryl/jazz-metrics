@@ -1,0 +1,48 @@
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.Models;
+using WebAPI.Models.AspiceVersions;
+using WebAPI.Services.AspiceVersions;
+using WebAPI.Services.Error;
+
+namespace WebAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AspiceVersionController : MainController
+    {
+        private readonly IAspiceVersionService _aspiceVersionService;
+
+        public AspiceVersionController(IErrorService errorService, IAspiceVersionService aspiceVersionService) : base(errorService) => _aspiceVersionService = aspiceVersionService;
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AspiceVersionModel>> Get(int id)
+        {
+            return await _aspiceVersionService.Get(id);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<BaseResponseModelGet<AspiceVersionModel>>> Get()
+        {
+            return await _aspiceVersionService.GetAll();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<BaseResponseModel>> Post(AspiceVersionModel model)
+        {
+            return await _aspiceVersionService.Create(model);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, AspiceVersionModel model)
+        {
+            return await _aspiceVersionService.Edit(model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<BaseResponseModel>> Delete(int id)
+        {
+            return await _aspiceVersionService.Drop(id);
+        }
+    }
+}

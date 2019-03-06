@@ -2,13 +2,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using WebApp.Services.Error;
+using WebApp.Services.Language;
+using WebApp.Services.Setting;
 using WebApp.Services.Test;
-using WebApp.Services.User;
+using WebApp.Services.Users;
 
 namespace WebApp
 {
@@ -50,6 +55,8 @@ namespace WebApp
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
             services.AddScoped<IErrorService, ErrorService>();
+            services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<ILanguageService, LanguageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +75,14 @@ namespace WebApp
             //app.UseHttpsRedirection(); TODO https
 
             app.UseStatusCodePagesWithRedirects("/error/{0}"); //http error stranky
+
+            var info = new CultureInfo("en-US");
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(info),
+                SupportedCultures = new List<CultureInfo> { info },
+                SupportedUICultures = new List<CultureInfo> { info }
+            });
 
             app.UseStaticFiles();
             app.UseCookiePolicy();

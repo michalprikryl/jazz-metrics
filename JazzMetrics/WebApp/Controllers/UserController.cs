@@ -2,26 +2,61 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Models;
 using WebApp.Models.Error;
 using WebApp.Models.User;
 using WebApp.Services.Error;
-using WebApp.Services.User;
+using WebApp.Services.Language;
+using WebApp.Services.Users;
 
 namespace WebApp.Controllers
 {
     public class UserController : AppController
     {
         private readonly IUserService _userService;
+        private readonly ILanguageService _languageService;
 
-        public UserController(IErrorService errorService, IUserService userService) : base(errorService) => _userService = userService;
+        public UserController(IErrorService errorService, IUserService userService, ILanguageService languageService) : base(errorService)
+        {
+            _userService = userService;
+            _languageService = languageService;
+        }
 
-        [HttpGet]
-        [AllowAnonymous]
+        [HttpGet, AllowAnonymous]
+        public async Task<ActionResult> Registration()
+        {
+            RegistrationViewModel model = new RegistrationViewModel
+            {
+                Languages = await GetLanguages()
+            };
+            model.Languages.Last().Selected = true;
+
+            return View(model);
+        }
+
+        [HttpPost, AllowAnonymous]
+        public async Task<ActionResult> Registration(RegistrationViewModel model)
+        {
+            model.Languages = await GetLanguages();
+
+            if (ModelState.IsValid)
+            {
+                BaseApiResult result = await _userService.CreateUser(model);
+
+                model.MessageList.Add(new Tuple<string, bool>(result.Message, !result.Success));
+            }
+
+            return View(model);
+        }
+
+        [HttpGet, AllowAnonymous]
         public ActionResult Login(string returnUrl = "")
         {
             if (MyUser == null)
@@ -37,9 +72,7 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        [HttpPost, AllowAnonymous]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl = "")
         {
             if (ModelState.IsValid)
@@ -64,7 +97,7 @@ namespace WebApp.Controllers
                             new Claim(ClaimTypes.Role, user.Role),
                             new Claim(TokenClaim, userIdentity.Token)
                         };
-                        
+
                         ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                         JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
@@ -118,6 +151,16 @@ namespace WebApp.Controllers
         public ActionResult AccessDenied()
         {
             return View();
+        }
+
+        private async Task<List<SelectListItem>> GetLanguages()
+        {
+            return (await _languageService.GetAllLanguages())
+                                            .Select(l => new SelectListItem
+                                            {
+                                                Value = l.Id.ToString(),
+                                                Text = $"{l.Name} ({l.Iso6391code})"
+                                            }).ToList();
         }
     }
 }

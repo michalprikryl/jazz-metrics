@@ -30,13 +30,18 @@
                     <li class="nav-item">
                         <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Home</a>
                     </li>
+                    @if (User.IsInRole("super-admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @Html.IsSelected("Setting", "")" href="/Setting">Settings</a>
+                        </li>
+                    }
                 }
             </ul>
         </div>
 
-        <a class="navbar-brand font-weight-bold" href="/">
+        <a class="navbar-brand font-weight-bolder logo-text" href="/">
             Jazz Metrics
-            @*<img src="~/images/logo.png" alt="Logo" class="logo">*@
         </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,14 +50,26 @@
 
         <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
             <ul class="navbar-nav ml-auto">
+                @if (logged)
+                {
+                    <li class="nav-item">
+                        <a href="#" class="navbar-text float-right mr-4 text-white font-weight-bolder">
+                            @User.GetName()
+                        </a>
+                    </li>
+                }
                 <li class="nav-item">
                     @if (logged)
                     {
-                        <a href="/User/Logout" class="navbar-text float-right">Logout</a>
+                        <a href="/User/Logout" class="navbar-text text-white float-right">Logout</a>
                     }
-                    else if (!Context.Request.Path.ToString().ToUpper().StartsWith("/USER/LOGIN"))
+                    else if (Context.Request.Path.ToString().ToUpper().StartsWith("/USER/LOGIN"))
                     {
-                        <a href="/User/Login" class="navbar-text float-right">Login</a>
+                        <a href="/User/Registration" class="navbar-text text-white float-right">Registration</a>
+                    }
+                    else
+                    {
+                        <a href="/User/Login" class="navbar-text text-white float-right">Login</a>
                     }
                 </li>
             </ul>
@@ -61,7 +78,12 @@
 
     <partial name="_CookieConsentPartial" />
 
+    <partial name="Partials/_Processing" />
+
     <div class="container body-content">
+        <h2>@ViewData["Title"]</h2>
+        <hr />
+
         @RenderBody()
         <hr />
         <footer>
@@ -89,7 +111,7 @@
                 integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
-                asp-fallback-src="~/lib/sweet-alert/sweetalert.min.js">    
+                asp-fallback-src="~/lib/sweet-alert/sweetalert.min.js">
         </script>
         <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
                 asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"

@@ -12,9 +12,9 @@ namespace WebApp.Services.Test
     /// <summary>
     /// trida pro testovani pripojeni na API a DB  (kdyz nejde API, tak nejde ani DB, ale pokud jde API, tak nemusi jit DB)
     /// </summary>
-    public class TestService : ClientApiWithConfig, ITestService
+    public class TestService : ClientApi, ITestService
     {
-        public TestService(IConfiguration config, string controller = "test", string jwt = null) : base(config, controller, jwt) { }
+        public TestService(IConfiguration config) : base(config, "test") { }
 
         /// <summary>
         /// metoda pro testovani pripojeni na API
@@ -24,7 +24,7 @@ namespace WebApp.Services.Test
         {
             TestViewModel result = new TestViewModel { ApiResultMessage = new ResultViewModel(), DbResultMessage = new ResultViewModel() };
 
-            await GetToAPI(null, async (httpResult) =>
+            await GetToAPI(async (httpResult) =>
             {
                 if (httpResult.StatusCode == HttpStatusCode.OK)
                 {

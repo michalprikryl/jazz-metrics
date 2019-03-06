@@ -1,5 +1,7 @@
-﻿<div class="col-md-12 col-sm-12 col-centered">
-    @if (Model.MessageList.Count > 0)
+﻿@model ViewModel
+
+<div class="col-md-12 col-sm-12 col-centered">
+    @if (Model.MessageList?.Count > 0)
     {
         <table class="alerttable">
             @foreach (var t in Model.MessageList)

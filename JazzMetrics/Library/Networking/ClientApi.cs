@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,54 +16,35 @@ namespace Library.Networking
     /// </summary>
     public abstract class ClientApi
     {
-        private readonly AuthenticationHeaderValue _authHeader;
-
         /// <summary>
         /// URL serveru
         /// </summary>
         public string ServerUrl { get; set; }
-        /// <summary>
-        /// na jaky controller se pozadavky posilaji
-        /// </summary>
-        public string Controller { get; private set; }
-        /// <summary>
-        /// znaci, zda pri pozadavku na vzdaleny zdroj pouzit autentifikacni hlavicku (defaultne se pouziva)
-        /// </summary>
-        public bool UseAuthetificationHeader { get; set; }
+        public string Controller { get; set; }
         /// <summary>
         /// vysledek posledniho volani vzdalene sluzby
         /// </summary>
-        public string HTTPResultOfLastReques { get; set; }
-        /// <summary>
-        /// vrati kompletni URL i s controllerem
-        /// </summary>
-        public string URLWithController { get { return $"{ServerUrl}/{Controller}"; } }
+        public string HTTPResultOfLastRequest { get; private set; }
 
-        /// <summary>
-        /// konstruktor, kdyz chci nastavit server az pozdeji
-        /// </summary>
-        /// <param name="controller">na jaky controller API se maji data zaslat</param>
-        /// <param name="jwt">JSON Web token, ktery urcuje druh autentifikacni hlavicky</param>
-        public ClientApi(string controller, string jwt)
+        public IConfiguration Configuration { get; private set; }
+
+        public ClientApi(string serverUrl, string controller)
         {
+            ServerUrl = serverUrl;
             Controller = controller;
-
-            _authHeader = SetHttpAuthHeader(jwt);
         }
 
         /// <summary>
-        /// konstruktor
+        /// nacte URL serveru z appsetting.json
         /// </summary>
-        /// <param name="serverUrl">url serveru s APi</param>
-        /// <param name="controller">na jaky controller API se maji data zaslat</param>
-        /// <param name="jwt">JSON Web token, ktery urcuje druh autentifikacni hlavicky</param>
-        public ClientApi(string serverUrl, string controller, string jwt)
+        /// <param name="config">config</param>
+        /// <param name="controller">controller, na ktery se posila</param>
+        /// <param name="jwt">jwt</param>
+        public ClientApi(IConfiguration config, string controller)
         {
-            ServerUrl = serverUrl;
-
+            Configuration = config;
             Controller = controller;
-
-            _authHeader = SetHttpAuthHeader(jwt);
+            ServerUrl = config["ServerApiUrl"];
         }
 
         /// <summary>
@@ -71,15 +53,15 @@ namespace Library.Networking
         /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
         /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
-        protected async Task PostToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
+        protected async Task PostToAPI(string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
             using (HttpClient client = new HttpClient())
             {
-                AdditionalHeaders(client);
+                AdditionalHeaders(client, jwt);
 
-                HttpResponseMessage response = await client.PostAsync(URLWithController, httpContent);
+                HttpResponseMessage response = await client.PostAsync($"{ServerUrl}/{controller ?? Controller}/{endpoint}", httpContent);
 
                 await SetResult(response, method);
             }
@@ -91,15 +73,20 @@ namespace Library.Networking
         /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
         /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
-        protected async Task PutToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
+        protected async Task PutToAPI(int id, string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                endpoint = $"/{endpoint}";
+            }
+
             using (HttpClient client = new HttpClient())
             {
-                AdditionalHeaders(client);
+                AdditionalHeaders(client, jwt);
 
-                HttpResponseMessage response = await client.PutAsync(URLWithController, httpContent);
+                HttpResponseMessage response = await client.PutAsync($"{ServerUrl}/{controller ?? Controller}{endpoint}/{id}", httpContent);
 
                 await SetResult(response, method);
             }
@@ -110,13 +97,18 @@ namespace Library.Networking
         /// </summary>
         /// <param name="id">id entity, kterou chci smazat</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task DeleteToAPI(int? id, Func<HttpResponseMessage, Task> method)
+        protected async Task DeleteToAPI(int? id, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
-            string requestUri = id.HasValue ? $"{URLWithController}/{id.Value}" : $"{ServerUrl}/{Controller}";
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                endpoint = $"/{endpoint}";
+            }
+
+            string requestUri = id.HasValue ? $"{ServerUrl}/{controller ?? Controller}{endpoint}/{id.Value}" : $"{ServerUrl}/{controller ?? Controller}{endpoint}";
 
             using (HttpClient client = new HttpClient())
             {
-                AdditionalHeaders(client);
+                AdditionalHeaders(client, jwt);
 
                 HttpResponseMessage response = await client.DeleteAsync(requestUri);
 
@@ -129,19 +121,19 @@ namespace Library.Networking
         /// </summary>
         /// <param name="id">id entity, kterou chci smazat</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task DeleteToAPI(string content, Func<HttpResponseMessage, Task> method, string mediaType = "application/json")
+        protected async Task DeleteToAPI(string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
 
             using (HttpClient client = new HttpClient())
             {
-                AdditionalHeaders(client);
+                AdditionalHeaders(client, jwt);
 
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = httpContent,
                     Method = HttpMethod.Delete,
-                    RequestUri = new Uri(URLWithController)
+                    RequestUri = new Uri($"{ServerUrl}/{controller ?? Controller}/{endpoint}")
                 };
 
                 HttpResponseMessage response = await client.SendAsync(request);
@@ -150,14 +142,24 @@ namespace Library.Networking
             }
         }
 
+        protected async Task GetToAPI(Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
+        {
+            await GetToAPI(string.Empty, method, controller, endpoint, jwt);
+        }
+
+        protected async Task GetToAPI(int id, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
+        {
+            await GetToAPI($"/{id}", method, controller, endpoint, jwt);
+        }
+
         /// <summary>
         /// posle HTTP GET pozadavek na dany controller
         /// </summary>
         /// <param name="id">id</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        protected async Task GetToAPI(List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method)
+        protected async Task GetToAPI(List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
-            StringBuilder builder = new StringBuilder($"{URLWithController}");
+            StringBuilder builder = new StringBuilder();
 
             if (parameters != null)
             {
@@ -172,11 +174,21 @@ namespace Library.Networking
                 }
             }
 
+            await GetToAPI(builder.ToString(), method, controller, endpoint, jwt);
+        }
+
+        protected async Task GetToAPI(string queryString, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
+        {
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                endpoint = $"/{endpoint}";
+            }
+
             using (HttpClient client = new HttpClient())
             {
-                AdditionalHeaders(client);
+                AdditionalHeaders(client, jwt);
 
-                HttpResponseMessage response = await client.GetAsync(builder.ToString());
+                HttpResponseMessage response = await client.GetAsync($"{ServerUrl}/{controller ?? Controller}{endpoint}{queryString}");
 
                 await SetResult(response, method);
             }
@@ -211,34 +223,18 @@ namespace Library.Networking
         /// prida dalsi hlavicky
         /// </summary>
         /// <param name="client"></param>
-        private void AdditionalHeaders(HttpClient client)
+        private void AdditionalHeaders(HttpClient client, string jwt)
         {
-            if (UseAuthetificationHeader)
+            if (!string.IsNullOrEmpty(jwt))
             {
-                client.DefaultRequestHeaders.Authorization = _authHeader;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
             }
         }
 
         private async Task SetResult(HttpResponseMessage result, Func<HttpResponseMessage, Task> method)
         {
             await method(result);
-            HTTPResultOfLastReques = $"{(int)result.StatusCode} - {Enum.GetName(typeof(HttpStatusCode), result.StatusCode)}";
-        }
-
-        private AuthenticationHeaderValue SetHttpAuthHeader(string jwt)
-        {
-            AuthenticationHeaderValue header = null;
-            if (!string.IsNullOrEmpty(jwt))
-            {
-                UseAuthetificationHeader = true;
-                header = new AuthenticationHeaderValue("Bearer", jwt);
-            }
-            else
-            {
-                UseAuthetificationHeader = false;
-            }
-
-            return header;
+            HTTPResultOfLastRequest = $"{(int)result.StatusCode} - {Enum.GetName(typeof(HttpStatusCode), result.StatusCode)}";
         }
 
         /// <summary>

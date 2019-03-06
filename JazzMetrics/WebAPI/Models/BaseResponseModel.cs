@@ -1,4 +1,6 @@
-﻿namespace WebAPI.Models
+﻿using System.Collections.Generic;
+
+namespace WebAPI.Models
 {
     /// <summary>
     /// zakladni model, ktery obsahuje pouze informace o tom, jak se pozadavek provedl
@@ -18,5 +20,10 @@
         {
             Success = true;
         }
+    }
+
+    public class BaseResponseModelGet<T> : BaseResponseModel
+    {
+        public List<T> Values { get; set; }
     }
 }

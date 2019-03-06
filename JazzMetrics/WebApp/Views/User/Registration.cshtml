@@ -1,0 +1,68 @@
+﻿@model RegistrationViewModel
+@{
+    ViewData["Title"] = "Registration";
+}
+
+<partial name="Partials/_ErrorTable" />
+
+<form asp-controller="user" asp-action="registration" method="post" class="form-horizontal" role="form">
+
+    <div class="col-md-10 mx-auto">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label asp-for="Firstname" class="control-label"></label>
+                <input asp-for="Firstname" class="form-control" placeholder="Firstname" />
+                <span asp-validation-for="Firstname" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Lastname" class="control-label"></label>
+                <input asp-for="Lastname" class="form-control" placeholder="Lastname" />
+                <span asp-validation-for="Lastname" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" placeholder="Username" />
+                <small id="emailHelp" class="form-text text-muted">If you don't specify username, email will be used instead.</small>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-check col-md-6">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Language" class="control-label"></label>
+                <select asp-for="Language" asp-items="Model.Languages" class="form-control"></select>
+                <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-row align-items-center">
+            <div class="form-group col-md-6">
+                <input asp-for="LdapLogin" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#ldap-div" />
+                <label asp-for="LdapLogin" class="form-check-label"></label>
+            </div>
+        </div>
+
+        <div class="form-row collapse" id="ldap-div">
+            <div class="form-group col-md-12">
+                <input asp-for="LdapUrl" class="form-control" placeholder="Paste LDAP URL" />
+                <span asp-validation-for="LdapUrl" class="text-danger"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Create account</button>
+    </div>
+
+</form>
+

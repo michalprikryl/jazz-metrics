@@ -13,9 +13,9 @@ namespace WebApp.Controllers
     {
         public IErrorService ErrorService { get; }
 
-        public string TokenClaim => "JWToken";
-        public string LastNameClaim => "LastName";
-        public string UserIdClaim => "UserId";
+        public static string TokenClaim => "JWToken";
+        public static string LastNameClaim => "LastName";
+        public static string UserIdClaim => "UserId";
 
         /// <summary>
         /// uzivatel nacteny v http contextu
@@ -68,6 +68,11 @@ namespace WebApp.Controllers
                     model.MessageList.Add(new Tuple<string, bool>(error.ErrorMessage, true));
                 }
             }
+        }
+
+        protected void AddMessageToModel(ViewModel model, string message, bool error = true)
+        {
+            model.MessageList.Add(new Tuple<string, bool>(message, error));
         }
     }
 }

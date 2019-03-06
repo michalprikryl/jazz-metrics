@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
             _testService = testService;
         }
 
-        [AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public ActionResult<TestModel> Get()
         {
             return _testService.RunTest();

@@ -1,12 +1,14 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-showProcessing = () => {
+﻿showProcessing = () => {
     const process = document.getElementById("process");
     if (process.style.display === 'none') {
         process.style.display = '';
+
+        setTimeout(() => {
+            const errors = document.getElementsByClassName("field-validation-error");
+            if (errors.length !== 0) {
+                hideProcessing();
+            }
+        }, 500);
     }
 };
 

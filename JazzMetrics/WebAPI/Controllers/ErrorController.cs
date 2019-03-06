@@ -13,8 +13,7 @@ namespace WebAPI.Controllers
     {
         public ErrorController(IErrorService errorService) : base(errorService) { }
 
-        [HttpPost]
-        [AllowAnonymous]
+        [HttpPost, AllowAnonymous]
         public async Task<ActionResult<BaseResponseModel>> Post([FromBody]ErrorModel value)
         {
             return await ErrorService.SaveErrorToDB(value);

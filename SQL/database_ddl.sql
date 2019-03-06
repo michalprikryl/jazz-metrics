@@ -8,6 +8,7 @@ CREATE TABLE [User]
 	[ID] int NOT NULL IDENTITY(1,1),
 	[FirstName] nvarchar(128) NOT NULL,
 	[LastName] nvarchar(128) NOT NULL,
+	[Username] nvarchar(128) NOT NULL,
 	[Password] nvarchar(1024) NOT NULL,
 	[Salt] nvarchar(1024) NOT NULL,
 	[Email] nvarchar(128) NOT NULL,

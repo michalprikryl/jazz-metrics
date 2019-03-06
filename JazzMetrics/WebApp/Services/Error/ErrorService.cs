@@ -11,9 +11,9 @@ namespace WebApp.Services.Error
     /// <summary>
     /// trida slouzi pro odesilani chyb na API
     /// </summary>
-    public class ErrorService : ClientApiWithConfig, IErrorService
+    public class ErrorService : ClientApi, IErrorService
     {
-        public ErrorService(IConfiguration config, string controller = "error", string jwt = null) : base(config, controller, jwt) { }
+        public ErrorService(IConfiguration config) : base(config, "error") { }
 
         /// <summary>
         /// vytvori error z modelu ziskaneho z view

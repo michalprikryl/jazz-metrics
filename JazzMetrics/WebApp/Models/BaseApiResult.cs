@@ -1,4 +1,6 @@
-﻿namespace WebApp.Models
+﻿using System.Collections.Generic;
+
+namespace WebApp.Models
 {
     /// <summary>
     /// zakladni model, ktery obsahuje pouze informace o tom, jak se pozadavek na API provedl
@@ -13,5 +15,10 @@
         /// true - zpracovani pozadavku dopadlo spravne, false - pri zpracovani nastala chyba
         /// </summary>
         public string Message { get; set; }
+    }
+
+    public class BaseApiResultGet<T> : BaseApiResult
+    {
+        public List<T> Values { get; set; }
     }
 }

@@ -12,10 +12,10 @@ INSERT INTO [UserRole] ([Name], [Description]) VALUES ('admin', 'Administrator o
 INSERT INTO [Language] ([ISO639_1Code], [ISO639_3Code], [Name]) VALUES ('cs', 'cze', 'Czech')
 INSERT INTO [Language] ([ISO639_1Code], [ISO639_3Code], [Name]) VALUES ('en', 'eng', 'English')
 
-INSERT INTO [User] ([FirstName], LastName, Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
-    ('Franta', 'Novak', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 2, 2, 0)
-INSERT INTO [User] ([FirstName], LastName, Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
-    ('Michal', 'Prikryl', 'm.p.from.h@seznam.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0)
+INSERT INTO [User] ([FirstName], LastName, Email, [Username], [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
+    ('Franta', 'Novak', 'novak@gmail.com', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 2, 2, 0)
+INSERT INTO [User] ([FirstName], LastName, Email, [Username], [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
+    ('Michal', 'Prikryl', 'm.p.from.h@seznam.cz', 'm.p.from.h@seznam.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0)
 
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Number', 'Metric values are numbers of value/type groups of artefact.')
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage', 'Metric is percentage - coverage of some artefact with another artefact etc.')

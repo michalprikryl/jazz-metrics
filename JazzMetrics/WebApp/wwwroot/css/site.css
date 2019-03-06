@@ -12,6 +12,10 @@ body {
     padding-right: 15px;
 }
 
+.cookie-container {
+    justify-content: center !important;
+}
+
 .alerttable {
     width: 100%;
     text-align: center;
@@ -55,8 +59,8 @@ a:hover {
     text-decoration: none;
 }
 
-.logo {
-    width: 88px;
+.logo-text {
+    font-size: 1.5em;
 }
 
 /*processing animation*/

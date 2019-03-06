@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
@@ -7,6 +8,7 @@ using WebApp.Services.Error;
 
 namespace WebApp.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : AppController
     {
         public ErrorController(IErrorService errorService) : base(errorService) { }

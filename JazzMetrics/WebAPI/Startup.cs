@@ -9,9 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Middleware;
+using WebAPI.Services.AffectedFields;
+using WebAPI.Services.AspiceVersions;
 using WebAPI.Services.Email;
 using WebAPI.Services.Error;
+using WebAPI.Services.Language;
 using WebAPI.Services.Log;
+using WebAPI.Services.MetricTypes;
 using WebAPI.Services.Setting;
 using WebAPI.Services.Test;
 using WebAPI.Services.Users;
@@ -61,20 +65,24 @@ namespace WebAPI
             services.AddScoped<IErrorService, ErrorService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<ILanguageService, LanguageService>();
+            services.AddScoped<IMetricTypeService, MetricTypeService>();
+            services.AddScoped<IAspiceVersionService, AspiceVersionService>();
+            services.AddScoped<IAffectedFieldService, AffectedFieldService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
                 app.UseHsts();
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-            }
+            //}
 
             app.UseAuthentication();
             //app.UseHttpsRedirection(); //TODO https a origins

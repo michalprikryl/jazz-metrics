@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using WebApp.Controllers;
 
 namespace WebApp
 {
@@ -35,6 +38,29 @@ namespace WebApp
             var acceptedControllers = controllers.Trim().Split(',').Distinct();
 
             return acceptedActions.Any(a => string.Compare(a, currentAction, true) == 0) && acceptedControllers.Any(c => string.Compare(c, currentController, true) == 0) ? cssClass : string.Empty;
+        }
+
+        /// <summary>
+        /// vrati username z uzivatelskych udaju
+        /// </summary>
+        /// <param name="user">uzivatelsky kontext</param>
+        /// <returns></returns>
+        public static string GetName(this ClaimsPrincipal user)
+        {
+            string firstName = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+            string lastName = user.Claims.FirstOrDefault(c => c.Type == AppController.LastNameClaim)?.Value ?? string.Empty;
+
+            return $"{firstName} {lastName}";
+        }
+
+        public static string EnglishNumber(this decimal number)
+        {
+            return number.ToString().Replace(",", ".");
+        }
+
+        public static string EnglishDateString(this DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd");
         }
     }
 }

@@ -55,7 +55,7 @@ namespace WebAPI.Services.Helpers
         /// </summary>
         /// <param name="pass"></param>
         /// <returns></returns>
-        public static string EncodePasswordMd5(string pass)   
+        private static string EncodePasswordMd5(string pass)   
         {
             MD5 md5 = new MD5CryptoServiceProvider();
             byte[] originalBytes = Encoding.Default.GetBytes(pass);

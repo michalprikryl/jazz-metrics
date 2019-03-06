@@ -328,6 +328,10 @@ namespace Database
 
                 entity.Property(e => e.UserRoleId).HasColumnName("UserRoleID");
 
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
                 entity.HasOne(d => d.Language)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.LanguageId)
@@ -344,7 +348,7 @@ namespace Database
             modelBuilder.Entity<UserProject>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.ProjectId })
-                    .HasName("PK__UserProj__00E96741A8458835");
+                    .HasName("PK__UserProj__00E9674184948FBA");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
