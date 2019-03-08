@@ -1,6 +1,9 @@
 ﻿using Library.Networking;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Setting.AffectedField;
@@ -194,6 +197,86 @@ namespace WebApp.Services.Setting
             {
                 result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
             }, "aspiceversion", jwt: jwt);
+
+            return result;
+        }
+        #endregion
+
+        public async Task<List<SelectListItem>> GetAspiceVersions(string jwt)
+        {
+            var response = await GetAll<BaseApiResultGet<AspiceVersionModel>>(jwt, "aspiceversion");
+            if (response.Success)
+            {
+                return response.Values.Select(v =>
+                    new SelectListItem
+                    {
+                        Value = v.Id.ToString(),
+                        Text = v.ToString()
+                    }).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        #region Automovice SPICE processes
+        public async Task<T> GetAll<T>(string jwt, string entity)
+        {
+            T result = default(T);
+
+            await GetToAPI(async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<T>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<T> Get<T>(int id, string jwt, string entity)
+        {
+            T result = default(T);
+
+            await GetToAPI(id, async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<T>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseApiResult> Create<T>(T model, string jwt, string entity)
+        {
+            BaseApiResult result = new BaseApiResult();
+
+            await PostToAPI(SerializeObjectToJSON(model), async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseApiResult> Edit<T>(int id, T model, string jwt, string entity)
+        {
+            BaseApiResult result = new BaseApiResult();
+
+            await PutToAPI(id, SerializeObjectToJSON(model), async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseApiResult> Drop(int id, string jwt, string entity)
+        {
+            BaseApiResult result = new BaseApiResult();
+
+            await DeleteToAPI(id, async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
 
             return result;
         }

@@ -28,7 +28,7 @@ namespace WebApp.Models.User
         public string Lastname { get; set; }
 
         [Display(Name = "Language")]
-        [Required(ErrorMessage = "Language is required!")]
+        [Required(ErrorMessage = "Choose Language, please!")]
         public string Language { get; set; }
         public List<SelectListItem> Languages { get; set; }
 

@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Middleware;
 using WebAPI.Services.AffectedFields;
+using WebAPI.Services.AspiceProcesses;
 using WebAPI.Services.AspiceVersions;
 using WebAPI.Services.Email;
 using WebAPI.Services.Error;
@@ -68,6 +69,7 @@ namespace WebAPI
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IMetricTypeService, MetricTypeService>();
             services.AddScoped<IAspiceVersionService, AspiceVersionService>();
+            services.AddScoped<IAspiceProcessService, AspiceProcessService>();
             services.AddScoped<IAffectedFieldService, AffectedFieldService>();
         }
 

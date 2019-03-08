@@ -7,6 +7,15 @@
       "destination": "wwwroot/lib/bootstrap"
     },
     {
+      "library": "bootstrap-datepicker@1.8.0",
+      "destination": "wwwroot/lib/bootstrap-datepicker",
+      "files": [
+        "css/bootstrap-datepicker.css",
+        "js/bootstrap-datepicker.min.js",
+        "locales/bootstrap-datepicker.en-GB.min.js"
+      ]
+    },
+    {
       "library": "jquery@3.3.1",
       "destination": "wwwroot/lib/jquery",
       "files": [

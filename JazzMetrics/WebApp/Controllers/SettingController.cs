@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.Models;
 using WebApp.Models.Setting.AffectedField;
+using WebApp.Models.Setting.AspiceProcess;
 using WebApp.Models.Setting.AspiceVersion;
 using WebApp.Models.Setting.MetricType;
 using WebApp.Services.Error;
@@ -16,6 +18,8 @@ namespace WebApp.Controllers
     public class SettingController : AppController
     {
         private readonly ISettingService _settingService;
+
+        private string AspiceProcessEntity => "aspiceprocess";
 
         public SettingController(IErrorService errorService, ISettingService settingService) : base(errorService) => _settingService = settingService;
 
@@ -33,7 +37,7 @@ namespace WebApp.Controllers
             var result = await _settingService.GetAllAffectedFields(Token);
             if (result.Success)
             {
-                model.AffectedFields = result.Values.Select(v => 
+                model.AffectedFields = result.Values.Select(v =>
                     new AffectedFieldViewModel
                     {
                         Id = v.Id,
@@ -60,9 +64,16 @@ namespace WebApp.Controllers
         [HttpPost("AffectedField/Add")]
         public async Task<IActionResult> AffectedFieldAddPost(AffectedFieldWorkModel model)
         {
-            var result = await _settingService.CreateAffectedField(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.CreateAffectedField(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("AffectedField/Add", model);
         }
@@ -90,9 +101,16 @@ namespace WebApp.Controllers
         [HttpPost("AffectedField/Edit/{id}")]
         public async Task<IActionResult> AffectedFieldEditPost(int id, AffectedFieldWorkModel model)
         {
-            var result = await _settingService.EditAffectedField(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.EditAffectedField(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("AffectedField/Edit", model);
         }
@@ -140,9 +158,16 @@ namespace WebApp.Controllers
         [HttpPost("MetricType/Add")]
         public async Task<IActionResult> MetricTypeAddPost(MetricTypeWorkModel model)
         {
-            var result = await _settingService.CreateMetricType(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.CreateMetricType(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("MetricType/Add", model);
         }
@@ -170,9 +195,16 @@ namespace WebApp.Controllers
         [HttpPost("MetricType/Edit/{id}")]
         public async Task<IActionResult> MetricTypeEditPost(int id, MetricTypeWorkModel model)
         {
-            var result = await _settingService.EditMetricType(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.EditMetricType(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("MetricType/Edit", model);
         }
@@ -213,7 +245,11 @@ namespace WebApp.Controllers
         [HttpGet("AspiceVersion/Add")]
         public IActionResult AspiceVersionAdd()
         {
-            AspiceVersionWorkModel model = new AspiceVersionWorkModel { ReleaseDate = DateTime.Now, VersionNumber = 3 };
+            AspiceVersionWorkModel model = new AspiceVersionWorkModel
+            {
+                ReleaseDate = DateTime.Now.ToShortDateString(),
+                VersionNumber = 3
+            };
 
             return View("AspiceVersion/Add", model);
         }
@@ -221,9 +257,16 @@ namespace WebApp.Controllers
         [HttpPost("AspiceVersion/Add")]
         public async Task<IActionResult> AspiceVersionAddPost(AspiceVersionWorkModel model)
         {
-            var result = await _settingService.CreateAspiceVersion(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.CreateAspiceVersion(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("AspiceVersion/Add", model);
         }
@@ -237,7 +280,7 @@ namespace WebApp.Controllers
             if (result.Success)
             {
                 model.Id = id;
-                model.ReleaseDate = result.ReleaseDate;
+                model.ReleaseDate = result.ReleaseDate.ToShortDateString();
                 model.Description = result.Description;
                 model.VersionNumber = result.VersionNumber;
             }
@@ -252,9 +295,16 @@ namespace WebApp.Controllers
         [HttpPost("AspiceVersion/Edit/{id}")]
         public async Task<IActionResult> AspiceVersionEditPost(int id, AspiceVersionWorkModel model)
         {
-            var result = await _settingService.EditAspiceVersion(model, Token);
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.EditAspiceVersion(model, Token);
 
-            AddMessageToModel(model, result.Message, !result.Success);
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
 
             return View("AspiceVersion/Edit", model);
         }
@@ -265,5 +315,125 @@ namespace WebApp.Controllers
             return Json(await _settingService.DropAspiceVersion(id, Token));
         }
         #endregion
+
+        #region Automotive SPICE processes
+        [HttpGet("AspiceProcess")]
+        public async Task<IActionResult> AspiceProcess()
+        {
+            AspiceProcessListModel model = new AspiceProcessListModel();
+
+            var result = await _settingService.GetAll<BaseApiResultGet<AspiceProcessModel>>(AspiceProcessEntity, Token);
+            if (result.Success)
+            {
+                model.AspiceProcesses = result.Values.Select(a =>
+                    new AspiceProcessViewModel
+                    {
+                        Id = a.Id,
+                        Name = a.Name,
+                        Shortcut = a.Shortcut,
+                        Description = a.Description,
+                        AspiceVersionId = a.AspiceVersion.Id,
+                        AspiceVersion = a.AspiceVersion.ToString(),
+                    }).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("AspiceVersion/Index", model);
+        }
+
+        [HttpGet("AspiceProcess/Add")]
+        public async Task<IActionResult> AspiceProcessAdd()
+        {
+            AspiceProcessWorkModel model = new AspiceProcessWorkModel();
+
+            await GetAspiceVersions(model);
+
+            return View("AspiceProcess/Add", model);
+        }
+
+        [HttpPost("AspiceVersion/Add")]
+        public async Task<IActionResult> AspiceVersionAddPost(AspiceProcessWorkModel model)
+        {
+            await GetAspiceVersions(model); //udrzet vybrany select
+
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.CreateAspiceVersion(model, Token);
+
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            return View("AspiceVersion/Add", model);
+        }
+
+        [HttpGet("AspiceVersion/Edit/{id}")]
+        public async Task<IActionResult> AspiceVersionEdit(int id)
+        {
+            AspiceProcessWorkModel model = new AspiceProcessWorkModel();
+
+            await GetAspiceVersions(model);
+
+            AspiceVersionModel result = await _settingService.GetAspiceVersion(id, Token);
+            if (result.Success)
+            {
+                model.Id = id;
+                model.ReleaseDate = result.ReleaseDate.ToShortDateString();
+                model.Description = result.Description;
+                model.VersionNumber = result.VersionNumber;
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("AspiceVersion/Edit", model);
+        }
+
+        [HttpPost("AspiceVersion/Edit/{id}")]
+        public async Task<IActionResult> AspiceVersionEditPost(int id, AspiceProcessWorkModel model)
+        {
+            await GetAspiceVersions(model);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _settingService.EditAspiceVersion(model, Token);
+
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            return View("AspiceVersion/Edit", model);
+        }
+
+        [HttpPost("AspiceVersion/Delete/{id}")]
+        public async Task<IActionResult> AspiceVersionTypeDelete(int id)
+        {
+            return Json(await _settingService.DropAspiceVersion(id, Token));
+        }
+        #endregion
+
+        private async Task GetAspiceVersions(AspiceProcessWorkModel model)
+        {
+            model.AspiceVersions = await _settingService.GetAspiceVersions(Token);
+
+            if (model.AspiceVersions == null || model.AspiceVersions.Count == 0)
+            {
+                AddMessageToModel(model, "Cannot retrieve Automotive SPICE versions, press F5 please.");
+            }
+            else
+            {
+                model.AspiceVersions.First().Selected = true;
+            }
+        }
     }
 }

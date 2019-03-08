@@ -15,13 +15,13 @@ namespace WebApp.Models.Setting.AspiceVersion
 
         [Display(Name = "Version number")]
         [Required(ErrorMessage = "Version number is required!")]
+        [Range(0, int.MaxValue, ErrorMessage = "Version must be greater than 0!")]
         [DisplayFormat(DataFormatString = "{0:0.0}", ApplyFormatInEditMode = true)]
         public decimal VersionNumber { get; set; }
 
         [Display(Name = "Release date")]
         [Required(ErrorMessage = "Release date is required!")]
-        [DataType(DataType.Date, ErrorMessage = "Release date must be a proper date!")]
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
 
         [Display(Name = "Description")]
         [Required(ErrorMessage = "Description is required!")]

@@ -18,3 +18,10 @@ hideProcessing = () => {
         process.style.display = 'none';
     }
 };
+
+!function () {
+    $('.date').datepicker({
+        orientation: "bottom left",
+        daysOfWeekHighlighted: "0,6"
+    });
+}();

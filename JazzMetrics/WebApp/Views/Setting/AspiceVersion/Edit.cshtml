@@ -22,7 +22,12 @@
 
         <div class="form-group">
             <label asp-for="ReleaseDate" class="control-label"></label>
-            <input asp-for="ReleaseDate" class="form-control" />
+            <div class="input-group">
+                <input asp-for="ReleaseDate" class="form-control date" autocomplete="off" />
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar-alt"></i></span>
+                </div>
+            </div>
             <span asp-validation-for="ReleaseDate" class="text-danger"></span>
         </div>
 

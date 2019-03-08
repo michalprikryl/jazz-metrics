@@ -6,5 +6,10 @@
         public string Name { get; set; }
         public string Iso6391code { get; set; }
         public string Iso6393code { get; set; }
+
+        public override string ToString()
+        {
+            return $"{l.Name} ({l.Iso6391code})";
+        }
     }
 }

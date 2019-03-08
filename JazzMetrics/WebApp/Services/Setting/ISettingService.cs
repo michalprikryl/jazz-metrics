@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Setting.AffectedField;
 using WebApp.Models.Setting.AspiceVersion;
@@ -25,5 +27,13 @@ namespace WebApp.Services.Setting
         Task<BaseApiResult> CreateAspiceVersion(AspiceVersionWorkModel model, string jwt);
         Task<BaseApiResult> EditAspiceVersion(AspiceVersionWorkModel model, string jwt);
         Task<BaseApiResult> DropAspiceVersion(int id, string jwt);
+
+        Task<T> GetAll<T>(string jwt, string entity);
+        Task<T> Get<T>(int id, string jwt, string entity);
+        Task<BaseApiResult> Create<T>(T model, string jwt, string entity);
+        Task<BaseApiResult> Edit<T>(int id, T model, string jwt, string entity);
+        Task<BaseApiResult> Drop(int id, string jwt, string entity);
+
+        Task<List<SelectListItem>> GetAspiceVersions(string jwt);
     }
 }

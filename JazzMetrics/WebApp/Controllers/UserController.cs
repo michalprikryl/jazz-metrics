@@ -32,11 +32,9 @@ namespace WebApp.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult> Registration()
         {
-            RegistrationViewModel model = new RegistrationViewModel
-            {
-                Languages = await GetLanguages()
-            };
-            model.Languages.Last().Selected = true;
+            RegistrationViewModel model = new RegistrationViewModel();
+
+            await GetLanguages(model);
 
             return View(model);
         }
@@ -44,7 +42,7 @@ namespace WebApp.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<ActionResult> Registration(RegistrationViewModel model)
         {
-            model.Languages = await GetLanguages();
+            await GetLanguages(model);
 
             if (ModelState.IsValid)
             {
@@ -153,14 +151,20 @@ namespace WebApp.Controllers
             return View();
         }
 
-        private async Task<List<SelectListItem>> GetLanguages()
+        private async Task GetLanguages(RegistrationViewModel model)
         {
-            return (await _languageService.GetAllLanguages())
-                                            .Select(l => new SelectListItem
-                                            {
-                                                Value = l.Id.ToString(),
-                                                Text = $"{l.Name} ({l.Iso6391code})"
-                                            }).ToList();
+            model.Languages = await _languageService.GetLanguagesForSelect();
+
+            if (model.Languages == null || model.Languages.Count == 0)
+            {
+                AddMessageToModel(model, "Cannot retrieve Automotive SPICE versions, press F5 please.");
+            }
+            else
+            {
+                model.Languages.First().Selected = true;
+            }
+
+            model.Languages.Last().Selected = true;
         }
     }
 }
