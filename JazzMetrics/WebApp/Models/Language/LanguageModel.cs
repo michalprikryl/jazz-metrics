@@ -9,7 +9,7 @@
 
         public override string ToString()
         {
-            return $"{l.Name} ({l.Iso6391code})";
+            return $"{Name} ({Iso6391code})";
         }
     }
 }

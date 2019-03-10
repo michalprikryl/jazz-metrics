@@ -34,6 +34,12 @@ namespace Library.Networking
             Controller = controller;
         }
 
+        public ClientApi(IConfiguration config)
+        {
+            Configuration = config;
+            ServerUrl = config["ServerApiUrl"];
+        }
+
         /// <summary>
         /// nacte URL serveru z appsetting.json
         /// </summary>

@@ -14,7 +14,9 @@ namespace WebApp.Services.Test
     /// </summary>
     public class TestService : ClientApi, ITestService
     {
-        public TestService(IConfiguration config) : base(config, "test") { }
+        public static string TestEntity => "test";
+
+        public TestService(IConfiguration config) : base(config, TestEntity) { }
 
         /// <summary>
         /// metoda pro testovani pripojeni na API

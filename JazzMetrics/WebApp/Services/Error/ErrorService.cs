@@ -13,7 +13,9 @@ namespace WebApp.Services.Error
     /// </summary>
     public class ErrorService : ClientApi, IErrorService
     {
-        public ErrorService(IConfiguration config) : base(config, "error") { }
+        public static string ErrorEntity => "error";
+
+        public ErrorService(IConfiguration config) : base(config, ErrorEntity) { }
 
         /// <summary>
         /// vytvori error z modelu ziskaneho z view

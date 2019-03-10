@@ -27,7 +27,7 @@ namespace WebApp.Models.Setting.AspiceProcess
 
         [Display(Name = "Automotive SPICE version")]
         [Required(ErrorMessage = "Choose Automotive SPICE version, please!")]
-        public string AspiceVersion { get; set; }
+        public string AspiceVersionId { get; set; }
         public List<SelectListItem> AspiceVersions { get; set; }
     }
 

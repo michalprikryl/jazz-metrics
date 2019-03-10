@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,6 +11,7 @@ using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Error;
 using WebApp.Models.User;
+using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Language;
 using WebApp.Services.Users;
@@ -21,11 +21,13 @@ namespace WebApp.Controllers
     public class UserController : AppController
     {
         private readonly IUserService _userService;
+        private readonly ICrudService _crudService;
         private readonly ILanguageService _languageService;
 
-        public UserController(IErrorService errorService, IUserService userService, ILanguageService languageService) : base(errorService)
+        public UserController(IErrorService errorService, IUserService userService, ILanguageService languageService, ICrudService crudService) : base(errorService)
         {
             _userService = userService;
+            _crudService = crudService;
             _languageService = languageService;
         }
 
@@ -46,7 +48,7 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                BaseApiResult result = await _userService.CreateUser(model);
+                BaseApiResult result = await _crudService.Create(model, null, UserService.UserEntity);
 
                 model.MessageList.Add(new Tuple<string, bool>(result.Message, !result.Success));
             }
@@ -157,14 +159,12 @@ namespace WebApp.Controllers
 
             if (model.Languages == null || model.Languages.Count == 0)
             {
-                AddMessageToModel(model, "Cannot retrieve Automotive SPICE versions, press F5 please.");
+                AddMessageToModel(model, "Cannot retrieve languages, press F5 please.");
             }
             else
             {
-                model.Languages.First().Selected = true;
+                model.Languages.Last().Selected = true;
             }
-
-            model.Languages.Last().Selected = true;
         }
     }
 }

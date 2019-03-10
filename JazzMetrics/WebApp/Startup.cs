@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Language;
 using WebApp.Services.Setting;
@@ -54,6 +55,7 @@ namespace WebApp
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
+            services.AddScoped<ICrudService, CrudService>();
             services.AddScoped<IErrorService, ErrorService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ILanguageService, LanguageService>();

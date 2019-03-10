@@ -149,7 +149,7 @@ namespace WebAPI.Services.AspiceProcesses
 
         private async Task<bool> CheckAspiceVersion(int aspiceVersionId, BaseResponseModel response)
         {
-            if (await Database.AspiceProcess.AnyAsync(a => a.Id == aspiceVersionId))
+            if (await Database.AspiceVersion.AnyAsync(a => a.Id == aspiceVersionId))
             {
                 return true;
             }

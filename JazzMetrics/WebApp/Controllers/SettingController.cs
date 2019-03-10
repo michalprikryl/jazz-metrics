@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApp.Models;
 using WebApp.Models.Setting.AffectedField;
 using WebApp.Models.Setting.AspiceProcess;
 using WebApp.Models.Setting.AspiceVersion;
 using WebApp.Models.Setting.MetricType;
+using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Setting;
 
@@ -17,11 +17,14 @@ namespace WebApp.Controllers
     [Authorize(Roles = "super-admin")]
     public class SettingController : AppController
     {
+        private readonly ICrudService _crudService;
         private readonly ISettingService _settingService;
 
-        private string AspiceProcessEntity => "aspiceprocess";
-
-        public SettingController(IErrorService errorService, ISettingService settingService) : base(errorService) => _settingService = settingService;
+        public SettingController(IErrorService errorService, ICrudService crudService, ISettingService settingService) : base(errorService)
+        {
+            _crudService = crudService;
+            _settingService = settingService;
+        }
 
         public IActionResult Index()
         {
@@ -34,7 +37,7 @@ namespace WebApp.Controllers
         {
             AffectedFieldListModel model = new AffectedFieldListModel();
 
-            var result = await _settingService.GetAllAffectedFields(Token);
+            var result = await _crudService.GetAll<AffectedFieldModel>(Token, SettingService.AffectedFieldEntity);
             if (result.Success)
             {
                 model.AffectedFields = result.Values.Select(v =>
@@ -66,7 +69,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.CreateAffectedField(model, Token);
+                var result = await _crudService.Create(model, Token, SettingService.AffectedFieldEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -83,7 +86,7 @@ namespace WebApp.Controllers
         {
             AffectedFieldWorkModel model = new AffectedFieldWorkModel();
 
-            AffectedFieldModel result = await _settingService.GetAffectedField(id, Token);
+            AffectedFieldModel result = await _crudService.Get<AffectedFieldModel>(id, Token, SettingService.AffectedFieldEntity);
             if (result.Success)
             {
                 model.Id = id;
@@ -103,7 +106,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.EditAffectedField(model, Token);
+                var result = await _crudService.Edit(id, model, Token, SettingService.AffectedFieldEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -118,7 +121,7 @@ namespace WebApp.Controllers
         [HttpPost("AffectedField/Delete/{id}")]
         public async Task<IActionResult> AffectedFieldDelete(int id)
         {
-            return Json(await _settingService.DropAffectedField(id, Token));
+            return Json(await _crudService.Drop(id, Token, SettingService.AffectedFieldEntity));
         }
         #endregion
 
@@ -128,7 +131,7 @@ namespace WebApp.Controllers
         {
             MetricTypeListModel model = new MetricTypeListModel();
 
-            var result = await _settingService.GetAllMetricTypes(Token);
+            var result = await _crudService.GetAll<MetricTypeModel>(Token, SettingService.MetricTypeEntity);
             if (result.Success)
             {
                 model.MetricTypes = result.Values.Select(v =>
@@ -160,7 +163,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.CreateMetricType(model, Token);
+                var result = await _crudService.Create(model, Token, SettingService.MetricTypeEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -177,7 +180,7 @@ namespace WebApp.Controllers
         {
             MetricTypeWorkModel model = new MetricTypeWorkModel();
 
-            MetricTypeModel result = await _settingService.GetMetricType(id, Token);
+            MetricTypeModel result = await _crudService.Get<MetricTypeModel>(id, Token, SettingService.MetricTypeEntity);
             if (result.Success)
             {
                 model.Id = id;
@@ -197,7 +200,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.EditMetricType(model, Token);
+                var result = await _crudService.Edit(id, model, Token, SettingService.MetricTypeEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -212,7 +215,7 @@ namespace WebApp.Controllers
         [HttpPost("MetricType/Delete/{id}")]
         public async Task<IActionResult> MetricTypeDelete(int id)
         {
-            return Json(await _settingService.DropMetricType(id, Token));
+            return Json(await _crudService.Drop(id, Token, SettingService.MetricTypeEntity));
         }
         #endregion
 
@@ -222,7 +225,7 @@ namespace WebApp.Controllers
         {
             AspiceVersionListModel model = new AspiceVersionListModel();
 
-            var result = await _settingService.GetAllAspiceVersions(Token);
+            var result = await _crudService.GetAll<AspiceVersionModel>(Token, SettingService.AspiceVersionEntity);
             if (result.Success)
             {
                 model.AspiceVersions = result.Values.Select(a =>
@@ -259,7 +262,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.CreateAspiceVersion(model, Token);
+                var result = await _crudService.Create(model, Token, SettingService.AspiceVersionEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -276,7 +279,7 @@ namespace WebApp.Controllers
         {
             AspiceVersionWorkModel model = new AspiceVersionWorkModel();
 
-            AspiceVersionModel result = await _settingService.GetAspiceVersion(id, Token);
+            AspiceVersionModel result = await _crudService.Get<AspiceVersionModel>(id, Token, SettingService.AspiceVersionEntity);
             if (result.Success)
             {
                 model.Id = id;
@@ -297,7 +300,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _settingService.EditAspiceVersion(model, Token);
+                var result = await _crudService.Edit(id, model, Token, SettingService.AspiceVersionEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -312,7 +315,7 @@ namespace WebApp.Controllers
         [HttpPost("AspiceVersion/Delete/{id}")]
         public async Task<IActionResult> AspiceVersionTypeDelete(int id)
         {
-            return Json(await _settingService.DropAspiceVersion(id, Token));
+            return Json(await _crudService.Drop(id, Token, SettingService.AspiceVersionEntity));
         }
         #endregion
 
@@ -322,7 +325,7 @@ namespace WebApp.Controllers
         {
             AspiceProcessListModel model = new AspiceProcessListModel();
 
-            var result = await _settingService.GetAll<BaseApiResultGet<AspiceProcessModel>>(AspiceProcessEntity, Token);
+            var result = await _crudService.GetAll<AspiceProcessModel>(Token, SettingService.AspiceProcessEntity);
             if (result.Success)
             {
                 model.AspiceProcesses = result.Values.Select(a =>
@@ -341,7 +344,7 @@ namespace WebApp.Controllers
                 AddMessageToModel(model, result.Message);
             }
 
-            return View("AspiceVersion/Index", model);
+            return View("AspiceProcess/Index", model);
         }
 
         [HttpGet("AspiceProcess/Add")]
@@ -354,14 +357,14 @@ namespace WebApp.Controllers
             return View("AspiceProcess/Add", model);
         }
 
-        [HttpPost("AspiceVersion/Add")]
-        public async Task<IActionResult> AspiceVersionAddPost(AspiceProcessWorkModel model)
+        [HttpPost("AspiceProcess/Add")]
+        public async Task<IActionResult> AspiceProcessAddPost(AspiceProcessWorkModel model)
         {
-            await GetAspiceVersions(model); //udrzet vybrany select
+            Task select = GetAspiceVersions(model);
 
             if (ModelState.IsValid)
             {
-                var result = await _settingService.CreateAspiceVersion(model, Token);
+                var result = await _crudService.Create(model, Token, SettingService.AspiceProcessEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -370,40 +373,45 @@ namespace WebApp.Controllers
                 AddModelStateErrors(model);
             }
 
-            return View("AspiceVersion/Add", model);
+            Task.WaitAll(select);
+
+            return View("AspiceProcess/Add", model);
         }
 
-        [HttpGet("AspiceVersion/Edit/{id}")]
-        public async Task<IActionResult> AspiceVersionEdit(int id)
+        [HttpGet("AspiceProcess/Edit/{id}")]
+        public async Task<IActionResult> AspiceProcessEdit(int id)
         {
             AspiceProcessWorkModel model = new AspiceProcessWorkModel();
 
-            await GetAspiceVersions(model);
+            Task select = GetAspiceVersions(model);
 
-            AspiceVersionModel result = await _settingService.GetAspiceVersion(id, Token);
+            AspiceProcessModel result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity);
             if (result.Success)
             {
                 model.Id = id;
-                model.ReleaseDate = result.ReleaseDate.ToShortDateString();
+                model.Name = result.Name;
+                model.Shortcut = result.Shortcut;
                 model.Description = result.Description;
-                model.VersionNumber = result.VersionNumber;
+                model.AspiceVersionId = result.AspiceVersion.Id.ToString();
             }
             else
             {
                 AddMessageToModel(model, result.Message);
             }
 
-            return View("AspiceVersion/Edit", model);
+            Task.WaitAll(select);
+
+            return View("AspiceProcess/Edit", model);
         }
 
-        [HttpPost("AspiceVersion/Edit/{id}")]
-        public async Task<IActionResult> AspiceVersionEditPost(int id, AspiceProcessWorkModel model)
+        [HttpPost("AspiceProcess/Edit/{id}")]
+        public async Task<IActionResult> AspiceProcessEditPost(int id, AspiceProcessWorkModel model)
         {
-            await GetAspiceVersions(model);
+            Task select = GetAspiceVersions(model);
 
             if (ModelState.IsValid)
             {
-                var result = await _settingService.EditAspiceVersion(model, Token);
+                var result = await _crudService.Edit(id, model, Token, SettingService.AspiceProcessEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -412,27 +420,25 @@ namespace WebApp.Controllers
                 AddModelStateErrors(model);
             }
 
-            return View("AspiceVersion/Edit", model);
+            Task.WaitAll(select);
+
+            return View("AspiceProcess/Edit", model);
         }
 
-        [HttpPost("AspiceVersion/Delete/{id}")]
-        public async Task<IActionResult> AspiceVersionTypeDelete(int id)
+        [HttpPost("AspiceProcess/Delete/{id}")]
+        public async Task<IActionResult> AspiceProcessDelete(int id)
         {
-            return Json(await _settingService.DropAspiceVersion(id, Token));
+            return Json(await _crudService.Drop(id, Token, SettingService.AspiceProcessEntity));
         }
         #endregion
 
         private async Task GetAspiceVersions(AspiceProcessWorkModel model)
         {
-            model.AspiceVersions = await _settingService.GetAspiceVersions(Token);
+            model.AspiceVersions = await _settingService.GetAspiceVersionsForSelect(Token);
 
             if (model.AspiceVersions == null || model.AspiceVersions.Count == 0)
             {
                 AddMessageToModel(model, "Cannot retrieve Automotive SPICE versions, press F5 please.");
-            }
-            else
-            {
-                model.AspiceVersions.First().Selected = true;
             }
         }
     }
