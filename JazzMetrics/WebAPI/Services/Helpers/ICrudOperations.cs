@@ -11,5 +11,6 @@ namespace WebAPI.Services.Helpers
         Task<BaseResponseModel> Edit(T request);
         Task<BaseResponseModel> Drop(int id);
         Task<U> Load(int id, BaseResponseModel response);
+        T ConvertToModel(U dbModel);
     }
 }

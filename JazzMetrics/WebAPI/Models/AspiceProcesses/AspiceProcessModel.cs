@@ -9,6 +9,7 @@ namespace WebAPI.Models.AspiceProcesses
         public string Shortcut { get; set; }
         public string Description { get; set; }
         public int AspiceVersionId { get; set; }
+
         public AspiceVersionModel AspiceVersion { get; set; }
 
         public bool Validate

@@ -16,6 +16,7 @@ using WebAPI.Services.Email;
 using WebAPI.Services.Error;
 using WebAPI.Services.Language;
 using WebAPI.Services.Log;
+using WebAPI.Services.Metrics;
 using WebAPI.Services.MetricTypes;
 using WebAPI.Services.Setting;
 using WebAPI.Services.Test;
@@ -65,6 +66,7 @@ namespace WebAPI
             services.AddScoped<ITestService, TestService>();
             services.AddScoped<IErrorService, ErrorService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMetricService, MetricService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IMetricTypeService, MetricTypeService>();
@@ -82,8 +84,8 @@ namespace WebAPI
             //}
             //else
             //{
-                app.UseHsts();
-                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            app.UseHsts();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             //}
 
             app.UseAuthentication();

@@ -17,13 +17,7 @@ namespace WebAPI.Services.AffectedFields
         {
             return new BaseResponseModelGet<AffectedFieldModel>
             {
-                Values = await Database.AffectedField.Select(a =>
-                    new AffectedFieldModel
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        Description = a.Description
-                    }).ToListAsync()
+                Values = (await Database.AffectedField.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
@@ -121,6 +115,16 @@ namespace WebAPI.Services.AffectedFields
             }
 
             return affectedField;
+        }
+
+        public AffectedFieldModel ConvertToModel(AffectedField dbModel)
+        {
+            return new AffectedFieldModel
+            {
+                Id = dbModel.Id,
+                Name = dbModel.Name,
+                Description = dbModel.Description
+            };
         }
     }
 }

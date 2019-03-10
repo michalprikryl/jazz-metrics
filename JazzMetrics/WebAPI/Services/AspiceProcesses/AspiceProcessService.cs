@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Database.DAO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AspiceProcesses;
 using WebAPI.Models.AspiceVersions;
@@ -23,15 +23,12 @@ namespace WebAPI.Services.AspiceProcesses
 
             foreach (var item in await Database.AspiceProcess.ToListAsync())
             {
-                response.Values.Add(
-                    new AspiceProcessModel
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Shortcut = item.Shortcut,
-                        Description = item.Description,
-                        AspiceVersion = await GetAspiceVersion(item.AspiceVersionId)
-                    });
+                AspiceProcessModel aspiceProcess = ConvertToModel(item);
+
+                aspiceProcess.AspiceVersion = GetAspiceVersion(item.AspiceVersion); //TODO lazy
+
+                response.Values.Add(aspiceProcess);
+
             }
 
             return response;
@@ -48,7 +45,8 @@ namespace WebAPI.Services.AspiceProcesses
                 response.Name = aspiceProcess.Name;
                 response.Shortcut = aspiceProcess.Shortcut;
                 response.Description = aspiceProcess.Description;
-                response.AspiceVersion = await GetAspiceVersion(aspiceProcess.AspiceVersionId);
+
+                response.AspiceVersion = GetAspiceVersion(aspiceProcess.AspiceVersion); //TODO lazy
             }
 
             return response;
@@ -145,7 +143,7 @@ namespace WebAPI.Services.AspiceProcesses
             return aspiceProcess;
         }
 
-        private async Task<AspiceVersionModel> GetAspiceVersion(int aspiceVersionId) => await _aspiceVersionService.Get(aspiceVersionId);
+        private AspiceVersionModel GetAspiceVersion(AspiceVersion aspiceVersion) => _aspiceVersionService.ConvertToModel(aspiceVersion);
 
         private async Task<bool> CheckAspiceVersion(int aspiceVersionId, BaseResponseModel response)
         {
@@ -160,6 +158,18 @@ namespace WebAPI.Services.AspiceProcesses
 
                 return false;
             }
+        }
+
+        public AspiceProcessModel ConvertToModel(AspiceProcess dbModel)
+        {
+            return new AspiceProcessModel
+            {
+                Id = dbModel.Id,
+                Name = dbModel.Name,
+                Shortcut = dbModel.Shortcut,
+                Description = dbModel.Description,
+                AspiceVersionId = dbModel.AspiceVersionId
+            };
         }
     }
 }

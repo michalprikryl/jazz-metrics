@@ -17,14 +17,7 @@ namespace WebAPI.Services.AspiceVersions
         {
             return new BaseResponseModelGet<AspiceVersionModel>
             {
-                Values = await Database.AspiceVersion.Select(a =>
-                    new AspiceVersionModel
-                    {
-                        Id = a.Id,
-                        ReleaseDate = a.ReleaseDate,
-                        Description = a.Description,
-                        VersionNumber = a.VersionNumber
-                    }).ToListAsync()
+                Values = (await Database.AspiceVersion.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
@@ -125,6 +118,17 @@ namespace WebAPI.Services.AspiceVersions
             }
 
             return aspiceVersion;
+        }
+
+        public AspiceVersionModel ConvertToModel(AspiceVersion dbModel)
+        {
+            return new AspiceVersionModel
+            {
+                Id = dbModel.Id,
+                ReleaseDate = dbModel.ReleaseDate,
+                Description = dbModel.Description,
+                VersionNumber = dbModel.VersionNumber
+            };
         }
     }
 }

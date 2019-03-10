@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebApp.Models.Setting.AffectedField;
 using WebApp.Models.Setting.AspiceProcess;
 using WebApp.Models.Setting.AspiceVersion;
+using WebApp.Models.Setting.Metric;
 using WebApp.Models.Setting.MetricType;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
@@ -430,7 +431,6 @@ namespace WebApp.Controllers
         {
             return Json(await _crudService.Drop(id, Token, SettingService.AspiceProcessEntity));
         }
-        #endregion
 
         private async Task GetAspiceVersions(AspiceProcessWorkModel model)
         {
@@ -441,5 +441,162 @@ namespace WebApp.Controllers
                 AddMessageToModel(model, "Cannot retrieve Automotive SPICE versions, press F5 please.");
             }
         }
+        #endregion
+
+        #region Metrics
+        [HttpGet("Metric")]
+        public async Task<IActionResult> Metric()
+        {
+            MetricListModel model = new MetricListModel();
+
+            var result = await _crudService.GetAll<MetricModel>(Token, SettingService.MetricEntity);
+            if (result.Success)
+            {
+                model.Metrics = result.Values.Select(a =>
+                    new MetricViewModel
+                    {
+                        Id = a.Id,
+                        Name = a.Name,
+                        Description = a.Description,
+                        Identificator = a.Identificator,
+                        AffectedFieldId = a.AffectedField.Id,
+                        AffectedField = a.AffectedField.ToString(),
+                        AspiceProcessId = a.AspiceProcess.Id,
+                        AspiceProcess = a.AspiceProcess.ToString(),
+                        MetricTypeId = a.MetricType.Id,
+                        MetricType = a.MetricType.ToString()
+                    }).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Metric/Index", model);
+        }
+
+        [HttpGet("Metric/Add")]
+        public async Task<IActionResult> MetricAdd()
+        {
+            MetricWorkModel model = new MetricWorkModel();
+
+            await GetMetricSelects(model);
+
+            return View("Metric/Add", model);
+        }
+
+        [HttpPost("Metric/Add")]
+        public async Task<IActionResult> MetricAddPost(MetricWorkModel model)
+        {
+            Task select = GetMetricSelects(model);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _crudService.Create(model, Token, SettingService.MetricEntity);
+
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            Task.WaitAll(select);
+
+            return View("Metric/Add", model);
+        }
+
+        [HttpGet("Metric/Edit/{id}")]
+        public async Task<IActionResult> MetricEdit(int id)
+        {
+            MetricWorkModel model = new MetricWorkModel();
+
+            Task select = GetMetricSelects(model);
+
+            MetricModel result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity);
+            if (result.Success)
+            {
+                model.Id = id;
+                model.Name = result.Name;
+                model.Description = result.Description;
+                model.Identificator = result.Identificator;
+                model.MetricTypeId = result.MetricType.Id.ToString();
+                model.AspiceProcessId = result.AspiceProcess.Id.ToString();
+                model.AffectedFieldId = result.AffectedField.Id.ToString();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            Task.WaitAll(select);
+
+            return View("Metric/Edit", model);
+        }
+
+        [HttpPost("Metric/Edit/{id}")]
+        public async Task<IActionResult> MetricEditPost(int id, MetricWorkModel model)
+        {
+            Task select = GetMetricSelects(model);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _crudService.Edit(id, model, Token, SettingService.MetricEntity);
+
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            Task.WaitAll(select);
+
+            return View("Metric/Edit", model);
+        }
+
+        [HttpPost("Metric/Delete/{id}")]
+        public async Task<IActionResult> MetricDelete(int id)
+        {
+            return Json(await _crudService.Drop(id, Token, SettingService.MetricEntity));
+        }
+
+        private async Task GetMetricSelects(MetricWorkModel model)
+        {
+            Task[] tasks = new Task[3];
+
+            tasks[0] = _settingService.GetAspiceProcessesForSelect(Token).ContinueWith(t =>
+            {
+                model.AspiceProcesses = t.Result;
+
+                if (model.AspiceProcesses == null || model.AspiceProcesses.Count == 0)
+                {
+                    AddMessageToModel(model, "Cannot retrieve Automotive SPICE processes, press F5 please.");
+                }
+            });
+
+            tasks[1] = _settingService.GetMetricTypesForSelect(Token).ContinueWith(t =>
+            {
+                model.MetricTypes = t.Result;
+
+                if (model.MetricTypes == null || model.MetricTypes.Count == 0)
+                {
+                    AddMessageToModel(model, "Cannot retrieve metric types, press F5 please.");
+                }
+            });
+
+            tasks[2] = _settingService.GetAffectedFieldsForSelect(Token).ContinueWith(t =>
+            {
+                model.AffectedFields = t.Result;
+
+                if (model.AffectedFields == null || model.AffectedFields.Count == 0)
+                {
+                    AddMessageToModel(model, "Cannot retrieve metric afected fields, press F5 please.");
+                }
+            });
+
+            await Task.WhenAll(tasks);
+        }
+        #endregion
     }
 }

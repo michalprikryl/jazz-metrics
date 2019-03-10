@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Database.DAO;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.MetricType;
 using WebAPI.Services.Helpers;
@@ -17,13 +17,7 @@ namespace WebAPI.Services.MetricTypes
         {
             return new BaseResponseModelGet<MetricTypeModel>
             {
-                Values = await Database.MetricType.Select(a => 
-                    new MetricTypeModel
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        Description = a.Description
-                    }).ToListAsync()
+                Values = (await Database.MetricType.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
@@ -121,6 +115,16 @@ namespace WebAPI.Services.MetricTypes
             }
 
             return metricType;
+        }
+
+        public MetricTypeModel ConvertToModel(MetricType dbModel)
+        {
+            return new MetricTypeModel
+            {
+                Id = dbModel.Id,
+                Name = dbModel.Name,
+                Description = dbModel.Description
+            };
         }
     }
 }
