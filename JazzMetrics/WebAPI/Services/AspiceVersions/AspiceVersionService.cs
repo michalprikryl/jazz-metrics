@@ -13,7 +13,7 @@ namespace WebAPI.Services.AspiceVersions
     {
         public AspiceVersionService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<AspiceVersionModel>> GetAll()
+        public async Task<BaseResponseModelGet<AspiceVersionModel>> GetAll(bool lazy)
         {
             return new BaseResponseModelGet<AspiceVersionModel>
             {
@@ -21,7 +21,7 @@ namespace WebAPI.Services.AspiceVersions
             };
         }
 
-        public async Task<AspiceVersionModel> Get(int id)
+        public async Task<AspiceVersionModel> Get(int id, bool lazy)
         {
             AspiceVersionModel response = new AspiceVersionModel();
 
@@ -37,22 +37,24 @@ namespace WebAPI.Services.AspiceVersions
             return response;
         }
 
-        public async Task<BaseResponseModel> Create(AspiceVersionModel request)
+        public async Task<BaseResponseModelPost> Create(AspiceVersionModel request)
         {
-            BaseResponseModel response = new BaseResponseModel();
+            BaseResponseModelPost response = new BaseResponseModelPost();
 
             if (request.Validate)
             {
-                await Database.AspiceVersion.AddAsync(
-                    new AspiceVersion
-                    {
-                        ReleaseDate = request.ReleaseDate,
-                        Description = request.Description,
-                        VersionNumber = request.VersionNumber
-                    });
+                AspiceVersion aspiceVersion = new AspiceVersion
+                {
+                    ReleaseDate = request.ReleaseDate,
+                    Description = request.Description,
+                    VersionNumber = request.VersionNumber
+                };
+
+                await Database.AspiceVersion.AddAsync(aspiceVersion);
 
                 await Database.SaveChangesAsync();
 
+                response.Id = aspiceVersion.Id;
                 response.Message = "Automotive SPICE version was successfully created!";
             }
             else

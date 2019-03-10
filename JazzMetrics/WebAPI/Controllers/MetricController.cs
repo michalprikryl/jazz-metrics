@@ -16,19 +16,19 @@ namespace WebAPI.Controllers
         public MetricController(IErrorService errorService, IMetricService metricService) : base(errorService) => _metricService = metricService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<MetricModel>> Get(int id)
+        public async Task<ActionResult<MetricModel>> Get(int id, bool lazy = true)
         {
-            return await _metricService.Get(id);
+            return await _metricService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<MetricModel>>> Get()
+        public async Task<ActionResult<BaseResponseModelGet<MetricModel>>> Get(bool lazy = true)
         {
-            return await _metricService.GetAll();
+            return await _metricService.GetAll(lazy);
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModel>> Post(MetricModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post(MetricModel model)
         {
             return await _metricService.Create(model);
         }

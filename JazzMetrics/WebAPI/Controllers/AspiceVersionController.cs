@@ -16,19 +16,19 @@ namespace WebAPI.Controllers
         public AspiceVersionController(IErrorService errorService, IAspiceVersionService aspiceVersionService) : base(errorService) => _aspiceVersionService = aspiceVersionService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AspiceVersionModel>> Get(int id)
+        public async Task<ActionResult<AspiceVersionModel>> Get(int id, bool lazy = true)
         {
-            return await _aspiceVersionService.Get(id);
+            return await _aspiceVersionService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<AspiceVersionModel>>> Get()
+        public async Task<ActionResult<BaseResponseModelGet<AspiceVersionModel>>> Get(bool lazy = true)
         {
-            return await _aspiceVersionService.GetAll();
+            return await _aspiceVersionService.GetAll(lazy);
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModel>> Post(AspiceVersionModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post(AspiceVersionModel model)
         {
             return await _aspiceVersionService.Create(model);
         }

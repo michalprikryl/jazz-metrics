@@ -28,7 +28,7 @@ namespace WebAPI.Services.Metrics
             _metricTypeService = metricTypeService;
         }
 
-        public async Task<BaseResponseModelGet<MetricModel>> GetAll()
+        public async Task<BaseResponseModelGet<MetricModel>> GetAll(bool lazy)
         {
             var response = new BaseResponseModelGet<MetricModel> { Values = new List<MetricModel>() };
 
@@ -36,10 +36,12 @@ namespace WebAPI.Services.Metrics
             {
                 MetricModel metric = ConvertToModel(item);
 
-                //TODO lazy, kvuli nacteni do jinych objektu
-                metric.MetricType = GetMetricType(item.MetricType);
-                metric.AspiceProcess = GetAspiceProcess(item.AspiceProcess);
-                metric.AffectedField = GetAffectedField(item.AffectedField);
+                if (!lazy)
+                {
+                    metric.MetricType = GetMetricType(item.MetricType);
+                    metric.AspiceProcess = GetAspiceProcess(item.AspiceProcess);
+                    metric.AffectedField = GetAffectedField(item.AffectedField);
+                }
 
                 response.Values.Add(metric);
             }
@@ -47,7 +49,7 @@ namespace WebAPI.Services.Metrics
             return response;
         }
 
-        public async Task<MetricModel> Get(int id)
+        public async Task<MetricModel> Get(int id, bool lazy)
         {
             MetricModel response = new MetricModel();
             BaseResponseModel result = new BaseResponseModel();
@@ -57,10 +59,12 @@ namespace WebAPI.Services.Metrics
             {
                 response = ConvertToModel(metric);
 
-                //TODO lazy
-                response.MetricType = GetMetricType(metric.MetricType);
-                response.AspiceProcess = GetAspiceProcess(metric.AspiceProcess);
-                response.AffectedField = GetAffectedField(metric.AffectedField);
+                if (!lazy)
+                {
+                    response.MetricType = GetMetricType(metric.MetricType);
+                    response.AspiceProcess = GetAspiceProcess(metric.AspiceProcess);
+                    response.AffectedField = GetAffectedField(metric.AffectedField);
+                }
             }
             else
             {
@@ -71,9 +75,9 @@ namespace WebAPI.Services.Metrics
             return response;
         }
 
-        public async Task<BaseResponseModel> Create(MetricModel request)
+        public async Task<BaseResponseModelPost> Create(MetricModel request)
         {
-            BaseResponseModel response = new BaseResponseModel();
+            BaseResponseModelPost response = new BaseResponseModelPost();
 
             if (request.Validate)
             {
@@ -85,8 +89,7 @@ namespace WebAPI.Services.Metrics
                         {
                             if (await CheckMetricIdentificator(request.Identificator, response))
                             {
-                                await Database.Metric.AddAsync(
-                                new Metric
+                                Metric metric = new Metric
                                 {
                                     Name = request.Name,
                                     Description = request.Description,
@@ -94,10 +97,13 @@ namespace WebAPI.Services.Metrics
                                     AspiceProcessId = request.AspiceProcessId,
                                     AffectedFieldId = request.AffectedFieldId,
                                     MetricTypeId = request.MetricTypeId
-                                });
+                                };
+
+                                await Database.Metric.AddAsync(metric);
 
                                 await Database.SaveChangesAsync();
 
+                                response.Id = metric.Id;
                                 response.Message = "Metric was successfully created!";
                             }
                         }

@@ -13,7 +13,7 @@ namespace WebAPI.Services.MetricTypes
     {
         public MetricTypeService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<MetricTypeModel>> GetAll()
+        public async Task<BaseResponseModelGet<MetricTypeModel>> GetAll(bool lazy)
         {
             return new BaseResponseModelGet<MetricTypeModel>
             {
@@ -21,7 +21,7 @@ namespace WebAPI.Services.MetricTypes
             };
         }
 
-        public async Task<MetricTypeModel> Get(int id)
+        public async Task<MetricTypeModel> Get(int id, bool lazy)
         {
             MetricTypeModel response = new MetricTypeModel();
 
@@ -36,21 +36,23 @@ namespace WebAPI.Services.MetricTypes
             return response;
         }
 
-        public async Task<BaseResponseModel> Create(MetricTypeModel request)
+        public async Task<BaseResponseModelPost> Create(MetricTypeModel request)
         {
-            BaseResponseModel response = new BaseResponseModel();
+            BaseResponseModelPost response = new BaseResponseModelPost();
 
             if (request.Validate)
             {
-                await Database.MetricType.AddAsync(
-                    new MetricType
-                    {
-                        Name = request.Name,
-                        Description = request.Description
-                    });
+                MetricType metricType = new MetricType
+                {
+                    Name = request.Name,
+                    Description = request.Description
+                };
+
+                await Database.MetricType.AddAsync(metricType);
 
                 await Database.SaveChangesAsync();
 
+                response.Id = metricType.Id;
                 response.Message = "Metric type was successfully created!";
             }
             else

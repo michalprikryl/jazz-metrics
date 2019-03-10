@@ -21,4 +21,9 @@ namespace WebApp.Models
     {
         public List<T> Values { get; set; }
     }
+
+    public class BaseApiResultPost : BaseApiResult
+    {
+        public int Id { get; set; }
+    }
 }

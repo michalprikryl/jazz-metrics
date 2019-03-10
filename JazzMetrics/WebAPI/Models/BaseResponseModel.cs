@@ -26,4 +26,9 @@ namespace WebAPI.Models
     {
         public List<T> Values { get; set; }
     }
+
+    public class BaseResponseModelPost : BaseResponseModel
+    {
+        public int Id { get; set; }
+    }
 }

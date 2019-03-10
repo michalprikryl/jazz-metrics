@@ -40,21 +40,21 @@ namespace WebAPI.Services.Error
 
             try
             {
-                    Database.AppError.Add(
-                        new AppError
-                        {
-                            Deleted = false,
-                            Exception = value.ExceptionMessage ?? "unknown",
-                            Function = value.Function ?? "unknown",
-                            InnerException = value.InnerExceptionMessage ?? "unknown",
-                            Message = value.Message ?? "unknown",
-                            Module = value.Module ?? "unknown",
-                            Solved = false,
-                            Time = value.Time ?? DateTime.Now,
-                            AppInfo = value.User ?? "unknown"
-                        });
+                Database.AppError.Add(
+                    new AppError
+                    {
+                        Deleted = false,
+                        Exception = value.ExceptionMessage ?? "unknown",
+                        Function = value.Function ?? "unknown",
+                        InnerException = value.InnerExceptionMessage ?? "unknown",
+                        Message = value.Message ?? "unknown",
+                        Module = value.Module ?? "unknown",
+                        Solved = false,
+                        Time = value.Time ?? DateTime.Now,
+                        AppInfo = value.User ?? "unknown"
+                    });
 
-                    await Database.SaveChangesAsync();
+                await Database.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -68,7 +68,7 @@ namespace WebAPI.Services.Error
                 else
                 {
                     await _emailService.SendEmail("Error occured at logging to DB",
-                        $"Exception with log:{Environment.NewLine}{e.ParseException()}{Environment.NewLine}Original exception (JSON):{Environment.NewLine}{JsonConvert.SerializeObject(value)}",
+                        $"Exception with log:{Environment.NewLine}\n{e.ParseException()}{Environment.NewLine}\nOriginal exception (JSON):{Environment.NewLine}\n{JsonConvert.SerializeObject(value)}",
                         await _settingService.GetSettingValue(ErrorEmailScope, ErrorEmailName));
                 }
             }

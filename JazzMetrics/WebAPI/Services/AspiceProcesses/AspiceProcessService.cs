@@ -17,7 +17,7 @@ namespace WebAPI.Services.AspiceProcesses
 
         public AspiceProcessService(JazzMetricsContext db, IAspiceVersionService aspiceVersionService) : base(db) => _aspiceVersionService = aspiceVersionService;
 
-        public async Task<BaseResponseModelGet<AspiceProcessModel>> GetAll()
+        public async Task<BaseResponseModelGet<AspiceProcessModel>> GetAll(bool lazy)
         {
             var response = new BaseResponseModelGet<AspiceProcessModel> { Values = new List<AspiceProcessModel>() };
 
@@ -25,16 +25,18 @@ namespace WebAPI.Services.AspiceProcesses
             {
                 AspiceProcessModel aspiceProcess = ConvertToModel(item);
 
-                aspiceProcess.AspiceVersion = GetAspiceVersion(item.AspiceVersion); //TODO lazy
+                if (!lazy)
+                {
+                    aspiceProcess.AspiceVersion = GetAspiceVersion(item.AspiceVersion);
+                }
 
                 response.Values.Add(aspiceProcess);
-
             }
 
             return response;
         }
 
-        public async Task<AspiceProcessModel> Get(int id)
+        public async Task<AspiceProcessModel> Get(int id, bool lazy)
         {
             AspiceProcessModel response = new AspiceProcessModel();
 
@@ -45,32 +47,38 @@ namespace WebAPI.Services.AspiceProcesses
                 response.Name = aspiceProcess.Name;
                 response.Shortcut = aspiceProcess.Shortcut;
                 response.Description = aspiceProcess.Description;
+                response.AspiceVersionId = aspiceProcess.AspiceVersionId;
 
-                response.AspiceVersion = GetAspiceVersion(aspiceProcess.AspiceVersion); //TODO lazy
+                if (!lazy)
+                {
+                    response.AspiceVersion = GetAspiceVersion(aspiceProcess.AspiceVersion);
+                }
             }
 
             return response;
         }
 
-        public async Task<BaseResponseModel> Create(AspiceProcessModel request)
+        public async Task<BaseResponseModelPost> Create(AspiceProcessModel request)
         {
-            BaseResponseModel response = new BaseResponseModel();
+            BaseResponseModelPost response = new BaseResponseModelPost();
 
             if (request.Validate)
             {
                 if (await CheckAspiceVersion(request.AspiceVersionId, response))
                 {
-                    await Database.AspiceProcess.AddAsync(
-                        new AspiceProcess
-                        {
-                            Name = request.Name,
-                            Shortcut = request.Shortcut,
-                            Description = request.Description,
-                            AspiceVersionId = request.AspiceVersionId
-                        });
+                    AspiceProcess aspiceProcess = new AspiceProcess
+                    {
+                        Name = request.Name,
+                        Shortcut = request.Shortcut,
+                        Description = request.Description,
+                        AspiceVersionId = request.AspiceVersionId
+                    };
+
+                    await Database.AspiceProcess.AddAsync(aspiceProcess);
 
                     await Database.SaveChangesAsync();
 
+                    response.Id = aspiceProcess.Id;
                     response.Message = "Automotive SPICE process was successfully created!";
                 }
             }

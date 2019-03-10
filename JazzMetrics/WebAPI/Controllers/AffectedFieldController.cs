@@ -16,19 +16,19 @@ namespace WebAPI.Controllers
         public AffectedFieldController(IErrorService errorService, IAffectedFieldService affectedFieldService) : base(errorService) => _affectedFieldService = affectedFieldService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AffectedFieldModel>> Get(int id)
+        public async Task<ActionResult<AffectedFieldModel>> Get(int id, bool lazy = true)
         {
-            return await _affectedFieldService.Get(id);
+            return await _affectedFieldService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<AffectedFieldModel>>> Get()
+        public async Task<ActionResult<BaseResponseModelGet<AffectedFieldModel>>> Get(bool lazy = true)
         {
-            return await _affectedFieldService.GetAll();
+            return await _affectedFieldService.GetAll(lazy);
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModel>> Post(AffectedFieldModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post(AffectedFieldModel model)
         {
             return await _affectedFieldService.Create(model);
         }

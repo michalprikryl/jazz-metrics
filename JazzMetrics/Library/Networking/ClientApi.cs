@@ -165,22 +165,12 @@ namespace Library.Networking
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
         protected async Task GetToAPI(List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
-            StringBuilder builder = new StringBuilder();
+            await GetToAPI(GetParametersString(parameters), method, controller, endpoint, jwt);
+        }
 
-            if (parameters != null)
-            {
-                if (parameters.Count > 0)
-                {
-                    builder.Append("?");
-                    foreach (var item in parameters)
-                    {
-                        builder.Append($"{item.Item1}={item.Item2}&");
-                    }
-                    builder.Remove(builder.Length - 1, 1);
-                }
-            }
-
-            await GetToAPI(builder.ToString(), method, controller, endpoint, jwt);
+        protected async Task GetToAPI(int id, List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
+        {
+            await GetToAPI($"/{id}{GetParametersString(parameters)}", method, controller, endpoint, jwt);
         }
 
         protected async Task GetToAPI(string queryString, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
@@ -198,6 +188,26 @@ namespace Library.Networking
 
                 await SetResult(response, method);
             }
+        }
+
+        protected string GetParametersString(List<Tuple<string, string>> parameters)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            if (parameters != null)
+            {
+                if (parameters.Count > 0)
+                {
+                    builder.Append("?");
+                    foreach (var item in parameters)
+                    {
+                        builder.Append($"{item.Item1}={item.Item2}&");
+                    }
+                    builder.Remove(builder.Length - 1, 1);
+                }
+            }
+
+            return builder.ToString();
         }
 
         protected Tuple<string, string> GetParameter(string name, int value)

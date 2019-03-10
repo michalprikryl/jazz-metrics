@@ -326,7 +326,7 @@ namespace WebApp.Controllers
         {
             AspiceProcessListModel model = new AspiceProcessListModel();
 
-            var result = await _crudService.GetAll<AspiceProcessModel>(Token, SettingService.AspiceProcessEntity);
+            var result = await _crudService.GetAll<AspiceProcessModel>(Token, SettingService.AspiceProcessEntity, false);
             if (result.Success)
             {
                 model.AspiceProcesses = result.Values.Select(a =>
@@ -386,7 +386,7 @@ namespace WebApp.Controllers
 
             Task select = GetAspiceVersions(model);
 
-            AspiceProcessModel result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity);
+            AspiceProcessModel result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity, false);
             if (result.Success)
             {
                 model.Id = id;
@@ -449,7 +449,7 @@ namespace WebApp.Controllers
         {
             MetricListModel model = new MetricListModel();
 
-            var result = await _crudService.GetAll<MetricModel>(Token, SettingService.MetricEntity);
+            var result = await _crudService.GetAll<MetricModel>(Token, SettingService.MetricEntity, false);
             if (result.Success)
             {
                 model.Metrics = result.Values.Select(a =>
@@ -513,7 +513,7 @@ namespace WebApp.Controllers
 
             Task select = GetMetricSelects(model);
 
-            MetricModel result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity);
+            MetricModel result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
             if (result.Success)
             {
                 model.Id = id;

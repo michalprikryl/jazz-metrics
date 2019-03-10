@@ -10,11 +10,11 @@ namespace WebApp.Services.Crud
     {
         public CrudService(IConfiguration config) : base(config) { }
 
-        public async Task<BaseApiResultGet<T>> GetAll<T>(string jwt, string entity)
+        public async Task<BaseApiResultGet<T>> GetAll<T>(string jwt, string entity, bool lazy = true)
         {
             BaseApiResultGet<T> result = null;
 
-            await GetToAPI(async (httpResult) =>
+            await GetToAPI(GetParametersList(GetParameter("lazy", lazy.ToString())), async (httpResult) =>
             {
                 result = JsonConvert.DeserializeObject<BaseApiResultGet<T>>(await httpResult.Content.ReadAsStringAsync());
             }, entity, jwt: jwt);
@@ -22,11 +22,11 @@ namespace WebApp.Services.Crud
             return result;
         }
 
-        public async Task<T> Get<T>(int id, string jwt, string entity)
+        public async Task<T> Get<T>(int id, string jwt, string entity, bool lazy = true)
         {
             T result = default(T);
 
-            await GetToAPI(id, async (httpResult) =>
+            await GetToAPI(id, GetParametersList(GetParameter("lazy", lazy.ToString())), async (httpResult) =>
             {
                 result = JsonConvert.DeserializeObject<T>(await httpResult.Content.ReadAsStringAsync());
             }, entity, jwt: jwt);
@@ -34,13 +34,13 @@ namespace WebApp.Services.Crud
             return result;
         }
 
-        public async Task<BaseApiResult> Create<T>(T model, string jwt, string entity)
+        public async Task<BaseApiResultPost> Create<T>(T model, string jwt, string entity)
         {
-            BaseApiResult result = new BaseApiResult();
+            BaseApiResultPost result = new BaseApiResultPost();
 
             await PostToAPI(SerializeObjectToJSON(model), async (httpResult) =>
             {
-                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
+                result = JsonConvert.DeserializeObject<BaseApiResultPost>(await httpResult.Content.ReadAsStringAsync());
             }, entity, jwt: jwt);
 
             return result;

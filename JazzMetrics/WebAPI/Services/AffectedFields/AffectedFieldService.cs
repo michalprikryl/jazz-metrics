@@ -13,7 +13,7 @@ namespace WebAPI.Services.AffectedFields
     {
         public AffectedFieldService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<AffectedFieldModel>> GetAll()
+        public async Task<BaseResponseModelGet<AffectedFieldModel>> GetAll(bool lazy)
         {
             return new BaseResponseModelGet<AffectedFieldModel>
             {
@@ -21,7 +21,7 @@ namespace WebAPI.Services.AffectedFields
             };
         }
 
-        public async Task<AffectedFieldModel> Get(int id)
+        public async Task<AffectedFieldModel> Get(int id, bool lazy)
         {
             AffectedFieldModel response = new AffectedFieldModel();
 
@@ -36,21 +36,23 @@ namespace WebAPI.Services.AffectedFields
             return response;
         }
 
-        public async Task<BaseResponseModel> Create(AffectedFieldModel request)
+        public async Task<BaseResponseModelPost> Create(AffectedFieldModel request)
         {
-            BaseResponseModel response = new BaseResponseModel();
+            BaseResponseModelPost response = new BaseResponseModelPost();
 
             if (request.Validate)
             {
-                await Database.AffectedField.AddAsync(
-                    new AffectedField
-                    {
-                        Name = request.Name,
-                        Description = request.Description
-                    });
+                AffectedField affectedField = new AffectedField
+                {
+                    Name = request.Name,
+                    Description = request.Description
+                };
+
+                await Database.AffectedField.AddAsync(affectedField);
 
                 await Database.SaveChangesAsync();
 
+                response.Id = affectedField.Id;
                 response.Message = "Affected field was successfully created!";
             }
             else
