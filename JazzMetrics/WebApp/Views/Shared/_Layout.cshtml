@@ -34,7 +34,7 @@
                     <li class="nav-item">
                         <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Home</a>
                     </li>
-                    @if (User.IsInRole("super-admin"))
+                    @if (User.IsInRole("super-admin") || User.IsInRole("admin"))
                     {
                         <li class="nav-item">
                             <a class="nav-link @Html.IsSelected("Setting", "")" href="/Setting">Settings</a>

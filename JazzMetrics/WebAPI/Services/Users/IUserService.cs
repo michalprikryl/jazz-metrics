@@ -1,13 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using Database.DAO;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.Users;
+using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Users
 {
-    public interface IUserService
+    public interface IUserService : ICrudOperations<UserModel, User>
     {
-        Task<BaseResponseModel> Registration(RegistrationRequestModel model);
         Task<LoginResponseModel> CheckUser(LoginRequestModel model);
-        Task<string> BuildToken(string username);
+        Task<string> BuildToken(string username, int? companyId);
+        Task<BaseResponseModelPost> GetByUsername(string username);
     }
 }

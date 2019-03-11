@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using WebAPI.Services.Users;
 
 namespace WebAPI
 {
@@ -43,6 +44,24 @@ namespace WebAPI
         internal static string GetEmail(this ClaimsPrincipal user)
         {
             return user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value ?? null;
+        }
+
+        /// <summary>
+        /// vrati companyId z uzivatelskych udaju
+        /// </summary>
+        /// <param name="user">uzivatelsky kontext</param>
+        /// <returns></returns>
+        internal static int? GetCompanyId(this ClaimsPrincipal user)
+        {
+            string value = user.Claims.FirstOrDefault(c => c.Type == UserService.CompanyClaim)?.Value ?? null;
+            if(int.TryParse(value, out int result))
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

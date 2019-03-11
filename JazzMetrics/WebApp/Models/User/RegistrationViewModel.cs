@@ -29,13 +29,21 @@ namespace WebApp.Models.User
 
         [Display(Name = "Language")]
         [Required(ErrorMessage = "Choose Language, please!")]
-        public string Language { get; set; }
+        public string LanguageId { get; set; }
         public List<SelectListItem> Languages { get; set; }
 
         [Display(Name = "I want use LDAP login")]
-        public bool LdapLogin { get; set; }
+        public bool UseLdaplogin { get; set; }
 
         [Display(Name = "LDAP URL")]
         public string LdapUrl { get; set; }
+
+        [Display(Name = "I want create new company - (if not, admin from existing company will assign you to their company).")]
+        public bool CreateCompany { get; set; }
+
+        [Display(Name = "New company name")]
+        public string Company { get; set; }
+
+        public int? CompanyId { get; set; }
     }
 }

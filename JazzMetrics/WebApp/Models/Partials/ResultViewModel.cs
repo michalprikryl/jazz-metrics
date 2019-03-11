@@ -5,5 +5,6 @@
         public string Message { get; set; }
         public string Color { get; set; }
         public string CssClass { get; set; }
+        public string JsFunction { get; set; }
     }
 }

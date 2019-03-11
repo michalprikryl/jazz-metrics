@@ -13,6 +13,7 @@ namespace Database
         public virtual DbSet<AppError> AppError { get; set; }
         public virtual DbSet<AspiceProcess> AspiceProcess { get; set; }
         public virtual DbSet<AspiceVersion> AspiceVersion { get; set; }
+        public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Metric> Metric { get; set; }
         public virtual DbSet<MetricColumn> MetricColumn { get; set; }
@@ -105,6 +106,15 @@ namespace Database
                 entity.Property(e => e.VersionNumber).HasColumnType("numeric(2, 1)");
             });
 
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(512);
+            });
+
             modelBuilder.Entity<Language>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -126,7 +136,7 @@ namespace Database
 
             modelBuilder.Entity<Metric>(entity =>
             {
-                entity.HasIndex(e => e.Identificator)
+                entity.HasIndex(e => new { e.Identificator, e.CompanyId })
                     .HasName("UNIQUE_IDENTIFICATOR")
                     .IsUnique();
 
@@ -135,6 +145,8 @@ namespace Database
                 entity.Property(e => e.AffectedFieldId).HasColumnName("AffectedFieldID");
 
                 entity.Property(e => e.AspiceProcessId).HasColumnName("AspiceProcessID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
 
                 entity.Property(e => e.Description).IsRequired();
 
@@ -159,6 +171,11 @@ namespace Database
                     .HasForeignKey(d => d.AspiceProcessId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_METRIC_ASPICEPROCESS");
+
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.Metric)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_METRIC_COMPANY");
 
                 entity.HasOne(d => d.MetricType)
                     .WithMany(p => p.Metric)
@@ -294,9 +311,30 @@ namespace Database
                     .HasConstraintName("FK_PROJECTMETRICVALUES_PROJECTMETRIC");
             });
 
+            modelBuilder.Entity<Setting>(entity =>
+            {
+                entity.HasIndex(e => new { e.SettingScope, e.SettingName })
+                    .HasName("UNIQUE_SETTINGSCOPE_SETTINGNAME")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.SettingName)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.SettingScope)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.Value).IsRequired();
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -332,6 +370,11 @@ namespace Database
                     .IsRequired()
                     .HasMaxLength(128);
 
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.User)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_USER_COMPANY");
+
                 entity.HasOne(d => d.Language)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.LanguageId)
@@ -348,7 +391,7 @@ namespace Database
             modelBuilder.Entity<UserProject>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.ProjectId })
-                    .HasName("PK__UserProj__00E9674184948FBA");
+                    .HasName("PK__UserProj__00E9674138FCADC8");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -378,25 +421,6 @@ namespace Database
                     .HasMaxLength(512);
 
                 entity.Property(e => e.Name).HasMaxLength(128);
-            });
-
-            modelBuilder.Entity<Setting>(entity =>
-            {
-                entity.HasIndex(e => new { e.SettingScope, e.SettingName })
-                    .HasName("UNIQUE_SETTINGSCOPE_SETTINGNAME")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.SettingName)
-                    .IsRequired()
-                    .HasMaxLength(256);
-
-                entity.Property(e => e.SettingScope)
-                    .IsRequired()
-                    .HasMaxLength(256);
-
-                entity.Property(e => e.Value).IsRequired();
             });
         }
     }

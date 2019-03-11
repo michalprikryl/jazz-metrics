@@ -98,6 +98,25 @@ namespace Library.Networking
             }
         }
 
+        protected async Task PatchToAPI(int id, List<PatchModel> model, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
+        {
+            StringContent httpContent = new StringContent(SerializeObjectToJSON(model), Encoding.UTF8, mediaType);
+
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                endpoint = $"/{endpoint}";
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                AdditionalHeaders(client, jwt);
+
+                HttpResponseMessage response = await client.PatchAsync($"{ServerUrl}/{controller ?? Controller}{endpoint}/{id}", httpContent);
+
+                await SetResult(response, method);
+            }
+        }
+
         /// <summary>
         /// posle HTTP DELETE pozadavek na dany controller
         /// </summary>

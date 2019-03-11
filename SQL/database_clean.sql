@@ -19,6 +19,7 @@ DROP TABLE [AffectedField];
 DROP TABLE [AspiceProcess];
 DROP TABLE [AspiceVersion];
 DROP TABLE [Setting];
+DROP TABLE [Company];
 
 /*
 USE [master];

@@ -1,11 +1,14 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,6 +23,8 @@ namespace WebAPI.Services.Users
 {
     public class UserService : BaseDatabase, IUserService
     {
+        public static string CompanyClaim => "Company";
+
         private readonly IConfiguration _config;
         private readonly IErrorService _errorService;
         private readonly ISettingService _settingService;
@@ -31,70 +36,225 @@ namespace WebAPI.Services.Users
             _settingService = settingService;
         }
 
-        public async Task<BaseResponseModel> Registration(RegistrationRequestModel model)
+        public async Task<BaseResponseModelGet<UserModel>> GetAll(bool lazy)
         {
-            BaseResponseModel response = new BaseResponseModel { Success = true };
+            var response = new BaseResponseModelGet<UserModel> { Values = new List<UserModel>() };
 
-            if (model.Validate)
+            foreach (var item in await Database.User.ToListAsync())
             {
-                if (new EmailAddressAttribute().IsValid(model.Email))
+                response.Values.Add(ConvertToModel(item));
+            }
+
+            return response;
+        }
+
+        public async Task<UserModel> Get(int id, bool lazy)
+        {
+            UserModel response = new UserModel();
+
+            User user = await Load(id, response);
+            if (user != null)
+            {
+                response = ConvertToModel(user);
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModelPost> Create(UserModel request)
+        {
+            BaseResponseModelPost response = new BaseResponseModelPost();
+
+            if (request.Validate)
+            {
+                if (ValidateEmail(request.Email, response) && ValidatePassword(request.Password, response))
                 {
-                    if (ValidatePassword(model.Password))
+                    request.Username = request.Username ?? request.Email;
+                    if (await CheckUsername(request.Username, response) && await CheckLanguage(request.LanguageId, response))
                     {
-                        model.Username = model.Username ?? model.Email;
-                        if (await Database.User.AllAsync(u => u.Username != model.Username))
+                        User user = new User
                         {
-                            if (await Database.Language.AnyAsync(u => u.Id == model.Language))
-                            {
-                                User user = new User
-                                {
-                                    Email = model.Email,
-                                    FirstName = model.Firstname,
-                                    LanguageId = model.Language,
-                                    LastName = model.Lastname,
-                                    LdapUrl = model.LdapUrl,
-                                    Salt = PasswordHelper.GeneratePassword(10),
-                                    Username = model.Username,
-                                    UseLdaplogin = model.LdapLogin,
-                                    UserRole = await Database.UserRole.FirstAsync(r => r.Name == "admin")
-                                };
+                            Email = request.Email,
+                            FirstName = request.Firstname,
+                            LanguageId = request.LanguageId,
+                            LastName = request.Lastname,
+                            LdapUrl = request.LdapUrl,
+                            Salt = PasswordHelper.GeneratePassword(10),
+                            Username = request.Username,
+                            UseLdaplogin = request.UseLdaplogin,
+                            CompanyId = request.CompanyId
+                        };
 
-                                user.Password = PasswordHelper.EncodePassword(model.Password, user.Salt);
+                        user.Password = PasswordHelper.EncodePassword(request.Password, user.Salt);
 
-                                await Database.User.AddAsync(user);
-
-                                await Database.SaveChangesAsync();
-
-                                response.Message = "User was successfully created!";
-                            }
-                            else
-                            {
-                                response.Success = false;
-                                response.Message = "Unknown chosen language!";
-                            }
+                        if (request.CompanyId.HasValue)
+                        {
+                            user.UserRole = await GetUserRole("admin");
                         }
                         else
                         {
-                            response.Success = false;
-                            response.Message = "Chosen username was already chosen by other user!";
+                            user.UserRole = await GetUserRole("user");
                         }
+
+                        await Database.User.AddAsync(user);
+
+                        await Database.SaveChangesAsync();
+
+                        response.Id = user.Id;
+                        response.Message = "User was successfully created!";
                     }
-                    else
-                    {
-                        response.Success = false;
-                        response.Message = "Password does not meet minimal requirements - one or more uppar case character, one or more lower case character and one or more number!";
-                    }
-                }
-                else
-                {
-                    response.Success = false;
-                    response.Message = "Chosen email address isn't valid!";
                 }
             }
             else
             {
                 response.Success = false;
                 response.Message = "Some of the required user properties is not present!";
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> Edit(UserModel request)
+        {
+            BaseResponseModel response = new BaseResponseModel();
+
+            if (request.Validate)
+            {
+                if (ValidateEmail(request.Email, response))
+                {
+                    request.Username = request.Username ?? request.Email;
+                    if (await CheckUsername(request.Username, response) && await CheckLanguage(request.LanguageId, response))
+                    {
+                        User user = await Load(request.Id, response);
+                        if (user != null)
+                        {
+                            user.FirstName = request.Firstname;
+                            user.LastName = request.Lastname;
+                            user.Email = request.Email;
+                            user.UseLdaplogin = request.UseLdaplogin;
+                            user.LdapUrl = request.LdapUrl;
+                            user.LanguageId = request.LanguageId;
+
+                            await Database.SaveChangesAsync();
+
+                            response.Message = "User was successfully edited!";
+                        }
+                    }
+                }
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Some of the required properties is not present!";
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> Drop(int id)
+        {
+            BaseResponseModel response = new BaseResponseModel();
+
+            User user = await Load(id, response);
+            if (user != null)
+            {
+                Database.UserProject.RemoveRange(user.UserProject);
+
+                Database.User.Remove(user);
+
+                await Database.SaveChangesAsync();
+
+                response.Message = "User was successfully deleted!";
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
+        {
+            BaseResponseModel response = new BaseResponseModel();
+
+            User user = await Load(id, response);
+            if (user != null)
+            {
+                bool save = true;
+                foreach (var item in request)
+                {
+                    if (string.Compare(item.PropertyName, "companyId", true) == 0)
+                    {
+                        var newValue = int.TryParse(item.Value, out int i) ? i : default(int?);
+                        if ((user.CompanyId.HasValue && !newValue.HasValue) || (!user.CompanyId.HasValue && newValue.HasValue))
+                        {
+                            user.CompanyId = newValue;
+                        }
+                        else if (user.CompanyId.HasValue && newValue.HasValue)
+                        {
+                            save = response.Success = false;
+                            response.Message = $"User's company cannot be changed, because this user is already member of {(user.CompanyId.Value == newValue.Value ? "this" : "some")} company!";
+
+                            break;
+                        }
+                    }
+                    else if (string.Compare(item.PropertyName, "userRoleId", true) == 0)
+                    {
+                        user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == "user") || user.UserRole.Name == "admin" ? await GetUserRole("user") : await GetUserRole("admin");
+                    }
+                }
+
+                if (save)
+                {
+                    await Database.SaveChangesAsync();
+
+                    response.Message = $"User was successfully edited!";
+                }
+            }
+
+            return response;
+        }
+
+        public async Task<User> Load(int id, BaseResponseModel response)
+        {
+            User user = await Database.User.FirstOrDefaultAsync(a => a.Id == id);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Unknown user!";
+            }
+
+            return user;
+        }
+
+        public UserModel ConvertToModel(User dbModel)
+        {
+            return new UserModel
+            {
+                Id = dbModel.Id,
+                Firstname = dbModel.FirstName,
+                Lastname = dbModel.LastName,
+                Email = dbModel.Email,
+                Username = dbModel.Username,
+                UseLdaplogin = dbModel.UseLdaplogin,
+                LdapUrl = dbModel.LdapUrl,
+                LanguageId = dbModel.LanguageId,
+                CompanyId = dbModel.CompanyId,
+                UserRoleId = dbModel.UserRoleId,
+                Admin = dbModel.UserRole.Name.Contains("admin", StringComparison.OrdinalIgnoreCase)
+            };
+        }
+
+        public async Task<BaseResponseModelPost> GetByUsername(string username)
+        {
+            BaseResponseModelPost response = new BaseResponseModelPost();
+
+            User user = await Database.User.FirstOrDefaultAsync(a => a.Username == username);
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Unknown username!";
+            }
+            else
+            {
+                response.Id = user.Id;
             }
 
             return response;
@@ -114,7 +274,7 @@ namespace WebAPI.Services.Users
                 model.Username = model.Username.Trim();
                 model.Password = model.Password.Trim();
 
-                User user = await Database.User.FirstOrDefaultAsync(u => u.Email == model.Username);
+                User user = await Database.User.FirstOrDefaultAsync(u => u.Username == model.Username);
                 if (user != null)
                 {
                     if ((user.UseLdaplogin && CheckLdapLogin(user.LdapUrl, model.Username, model.Password)) || ComparePasswords(user, model.Password))
@@ -141,7 +301,7 @@ namespace WebAPI.Services.Users
             return result;
         }
 
-        public async Task<string> BuildToken(string username)
+        public async Task<string> BuildToken(string username, int? companyId)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -157,7 +317,8 @@ namespace WebAPI.Services.Users
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Email, username)
+                new Claim(JwtRegisteredClaimNames.Email, username),
+                new Claim(CompanyClaim, companyId.ToString())
             };
 
             var token = new JwtSecurityToken(issuer, issuer, claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
@@ -218,15 +379,15 @@ namespace WebAPI.Services.Users
         private async Task CreateUserSession(User user, LoginResponseModel result)
         {
             result.Success = true;
-            result.Token = await BuildToken(user.Email);
-            result.User = new UserModel
+            result.Token = await BuildToken(user.Username, user.CompanyId);
+            result.User = new UserCookieModel
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
                 Lastname = user.LastName,
-                RoleId = user.UserRoleId,
                 Role = user.UserRole.Name,
-                UserId = user.Id
+                UserId = user.Id,
+                CompanyId = user.CompanyId
             };
         }
 
@@ -235,7 +396,9 @@ namespace WebAPI.Services.Users
             return user.Password == PasswordHelper.EncodePassword(sentPasswd, user.Salt);
         }
 
-        private bool ValidatePassword(string password)
+        private async Task<UserRole> GetUserRole(string name) => await Database.UserRole.FirstAsync(r => r.Name == name);
+
+        private bool ValidatePassword(string password, BaseResponseModel response)
         {
             if (Regex.IsMatch(password, @"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,50}$"))
             {
@@ -243,6 +406,54 @@ namespace WebAPI.Services.Users
             }
             else
             {
+                response.Success = false;
+                response.Message = "Password does not meet minimal requirements - one or more uppar case character, one or more lower case character and one or more number!";
+
+                return false;
+            }
+        }
+
+        private bool ValidateEmail(string email, BaseResponseModel response)
+        {
+            if (new EmailAddressAttribute().IsValid(email))
+            {
+                return true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Chosen email address isn't valid!";
+
+                return false;
+            }
+        }
+
+        private async Task<bool> CheckUsername(string username, BaseResponseModel response)
+        {
+            if (await Database.User.AllAsync(u => u.Username != username))
+            {
+                return true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Chosen username was already chosen by other user!";
+
+                return false;
+            }
+        }
+
+        private async Task<bool> CheckLanguage(int languageId, BaseResponseModel response)
+        {
+            if (await Database.Language.AnyAsync(u => u.Id == languageId))
+            {
+                return true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Unknown chosen language!";
+
                 return false;
             }
         }

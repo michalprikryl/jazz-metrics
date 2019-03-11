@@ -16,6 +16,7 @@ namespace WebApp.Services.Setting
         public static string AspiceProcessEntity => "aspiceprocess";
         public static string AspiceVersionEntity => "aspiceversion";
         public static string MetricTypeEntity => "metrictype";
+        public static string CompanyEntity => "company";
         public static string MetricEntity => "metric";
 
         private readonly ICrudService _crudService;

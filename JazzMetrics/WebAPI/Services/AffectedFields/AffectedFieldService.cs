@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Database;
 using Database.DAO;
+using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
 using WebAPI.Models.AffectedFields;
@@ -105,6 +107,11 @@ namespace WebAPI.Services.AffectedFields
             }
 
             return response;
+        }
+
+        public Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<AffectedField> Load(int id, BaseResponseModel response)

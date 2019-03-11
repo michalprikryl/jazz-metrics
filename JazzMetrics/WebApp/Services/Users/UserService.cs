@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using WebApp.Models;
 using WebApp.Models.User;
 
 namespace WebApp.Services.Users
@@ -25,6 +26,18 @@ namespace WebApp.Services.Users
             {
                 result = JsonConvert.DeserializeObject<UserIdentityModel>(await httpResult.Content.ReadAsStringAsync());
             }, endpoint: "login");
+
+            return result;
+        }
+
+        public async Task<BaseApiResultPost> FindUserIdByUsername(string username, string jwt)
+        {
+            BaseApiResultPost result = new BaseApiResultPost();
+
+            await GetToAPI(GetParametersList(GetParameter("username", username)), async httpResult =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResultPost>(await httpResult.Content.ReadAsStringAsync());
+            }, UserEntity, jwt: jwt);
 
             return result;
         }

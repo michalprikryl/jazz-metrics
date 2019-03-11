@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -176,6 +177,11 @@ namespace WebAPI.Services.Metrics
             }
 
             return response;
+        }
+
+        public Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<Metric> Load(int id, BaseResponseModel response)

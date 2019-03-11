@@ -38,13 +38,13 @@
         /// <summary>
         /// user data
         /// </summary>
-        public UserModel User { get; set; }
+        public UserCookieModel User { get; set; }
     }
 
     /// <summary>
     /// trida pro kontext uzivatele ve scanneru
     /// </summary>
-    public class UserModel
+    public class UserCookieModel
     {
         /// <summary>
         /// ID uzivatele z DB
@@ -63,12 +63,9 @@
         /// </summary>
         public string Email { get; set; }
         /// <summary>
-        /// ID role uzivatele
-        /// </summary>
-        public int RoleId { get; set; }
-        /// <summary>
         /// role uzivatele
         /// </summary>
         public string Role { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

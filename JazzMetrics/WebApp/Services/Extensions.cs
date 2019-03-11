@@ -40,6 +40,11 @@ namespace WebApp
             return acceptedActions.Any(a => string.Compare(a, currentAction, true) == 0) && acceptedControllers.Any(c => string.Compare(c, currentController, true) == 0) ? cssClass : string.Empty;
         }
 
+        public static string IsCollapsed(this IHtmlHelper html, string value)
+        {
+            return string.IsNullOrEmpty(value) ? "collapse" : string.Empty;
+        }
+
         /// <summary>
         /// vrati username z uzivatelskych udaju
         /// </summary>

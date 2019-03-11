@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Library.Networking;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApp.Models;
 
 namespace WebApp.Services.Crud
@@ -10,5 +12,6 @@ namespace WebApp.Services.Crud
         Task<BaseApiResultPost> Create<T>(T model, string jwt, string entity);
         Task<BaseApiResult> Edit<T>(int id, T model, string jwt, string entity);
         Task<BaseApiResult> Drop(int id, string jwt, string entity);
+        Task<BaseApiResult> PartialEdit(int id, List<PatchModel> model, string jwt, string entity);
     }
 }

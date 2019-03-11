@@ -12,6 +12,7 @@ using WebAPI.Middleware;
 using WebAPI.Services.AffectedFields;
 using WebAPI.Services.AspiceProcesses;
 using WebAPI.Services.AspiceVersions;
+using WebAPI.Services.Companies;
 using WebAPI.Services.Email;
 using WebAPI.Services.Error;
 using WebAPI.Services.Language;
@@ -68,6 +69,7 @@ namespace WebAPI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMetricService, MetricService>();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IMetricTypeService, MetricTypeService>();
             services.AddScoped<IAspiceVersionService, AspiceVersionService>();

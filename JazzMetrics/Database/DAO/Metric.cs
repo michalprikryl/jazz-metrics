@@ -18,9 +18,11 @@ namespace Database.DAO
         public int MetricTypeId { get; set; }
         public int AspiceProcessId { get; set; }
         public int AffectedFieldId { get; set; }
+        public int? CompanyId { get; set; }
 
         public virtual AffectedField AffectedField { get; set; }
         public virtual AspiceProcess AspiceProcess { get; set; }
+        public virtual Company Company { get; set; }
         public virtual MetricType MetricType { get; set; }
         public virtual ICollection<MetricColumn> MetricColumn { get; set; }
         public virtual ICollection<ProjectMetric> ProjectMetric { get; set; }

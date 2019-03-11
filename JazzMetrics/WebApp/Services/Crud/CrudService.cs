@@ -1,6 +1,7 @@
 ﻿using Library.Networking;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.Models;
 
@@ -63,6 +64,18 @@ namespace WebApp.Services.Crud
             BaseApiResult result = new BaseApiResult();
 
             await DeleteToAPI(id, async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
+            }, entity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseApiResult> PartialEdit(int id, List<PatchModel> model, string jwt, string entity)
+        {
+            BaseApiResult result = new BaseApiResult();
+
+            await PatchToAPI(id, model, async (httpResult) =>
             {
                 result = JsonConvert.DeserializeObject<BaseApiResult>(await httpResult.Content.ReadAsStringAsync());
             }, entity, jwt: jwt);

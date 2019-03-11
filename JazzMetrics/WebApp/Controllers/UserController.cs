@@ -10,10 +10,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Error;
+using WebApp.Models.Setting.Company;
 using WebApp.Models.User;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Language;
+using WebApp.Services.Setting;
 using WebApp.Services.Users;
 
 namespace WebApp.Controllers
@@ -44,14 +46,35 @@ namespace WebApp.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<ActionResult> Registration(RegistrationViewModel model)
         {
-            await GetLanguages(model);
+            Task task = GetLanguages(model);
 
             if (ModelState.IsValid)
             {
-                BaseApiResult result = await _crudService.Create(model, null, UserService.UserEntity);
+                BaseApiResultPost resultCompany = null;
+                if (!string.IsNullOrEmpty(model.Company))
+                {
+                    resultCompany = await _crudService.Create(new CompanyModel { Name = model.Company }, null, SettingService.CompanyEntity);
+                    model.CompanyId = resultCompany.Id;
+                }
 
-                model.MessageList.Add(new Tuple<string, bool>(result.Message, !result.Success));
+                if (resultCompany == null || resultCompany.Success)
+                {
+                    BaseApiResultPost result = await _crudService.Create(model, null, UserService.UserEntity);
+
+                    if (!result.Success && resultCompany != null)
+                    {
+                        await _crudService.Drop(model.CompanyId.Value, null, SettingService.CompanyEntity);
+                    }
+
+                    AddMessageToModel(model, result.Message, !result.Success);
+                }
+                else
+                {
+                    AddMessageToModel(model, resultCompany.Message);
+                }
             }
+
+            await Task.WhenAll(task);
 
             return View(model);
         }
@@ -86,7 +109,7 @@ namespace WebApp.Controllers
                     }
                     else if (userIdentity.Success && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
                     {
-                        UserModel user = userIdentity.User;
+                        UserCookiesModel user = userIdentity.User;
 
                         List<Claim> claims = new List<Claim>
                         {
@@ -94,6 +117,7 @@ namespace WebApp.Controllers
                             new Claim(ClaimTypes.Name, user.Firstname),
                             new Claim(LastNameClaim, user.Lastname),
                             new Claim(UserIdClaim, user.UserId.ToString()),
+                            new Claim(CompanyIdClaim, user.CompanyId.ToString()),
                             new Claim(ClaimTypes.Role, user.Role),
                             new Claim(TokenClaim, userIdentity.Token)
                         };

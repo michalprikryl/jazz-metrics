@@ -41,23 +41,37 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group col-md-6">
-                <label asp-for="Language" class="control-label"></label>
-                <select asp-for="Language" asp-items="Model.Languages" class="form-control"></select>
-                <span asp-validation-for="Language" class="text-danger"></span>
+                <label asp-for="LanguageId" class="control-label"></label>
+                <select asp-for="LanguageId" asp-items="Model.Languages" class="form-control"></select>
+                <span asp-validation-for="LanguageId" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-row align-items-center">
             <div class="form-group col-md-6">
-                <input asp-for="LdapLogin" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#ldap-div" />
-                <label asp-for="LdapLogin" class="form-check-label"></label>
+                <input asp-for="UseLdaplogin" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#ldap-div" />
+                <label asp-for="UseLdaplogin" class="form-check-label"></label>
             </div>
         </div>
 
-        <div class="form-row collapse" id="ldap-div">
+        <div class="form-row @Html.IsCollapsed(Model.LdapUrl)" id="ldap-div">
             <div class="form-group col-md-12">
                 <input asp-for="LdapUrl" class="form-control" placeholder="Paste LDAP URL" />
                 <span asp-validation-for="LdapUrl" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-row align-items-center">
+            <div class="form-group col-md-12">
+                <input asp-for="CreateCompany" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#company-div" />
+                <label asp-for="CreateCompany" class="form-check-label"></label>
+            </div>
+        </div>
+
+        <div class="form-row @Html.IsCollapsed(Model.Company)" id="company-div">
+            <div class="form-group col-md-12">
+                <input asp-for="Company" class="form-control" placeholder="Paste new company name" />
+                <span asp-validation-for="Company" class="text-danger"></span>
             </div>
         </div>
 

@@ -21,7 +21,9 @@ namespace Database.DAO
         public int LanguageId { get; set; }
         public bool UseLdaplogin { get; set; }
         public string LdapUrl { get; set; }
+        public int? CompanyId { get; set; }
 
+        public virtual Company Company { get; set; }
         public virtual Language Language { get; set; }
         public virtual UserRole UserRole { get; set; }
         public virtual ICollection<UserProject> UserProject { get; set; }
