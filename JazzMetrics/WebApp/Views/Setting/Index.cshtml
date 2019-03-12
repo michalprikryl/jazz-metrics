@@ -15,17 +15,20 @@
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Metrics</h5>
-                <p class="card-text">Settings of metrics.</p>
-                <a asp-controller="Setting" asp-action="Metric" class="btn btn-primary">Go to setting</a>
+@if (User.IsInRole("super-admin") || User.IsInRole("admin"))
+{
+    <div class="row mb-4">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Metrics</h5>
+                    <p class="card-text">Settings of metrics.</p>
+                    <a asp-controller="Setting" asp-action="Metric" class="btn btn-primary">Go to setting</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 @if (User.IsInRole("super-admin"))
 {

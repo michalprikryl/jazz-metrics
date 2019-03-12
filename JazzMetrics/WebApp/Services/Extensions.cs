@@ -58,6 +58,11 @@ namespace WebApp
             return $"{firstName} {lastName}";
         }
 
+        public static int? CompanyId(this ClaimsPrincipal user)
+        {
+            return int.TryParse(user.Claims.FirstOrDefault(c => c.Type == AppController.CompanyIdClaim)?.Value ?? string.Empty, out int result) ? result : default(int?);
+        }
+
         public static string EnglishNumber(this decimal number)
         {
             return number.ToString().Replace(",", ".");

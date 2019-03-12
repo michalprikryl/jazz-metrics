@@ -1,8 +1,6 @@
-﻿using Library.Networking;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
@@ -20,7 +18,6 @@ using WebApp.Services.Users;
 namespace WebApp.Controllers
 {
     [Route("Setting")]
-    [Authorize(Roles = "super-admin,admin")]
     public class SettingController : AppController
     {
         private readonly ICrudService _crudService;
@@ -638,29 +635,55 @@ namespace WebApp.Controllers
 
             CheckTempData(model);
 
-            var result = await _crudService.Get<CompanyModel>(MyUser.CompanyId ?? 0, Token, SettingService.CompanyEntity, false);
-            if (result.Success)
+            if (MyUser.CompanyId.HasValue)
             {
-                model.Id = result.Id;
-                model.Name = result.Name;
-                model.Users = result.Users.Select(a =>
-                    new CompanyUser
-                    {
-                        UserId = a.Id,
-                        Username = a.Username,
-                        UserInfo = a.ToString(),
-                        Admin = a.Admin
-                    }).ToList();
-            }
-            else
-            {
-                AddMessageToModel(model, result.Message);
+                var result = await _crudService.Get<CompanyModel>(MyUser.CompanyId.Value, Token, SettingService.CompanyEntity, false);
+                if (result.Success)
+                {
+                    model.Id = result.Id;
+                    model.Name = result.Name;
+                    model.Users = result.Users.Select(a =>
+                        new CompanyUser
+                        {
+                            UserId = a.Id,
+                            Username = a.Username,
+                            UserInfo = a.ToString(),
+                            Admin = a.Admin
+                        }).ToList();
+                }
+                else
+                {
+                    AddMessageToModel(model, result.Message);
+                }
             }
 
             return View("Company/Index", model);
         }
 
+        [HttpPost("Company/Add")]
+        public async Task<IActionResult> CompanyAdd(CompanyModel model)
+        {
+            ViewModel viewModel = new ViewModel();
+
+            var result = await _crudService.Create(model, Token, SettingService.CompanyEntity);
+            if (result.Success)
+            {
+                var userResult = await _crudService.PartialEdit(MyUser.UserId, CreatePatchModel("companyId", result.Id.ToString()), Token, UserService.UserEntity); //TODO update role na admina v DB a update cookies
+
+                AddMessageToModel(viewModel, result.Message, !result.Success);
+            }
+            else
+            {
+                AddMessageToModel(viewModel, result.Message);
+            }
+
+            AddViewModelToTempData(viewModel);
+
+            return RedirectToAction("Company");
+        }
+
         [HttpPost("CompanyUser/Add")]
+        [Authorize(Roles = "super-admin,admin")]
         public async Task<IActionResult> CompanyUserAdd(CompanyUserModel model)
         {
             ViewModel viewModel = new ViewModel();
@@ -683,12 +706,14 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("CompanyUser/Edit/{id}")]
+        [Authorize(Roles = "super-admin,admin")]
         public async Task<IActionResult> CompanyUserUpdate(int id)
         {
             return Json(await _crudService.PartialEdit(id, CreatePatchModel("userRoleId", ""), Token, UserService.UserEntity));
         }
 
         [HttpPost("CompanyUser/Delete/{id}")]
+        [Authorize(Roles = "super-admin,admin")]
         public async Task<IActionResult> CompanyUserDelete(int id)
         {
             return Json(await _crudService.PartialEdit(id, CreatePatchModel("companyId", null), Token, UserService.UserEntity));
