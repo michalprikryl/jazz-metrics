@@ -19,6 +19,8 @@ using WebAPI.Services.Language;
 using WebAPI.Services.Log;
 using WebAPI.Services.Metrics;
 using WebAPI.Services.MetricTypes;
+using WebAPI.Services.ProjectMetrics;
+using WebAPI.Services.Projects;
 using WebAPI.Services.Setting;
 using WebAPI.Services.Test;
 using WebAPI.Services.Users;
@@ -60,6 +62,8 @@ namespace WebAPI
                 };
             });
 
+            services.AddHttpContextAccessor(); //pristup k identite v kontruktoru pomoci IHttpContextAccessor 
+
             services.AddDbContext<JazzMetricsContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringName)));
 
             services.AddScoped<ILogService, LogService>();
@@ -70,10 +74,12 @@ namespace WebAPI
             services.AddScoped<IMetricService, MetricService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IMetricTypeService, MetricTypeService>();
             services.AddScoped<IAspiceVersionService, AspiceVersionService>();
             services.AddScoped<IAspiceProcessService, AspiceProcessService>();
+            services.AddScoped<IProjectMetricService, ProjectMetricService>();
             services.AddScoped<IAffectedFieldService, AffectedFieldService>();
         }
 

@@ -9,7 +9,7 @@ namespace WebApp.Services.Users
 {
     public class UserService : ClientApi, IUserService
     {
-        public static string UserEntity => "user";
+        public const string UserEntity = "user";
 
         public UserService(IConfiguration config) : base(config, UserEntity) { }
 

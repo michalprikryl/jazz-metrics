@@ -21,6 +21,7 @@ namespace WebApp.Controllers
     {
         public IErrorService ErrorService { get; }
 
+        public const string RoleUser = "user";
         public const string RoleAdmin = "admin";
         public const string RoleSuperAdmin = "super-admin";
 

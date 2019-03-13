@@ -108,7 +108,7 @@ namespace WebAPI.Services.Companies
             return response;
         }
 
-        public async Task<BaseResponseModel> Drop(int id)
+        public async Task<BaseResponseModel> DropAsync(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

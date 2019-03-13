@@ -10,6 +10,8 @@ namespace WebAPI
     /// </summary>
     public static class Extensions
     {
+        public static string UserIdClaim = "userid";
+
         /// <summary>
         /// cesta do App_Data, obsahuje na konci \\
         /// </summary>
@@ -40,9 +42,9 @@ namespace WebAPI
         /// </summary>
         /// <param name="user">uzivatelsky kontext</param>
         /// <returns></returns>
-        internal static string GetEmail(this ClaimsPrincipal user)
+        internal static int GetId(this ClaimsPrincipal user)
         {
-            return user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.UniqueName)?.Value ?? null;
+            return int.TryParse(user.FindFirstValue(UserIdClaim), out int id) ? id : 0;
         }
     }
 }

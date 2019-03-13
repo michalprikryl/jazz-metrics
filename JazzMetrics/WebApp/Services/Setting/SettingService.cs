@@ -12,12 +12,12 @@ namespace WebApp.Services.Setting
 {
     public class SettingService : ISettingService
     {
-        public static string AffectedFieldEntity => "affectedfield";
-        public static string AspiceProcessEntity => "aspiceprocess";
-        public static string AspiceVersionEntity => "aspiceversion";
-        public static string MetricTypeEntity => "metrictype";
-        public static string CompanyEntity => "company";
-        public static string MetricEntity => "metric";
+        public const string AffectedFieldEntity = "affectedfield";
+        public const string AspiceProcessEntity = "aspiceprocess";
+        public const string AspiceVersionEntity = "aspiceversion";
+        public const string MetricTypeEntity = "metrictype";
+        public const string CompanyEntity = "company";
+        public const string MetricEntity = "metric";
 
         private readonly ICrudService _crudService;
 

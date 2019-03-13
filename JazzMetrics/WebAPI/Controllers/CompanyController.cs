@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}"), AllowAnonymous]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _companyService.Drop(id);
+            return await _companyService.DropAsync(id);
         }
     }
 }

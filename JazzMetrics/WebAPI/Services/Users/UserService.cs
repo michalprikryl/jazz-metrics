@@ -144,7 +144,7 @@ namespace WebAPI.Services.Users
             return response;
         }
 
-        public async Task<BaseResponseModel> Drop(int id)
+        public async Task<BaseResponseModel> DropAsync(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 
@@ -321,7 +321,7 @@ namespace WebAPI.Services.Users
             return result;
         }
 
-        public async Task<string> BuildToken(string username)
+        public async Task<string> BuildToken(int id)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -337,7 +337,7 @@ namespace WebAPI.Services.Users
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, username),
+                new Claim(Extensions.UserIdClaim, id.ToString()),
             };
 
             var token = new JwtSecurityToken(issuer, issuer, claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
@@ -398,7 +398,7 @@ namespace WebAPI.Services.Users
         private async Task CreateUserSession(User user, LoginResponseModel result)
         {
             result.Success = true;
-            result.Token = await BuildToken(user.Username);
+            result.Token = await BuildToken(user.Id);
             result.User = new UserCookieModel
             {
                 Username = user.Username,

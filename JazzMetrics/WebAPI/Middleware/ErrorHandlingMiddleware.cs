@@ -33,7 +33,7 @@ namespace WebAPI.Middleware
 
         private static Task HandleExceptionAsync(IErrorService errorService, HttpContext context, Exception exception, string version)
         {
-            Task error = errorService.SaveErrorToDB(new ErrorModel(exception, $"JazzMetricsAPI - {version} -> {context.User.GetEmail()}", "global error handler"));
+            Task error = errorService.SaveErrorToDB(new ErrorModel(exception, $"JazzMetricsAPI - {version} -> {context.User.GetId()}", "global error handler"));
 
             string result = JsonConvert.SerializeObject(new BaseResponseModel
             {

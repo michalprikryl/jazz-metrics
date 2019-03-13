@@ -7,6 +7,10 @@ namespace WebAPI.Controllers
     [Authorize]
     public class MainController : ControllerBase
     {
+        public const string RoleUser = "user";
+        public const string RoleAdmin = "admin";
+        public const string RoleSuperAdmin = "super-admin";
+
         public IErrorService ErrorService { get; }
 
         public MainController(IErrorService errorService)

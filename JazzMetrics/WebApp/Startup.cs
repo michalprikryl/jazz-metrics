@@ -12,6 +12,7 @@ using System.Globalization;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Language;
+using WebApp.Services.Project;
 using WebApp.Services.Setting;
 using WebApp.Services.Test;
 using WebApp.Services.Users;
@@ -57,6 +58,7 @@ namespace WebApp
             services.AddScoped<ITestService, TestService>();
             services.AddScoped<ICrudService, CrudService>();
             services.AddScoped<IErrorService, ErrorService>();
+            services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ILanguageService, LanguageService>();
         }
