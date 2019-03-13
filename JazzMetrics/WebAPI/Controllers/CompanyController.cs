@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.Company;
 using WebAPI.Services.Companies;
@@ -29,13 +29,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(CompanyModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]CompanyModel model)
         {
             return await _companyService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, CompanyModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]CompanyModel model)
         {
             return await _companyService.Edit(model);
         }

@@ -25,7 +25,7 @@ namespace WebApp.Services.Users
             await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
             {
                 result = JsonConvert.DeserializeObject<UserIdentityModel>(await httpResult.Content.ReadAsStringAsync());
-            }, endpoint: "login");
+            }, "login");
 
             return result;
         }
@@ -37,7 +37,7 @@ namespace WebApp.Services.Users
             await GetToAPI(GetParametersList(GetParameter("username", username)), async httpResult =>
             {
                 result = JsonConvert.DeserializeObject<BaseApiResultPost>(await httpResult.Content.ReadAsStringAsync());
-            }, UserEntity, jwt: jwt);
+            }, jwt: jwt);
 
             return result;
         }

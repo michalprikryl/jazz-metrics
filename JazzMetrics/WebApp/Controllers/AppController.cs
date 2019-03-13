@@ -1,10 +1,15 @@
 ﻿using Library.Networking;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.User;
 using WebApp.Services.Error;
@@ -16,6 +21,9 @@ namespace WebApp.Controllers
     {
         public IErrorService ErrorService { get; }
 
+        public const string RoleAdmin = "admin";
+        public const string RoleSuperAdmin = "super-admin";
+
         public static string TokenClaim => "JWToken";
         public static string LastNameClaim => "LastName";
         public static string UserIdClaim => "UserId";
@@ -26,25 +34,7 @@ namespace WebApp.Controllers
         /// </summary>
         public UserCookiesModel MyUser
         {
-            get
-            {
-                if (User.Identity.IsAuthenticated)
-                {
-                    return new UserCookiesModel
-                    {
-                        Email = User.FindFirstValue(ClaimTypes.Email),
-                        Firstname = User.FindFirstValue(ClaimTypes.Name),
-                        Lastname = User.FindFirstValue(LastNameClaim),
-                        Role = User.FindFirstValue(ClaimTypes.Role),
-                        UserId = int.Parse(User.FindFirstValue(UserIdClaim)),
-                        CompanyId = int.TryParse(User.FindFirstValue(CompanyIdClaim), out int n) ? n : default(int?)
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            get => User.GetIdentity();
         }
 
         /// <summary>
@@ -75,27 +65,13 @@ namespace WebApp.Controllers
             }
         }
 
-        protected void AddMessageToModel(ViewModel model, string message, bool error = true)
-        {
-            model.MessageList.Add(new Tuple<string, bool>(message, error));
-        }
+        protected void AddMessageToModel(ViewModel model, string message, bool error = true) => model.MessageList.Add(new Tuple<string, bool>(message, error));
 
-        protected List<PatchModel> CreatePatchModel(string propertyName, string propertyValue)
-        {
-            return new List<PatchModel>
-           {
-               new PatchModel
-               {
-                   PropertyName = propertyName,
-                   Value = propertyValue
-               }
-           };
-        }
+        protected PatchModel CreatePatchModel(string propertyName, string propertyValue) => new PatchModel { PropertyName = propertyName, Value = propertyValue };
 
-        protected void AddViewModelToTempData(ViewModel model)
-        {
-            TempData["ViewModel"] = JsonConvert.SerializeObject(model);
-        }
+        protected List<PatchModel> CreatePatchList(params PatchModel[] models) => models.ToList();
+
+        protected void AddViewModelToTempData(ViewModel model) => TempData["ViewModel"] = JsonConvert.SerializeObject(model);
 
         protected void CheckTempData(ViewModel model)
         {
@@ -104,6 +80,35 @@ namespace WebApp.Controllers
                 var source = JsonConvert.DeserializeObject<ViewModel>(TempData["ViewModel"] as string);
                 model.MessageList = source.MessageList;
             }
+        }
+
+        protected async Task UserLogin(UserCookiesModel user, string token)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.GivenName, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Firstname),
+                new Claim(LastNameClaim, user.Lastname),
+                new Claim(UserIdClaim, user.UserId.ToString()),
+                new Claim(CompanyIdClaim, user.CompanyId.ToString()),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(TokenClaim, token)
+            };
+
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken jwt = handler.ReadToken(token) as JwtSecurityToken;
+
+            AuthenticationProperties authProperties = new AuthenticationProperties
+            {
+                //IsPersistent = true, //pokud chci, aby cookie zustavala i dele nez session
+                IssuedUtc = DateTime.UtcNow,
+                ExpiresUtc = DateTime.SpecifyKind(jwt.ValidTo, DateTimeKind.Utc)
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
         }
     }
 }

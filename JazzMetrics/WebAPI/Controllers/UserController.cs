@@ -18,6 +18,12 @@ namespace WebAPI.Controllers
 
         public UserController(IErrorService errorService, IUserService userService) : base(errorService) => _userService = userService;
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserModel>> Get(int id, bool lazy = true)
+        {
+            return await _userService.Get(id, lazy);
+        }
+
         [HttpGet]
         public async Task<ActionResult<BaseResponseModelPost>> GetByUsername(string username)
         {
@@ -30,10 +36,10 @@ namespace WebAPI.Controllers
             return await _userService.Create(value);
         }
 
-        [HttpPost("Login"), AllowAnonymous]
-        public async Task<ActionResult<LoginResponseModel>> Login([FromBody]LoginRequestModel value)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]UserModel value)
         {
-            return await _userService.CheckUser(value);
+            return await _userService.Edit(value);
         }
 
         [HttpPatch("{id}")]

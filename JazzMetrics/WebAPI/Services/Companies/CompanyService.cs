@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Database.DAO;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.Company;
 using WebAPI.Models.Users;

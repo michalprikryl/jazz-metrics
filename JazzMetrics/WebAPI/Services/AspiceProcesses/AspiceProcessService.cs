@@ -130,11 +130,19 @@ namespace WebAPI.Services.AspiceProcesses
             AspiceProcess aspiceProcess = await Load(id, response);
             if (aspiceProcess != null)
             {
-                Database.AspiceProcess.Remove(aspiceProcess);
+                if (aspiceProcess.Metric.Count == 0)
+                {
+                    Database.AspiceProcess.Remove(aspiceProcess);
 
-                await Database.SaveChangesAsync();
+                    await Database.SaveChangesAsync();
 
-                response.Message = "Automotive SPICE process was successfully deleted!";
+                    response.Message = "Automotive SPICE process was successfully deleted!";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Cannot delete Automotive SPICE process, because some metrics use this process!";
+                }
             }
 
             return response;

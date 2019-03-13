@@ -28,13 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(MetricModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]MetricModel model)
         {
             return await _metricService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, MetricModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]MetricModel model)
         {
             return await _metricService.Edit(model);
         }

@@ -1,29 +1,22 @@
 ﻿@{
+    var user = User.GetIdentity();
     ViewData["Title"] = "Main page";
 }
 
 <div class="jumbotron">
     <h1>Jazz metrics</h1>
-    <p class="lead">@ViewBag.Information</p>
-    <p><a href="http://jazz-metrics.com" class="btn btn-primary btn-lg">Chci víc &raquo;</a></p>
+    <p class="lead">You are logged as @user.ToString().</p>
 </div>
 
 <div class="row justify-content-md-center">
     <div class="col-md-4">
-        <h2>IBM Jazz metriky</h2>
+        <h2>IBM Jazz metrics</h2>
         <p>
-            V této webové aplikaci lze vytvářet, měnit a spravovat metriky z IBM Jazz.
+            In this web application you can create, edit and manage metrics from IBM Jazz platform.
         </p>
-        <p><a class="btn btn-default" href="#">Přejít &raquo;</a></p>
+        <p><a class="btn btn-primary" href="#">Go &raquo;</a></p>
     </div>
 </div>
-
-<address>
-    KATEDRA INFORMATIKY<br />
-    17. listopadu 15/2172<br />
-    708 33  Ostrava-Poruba<br />
-    Telefon: +420 597 325 961
-</address>
 
 <address>
     <strong>Support:</strong>   <a href="mailto:michal.prikryl@post.cz">michal.prikryl@post.cz</a><br />

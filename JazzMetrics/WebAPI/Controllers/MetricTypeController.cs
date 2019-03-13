@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.MetricType;
 using WebAPI.Services.Error;
@@ -28,13 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(MetricTypeModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]MetricTypeModel model)
         {
             return await _metricTypeService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, MetricTypeModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]MetricTypeModel model)
         {
             return await _metricTypeService.Edit(model);
         }

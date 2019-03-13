@@ -35,7 +35,7 @@
                         <a class="nav-link @Html.IsSelected("Home", "Index")" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @Html.IsSelected("Setting", "")" href="/Setting">Settings</a>
+                        <a class="nav-link @Html.IsSelected("Setting,User", "")" href="/Setting">Settings</a>
                     </li>
                 }
             </ul>
@@ -54,7 +54,7 @@
                 @if (logged)
                 {
                     <li class="nav-item">
-                        <a href="#" class="navbar-text float-right mr-4 text-white font-weight-bolder">
+                        <a href="/User/Detail/@User.UserId()" class="navbar-text float-right mr-4 text-white font-weight-bolder">
                             @User.GetName()
                         </a>
                     </li>

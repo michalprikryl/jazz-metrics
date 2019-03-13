@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AspiceProcesses;
 using WebAPI.Services.AspiceProcesses;
@@ -28,13 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(AspiceProcessModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]AspiceProcessModel model)
         {
             return await _aspiceProcessService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, AspiceProcessModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]AspiceProcessModel model)
         {
             return await _aspiceProcessService.Edit(model);
         }

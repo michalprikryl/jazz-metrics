@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using WebApp.Controllers;
+using WebApp.Models.User;
 
 namespace WebApp
 {
@@ -63,6 +64,11 @@ namespace WebApp
             return int.TryParse(user.Claims.FirstOrDefault(c => c.Type == AppController.CompanyIdClaim)?.Value ?? string.Empty, out int result) ? result : default(int?);
         }
 
+        public static int UserId(this ClaimsPrincipal user)
+        {
+            return int.TryParse(user.Claims.FirstOrDefault(c => c.Type == AppController.UserIdClaim)?.Value ?? string.Empty, out int result) ? result : 0;
+        }
+
         public static string EnglishNumber(this decimal number)
         {
             return number.ToString().Replace(",", ".");
@@ -71,6 +77,27 @@ namespace WebApp
         public static string EnglishDateString(this DateTime date)
         {
             return date.ToString("yyyy-MM-dd");
+        }
+
+        public static UserCookiesModel GetIdentity(this ClaimsPrincipal user)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                return new UserCookiesModel
+                {
+                    Username = user.FindFirstValue(ClaimTypes.GivenName),
+                    Email = user.FindFirstValue(ClaimTypes.Email),
+                    Firstname = user.FindFirstValue(ClaimTypes.Name),
+                    Lastname = user.FindFirstValue(AppController.LastNameClaim),
+                    Role = user.FindFirstValue(ClaimTypes.Role),
+                    UserId = int.Parse(user.FindFirstValue(AppController.UserIdClaim)),
+                    CompanyId = int.TryParse(user.FindFirstValue(AppController.CompanyIdClaim), out int n) ? n : default(int?)
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

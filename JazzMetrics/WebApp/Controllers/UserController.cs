@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Error;
@@ -20,6 +17,7 @@ using WebApp.Services.Users;
 
 namespace WebApp.Controllers
 {
+    [Route("User")]
     public class UserController : AppController
     {
         private readonly IUserService _userService;
@@ -33,7 +31,7 @@ namespace WebApp.Controllers
             _languageService = languageService;
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet("Registration"), AllowAnonymous]
         public async Task<ActionResult> Registration()
         {
             RegistrationViewModel model = new RegistrationViewModel();
@@ -43,34 +41,45 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost("Registration"), AllowAnonymous]
         public async Task<ActionResult> Registration(RegistrationViewModel model)
         {
             Task task = GetLanguages(model);
 
             if (ModelState.IsValid)
             {
-                BaseApiResultPost resultCompany = null;
-                if (!string.IsNullOrEmpty(model.Company))
+                if (model.Password == model.ConfirmPassword)
                 {
-                    resultCompany = await _crudService.Create(new CompanyModel { Name = model.Company }, null, SettingService.CompanyEntity);
-                    model.CompanyId = resultCompany.Id;
-                }
-
-                if (resultCompany == null || resultCompany.Success)
-                {
-                    BaseApiResultPost result = await _crudService.Create(model, null, UserService.UserEntity);
-
-                    if (!result.Success && resultCompany != null)
+                    BaseApiResultPost resultCompany = null;
+                    if (!string.IsNullOrEmpty(model.Company))
                     {
-                        await _crudService.Drop(model.CompanyId.Value, null, SettingService.CompanyEntity);
+                        resultCompany = await _crudService.Create(new CompanyModel { Name = model.Company }, null, SettingService.CompanyEntity);
+                        model.CompanyId = resultCompany.Id;
                     }
 
-                    AddMessageToModel(model, result.Message, !result.Success);
+                    if (resultCompany == null || resultCompany.Success)
+                    {
+                        BaseApiResultPost result = await _crudService.Create(model, null, UserService.UserEntity);
+
+                        if (!result.Success && resultCompany != null)
+                        {
+                            await _crudService.Drop(model.CompanyId.Value, null, SettingService.CompanyEntity);
+                        }
+
+                        AddMessageToModel(model, result.Message, !result.Success);
+
+                        AddViewModelToTempData(model);
+
+                        return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        AddMessageToModel(model, resultCompany.Message);
+                    }
                 }
                 else
                 {
-                    AddMessageToModel(model, resultCompany.Message);
+                    AddMessageToModel(model, "Password and cofirmed password are not equal!");
                 }
             }
 
@@ -79,13 +88,20 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet("Login"), AllowAnonymous]
         public ActionResult Login(string returnUrl = "")
         {
             if (MyUser == null)
             {
                 LoginViewModel model = new LoginViewModel();
                 ViewBag.ReturnUrl = returnUrl;
+
+                CheckTempData(model);
+
+                if (model.MessageList.Any(m => !m.Item2))
+                {
+                    AddMessageToModel(model, "Your account to Jazz Metrics is prepared!", false);
+                }
 
                 return View(model);
             }
@@ -95,46 +111,21 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost("Login"), AllowAnonymous]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl = "")
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    UserIdentityModel userIdentity = await _userService.AuthenticateUser(model);
-                    if (userIdentity == null)
+                    UserIdentityModel identity = await _userService.AuthenticateUser(model);
+                    if (identity == null)
                     {
                         model.MessageList.Add(new Tuple<string, bool>("Server is not accessible.", true));
                     }
-                    else if (userIdentity.Success && userIdentity.User != null && !string.IsNullOrEmpty(userIdentity.Token))
+                    else if (identity.Success && identity.User != null && !string.IsNullOrEmpty(identity.Token))
                     {
-                        UserCookiesModel user = userIdentity.User;
-
-                        List<Claim> claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Name, user.Firstname),
-                            new Claim(LastNameClaim, user.Lastname),
-                            new Claim(UserIdClaim, user.UserId.ToString()),
-                            new Claim(CompanyIdClaim, user.CompanyId.ToString()),
-                            new Claim(ClaimTypes.Role, user.Role),
-                            new Claim(TokenClaim, userIdentity.Token)
-                        };
-
-                        ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-                        JwtSecurityToken token = handler.ReadToken(userIdentity.Token) as JwtSecurityToken;
-
-                        AuthenticationProperties authProperties = new AuthenticationProperties
-                        {
-                            IsPersistent = true,
-                            IssuedUtc = DateTime.UtcNow,
-                            ExpiresUtc = DateTime.SpecifyKind(token.ValidTo, DateTimeKind.Utc)
-                        };
-
-                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                        Task login = UserLogin(identity.User, identity.Token);
 
                         if (Url.IsLocalUrl(returnUrl))
                         {
@@ -149,7 +140,7 @@ namespace WebApp.Controllers
                     {
                         ModelState.Remove("Password");
 
-                        model.MessageList.Add(new Tuple<string, bool>(userIdentity.Message ?? "Incorrect username or password.", true));
+                        model.MessageList.Add(new Tuple<string, bool>(identity.Message ?? "Incorrect username or password.", true));
                     }
                 }
                 catch (Exception e)
@@ -163,7 +154,7 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        [HttpGet]
+        [HttpGet("Logout")]
         public async Task<ActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -171,13 +162,144 @@ namespace WebApp.Controllers
             return RedirectToAction("Login", "User");
         }
 
-        [HttpGet]
+        [HttpGet("AccessDenied")]
         public ActionResult AccessDenied()
         {
             return View();
         }
 
-        private async Task GetLanguages(RegistrationViewModel model)
+        [HttpGet("Detail/{id}")]
+        public async Task<ActionResult> Detail(int id)
+        {
+            UserViewModel model = new UserViewModel();
+
+            var response = await _crudService.Get<UserModel>(id, Token, UserService.UserEntity);
+            if (response.Success)
+            {
+                if (MyUser.CompanyId == response.CompanyId || User.IsInRole(RoleSuperAdmin))
+                {
+                    model.Id = response.Id;
+                    model.Username = response.Username;
+                    model.Firstname = response.Firstname;
+                    model.Lastname = response.Lastname;
+                    model.Email = response.Email;
+                    model.Admin = response.Admin;
+                }
+                else
+                {
+                    model.CanView = false;
+                    AddMessageToModel(model, "You cannot display this user, because this user belongs to different company!");
+                }
+            }
+            else
+            {
+                AddMessageToModel(model, response.Message);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet("Edit/{id}")]
+        public async Task<ActionResult> Edit(int id)
+        {
+            UserWorkModel model = new UserWorkModel();
+
+            if (MyUser.UserId == id || User.IsInRole(RoleSuperAdmin))
+            {
+                Task task = GetLanguages(model);
+
+                var response = await _crudService.Get<UserModel>(id, Token, UserService.UserEntity);
+
+                if (response.Success)
+                {
+                    model.Id = response.Id;
+                    model.Firstname = response.Firstname;
+                    model.Lastname = response.Lastname;
+                    model.Email = response.Email;
+                    model.UseLdaplogin = response.UseLdaplogin;
+                    model.LdapUrl = response.LdapUrl;
+                    model.LanguageId = response.LanguageId.ToString();
+                }
+                else
+                {
+                    AddMessageToModel(model, response.Message);
+                }
+
+                await Task.WhenAll(task);
+            }
+            else
+            {
+                model.CanView = false;
+                AddMessageToModel(model, "You cannot edit this user!");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost("Edit/{id}")]
+        public async Task<IActionResult> Edit(int id, UserWorkModel model)
+        {
+            Task select = GetLanguages(model);
+
+            if (ModelState.IsValid)
+            {
+                Task userTask = _crudService.Edit(id, model, Token, UserService.UserEntity).ContinueWith(async r =>
+                {
+                    var result = r.Result;
+                    if (result.Success)
+                    {
+                        var user = MyUser;
+                        user.Firstname = model.Firstname;
+                        user.Lastname = model.Lastname;
+                        user.Email = model.Email;
+                        await UserLogin(user, Token);
+                    }
+
+                    if (!model.UseLdaplogin)
+                    {
+                        model.LdapUrl = null;
+                    }
+
+                    AddMessageToModel(model, result.Message, !result.Success);
+                });
+
+                Task passwordTask = Task.CompletedTask;
+                if (!string.IsNullOrEmpty(model.OldPassword) && !string.IsNullOrEmpty(model.Password) && !string.IsNullOrEmpty(model.ConfirmPassword))
+                {
+                    if (model.Password == model.ConfirmPassword)
+                    {
+                        passwordTask = _crudService.PartialEdit(id, CreatePatchList(CreatePatchModel("password", $"{model.OldPassword};;;{model.Password}")), Token, UserService.UserEntity).ContinueWith(r =>
+                        {
+                            var passwordResult = r.Result;
+                            if (passwordResult.Success)
+                            {
+                                AddMessageToModel(model, "Password was changed!", false);
+                            }
+                            else
+                            {
+                                AddMessageToModel(model, passwordResult.Message);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        AddMessageToModel(model, "Password and cofirmed password are not equal! Password wasn't changed.");
+                    }
+                }
+
+                await Task.WhenAll(userTask, passwordTask);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            await Task.WhenAll(select);
+
+            return View(model);
+        }
+
+        private async Task GetLanguages(UserBaseModel model)
         {
             model.Languages = await _languageService.GetLanguagesForSelect();
 

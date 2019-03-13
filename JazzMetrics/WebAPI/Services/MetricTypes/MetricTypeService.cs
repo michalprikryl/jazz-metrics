@@ -99,11 +99,19 @@ namespace WebAPI.Services.MetricTypes
             MetricType metricType = await Load(id, response);
             if (metricType != null)
             {
-                Database.MetricType.Remove(metricType);
+                if (metricType.Metric.Count == 0)
+                {
+                    Database.MetricType.Remove(metricType);
 
-                await Database.SaveChangesAsync();
+                    await Database.SaveChangesAsync();
 
-                response.Message = "Metric type was successfully deleted!";
+                    response.Message = "Metric type was successfully deleted!";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Cannot delete metric type, because some metrics use this type!";
+                }
             }
 
             return response;

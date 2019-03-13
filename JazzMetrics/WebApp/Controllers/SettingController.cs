@@ -38,7 +38,7 @@ namespace WebApp.Controllers
 
         #region Affected field
         [HttpGet("AffectedField")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AffectedField()
         {
             AffectedFieldListModel model = new AffectedFieldListModel();
@@ -63,7 +63,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AffectedField/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public IActionResult AffectedFieldAdd()
         {
             AffectedFieldWorkModel model = new AffectedFieldWorkModel();
@@ -72,7 +72,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AffectedField/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AffectedFieldAddPost(AffectedFieldWorkModel model)
         {
             if (ModelState.IsValid)
@@ -90,7 +90,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AffectedField/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AffectedFieldEdit(int id)
         {
             AffectedFieldWorkModel model = new AffectedFieldWorkModel();
@@ -111,7 +111,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AffectedField/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AffectedFieldEditPost(int id, AffectedFieldWorkModel model)
         {
             if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AffectedField/Delete/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AffectedFieldDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, SettingService.AffectedFieldEntity));
@@ -138,7 +138,7 @@ namespace WebApp.Controllers
 
         #region Metric types
         [HttpGet("MetricType")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> MetricType()
         {
             MetricTypeListModel model = new MetricTypeListModel();
@@ -163,7 +163,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("MetricType/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public IActionResult MetricTypeAdd()
         {
             MetricTypeWorkModel model = new MetricTypeWorkModel();
@@ -172,7 +172,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("MetricType/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> MetricTypeAddPost(MetricTypeWorkModel model)
         {
             if (ModelState.IsValid)
@@ -190,7 +190,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("MetricType/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> MetricTypeEdit(int id)
         {
             MetricTypeWorkModel model = new MetricTypeWorkModel();
@@ -211,7 +211,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("MetricType/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> MetricTypeEditPost(int id, MetricTypeWorkModel model)
         {
             if (ModelState.IsValid)
@@ -229,7 +229,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("MetricType/Delete/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> MetricTypeDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, SettingService.MetricTypeEntity));
@@ -238,7 +238,7 @@ namespace WebApp.Controllers
 
         #region Automotive SPICE versions
         [HttpGet("AspiceVersion")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceVersion()
         {
             AspiceVersionListModel model = new AspiceVersionListModel();
@@ -264,7 +264,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AspiceVersion/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public IActionResult AspiceVersionAdd()
         {
             AspiceVersionWorkModel model = new AspiceVersionWorkModel
@@ -277,7 +277,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceVersion/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceVersionAddPost(AspiceVersionWorkModel model)
         {
             if (ModelState.IsValid)
@@ -295,7 +295,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AspiceVersion/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceVersionEdit(int id)
         {
             AspiceVersionWorkModel model = new AspiceVersionWorkModel();
@@ -317,7 +317,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceVersion/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceVersionEditPost(int id, AspiceVersionWorkModel model)
         {
             if (ModelState.IsValid)
@@ -335,7 +335,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceVersion/Delete/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceVersionTypeDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, SettingService.AspiceVersionEntity));
@@ -344,7 +344,7 @@ namespace WebApp.Controllers
 
         #region Automotive SPICE processes
         [HttpGet("AspiceProcess")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcess()
         {
             AspiceProcessListModel model = new AspiceProcessListModel();
@@ -372,7 +372,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AspiceProcess/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcessAdd()
         {
             AspiceProcessWorkModel model = new AspiceProcessWorkModel();
@@ -383,7 +383,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceProcess/Add")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcessAddPost(AspiceProcessWorkModel model)
         {
             Task select = GetAspiceVersions(model);
@@ -405,7 +405,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("AspiceProcess/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcessEdit(int id)
         {
             AspiceProcessWorkModel model = new AspiceProcessWorkModel();
@@ -432,7 +432,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceProcess/Edit/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcessEditPost(int id, AspiceProcessWorkModel model)
         {
             Task select = GetAspiceVersions(model);
@@ -454,7 +454,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("AspiceProcess/Delete/{id}")]
-        [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<IActionResult> AspiceProcessDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, SettingService.AspiceProcessEntity));
@@ -656,6 +656,10 @@ namespace WebApp.Controllers
                     AddMessageToModel(model, result.Message);
                 }
             }
+            else
+            {
+                model.CanView = false;
+            }
 
             return View("Company/Index", model);
         }
@@ -668,7 +672,13 @@ namespace WebApp.Controllers
             var result = await _crudService.Create(model, Token, SettingService.CompanyEntity);
             if (result.Success)
             {
-                var userResult = await _crudService.PartialEdit(MyUser.UserId, CreatePatchModel("companyId", result.Id.ToString()), Token, UserService.UserEntity); //TODO update role na admina v DB a update cookies
+                var userResult = await _crudService.PartialEdit(MyUser.UserId, CreatePatchList(CreatePatchModel("companyId", result.Id.ToString()), CreatePatchModel("userRoleId", RoleAdmin)),
+                    Token, UserService.UserEntity);
+
+                var user = MyUser;
+                user.CompanyId = result.Id;
+                user.Role = RoleAdmin;
+                await UserLogin(user, Token);
 
                 AddMessageToModel(viewModel, result.Message, !result.Success);
             }
@@ -683,7 +693,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("CompanyUser/Add")]
-        [Authorize(Roles = "super-admin,admin")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> CompanyUserAdd(CompanyUserModel model)
         {
             ViewModel viewModel = new ViewModel();
@@ -691,9 +701,15 @@ namespace WebApp.Controllers
             var userResult = await _userService.FindUserIdByUsername(model.Username, Token);
             if (userResult.Success)
             {
-                var result = await _crudService.PartialEdit(userResult.Id, CreatePatchModel("companyId", model.CompanyId.ToString()), Token, UserService.UserEntity);
-
-                AddMessageToModel(viewModel, result.Message, !result.Success);
+                var result = await _crudService.PartialEdit(userResult.Id, CreatePatchList(CreatePatchModel("companyId", model.CompanyId.ToString())), Token, UserService.UserEntity);
+                if (result.Success)
+                {
+                    AddMessageToModel(viewModel, "User was successfully added to company.", false);
+                }
+                else
+                {
+                    AddMessageToModel(viewModel, result.Message);
+                }
             }
             else
             {
@@ -706,17 +722,17 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("CompanyUser/Edit/{id}")]
-        [Authorize(Roles = "super-admin,admin")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> CompanyUserUpdate(int id)
         {
-            return Json(await _crudService.PartialEdit(id, CreatePatchModel("userRoleId", ""), Token, UserService.UserEntity));
+            return Json(await _crudService.PartialEdit(id, CreatePatchList(CreatePatchModel("userRoleId", "")), Token, UserService.UserEntity));
         }
 
         [HttpPost("CompanyUser/Delete/{id}")]
-        [Authorize(Roles = "super-admin,admin")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> CompanyUserDelete(int id)
         {
-            return Json(await _crudService.PartialEdit(id, CreatePatchModel("companyId", null), Token, UserService.UserEntity));
+            return Json(await _crudService.PartialEdit(id, CreatePatchList(CreatePatchModel("companyId", null)), Token, UserService.UserEntity));
         }
         #endregion
     }

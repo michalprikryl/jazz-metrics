@@ -1,5 +1,4 @@
-﻿using Library.Security;
-using System;
+﻿using System;
 
 namespace JazzMetrics
 {

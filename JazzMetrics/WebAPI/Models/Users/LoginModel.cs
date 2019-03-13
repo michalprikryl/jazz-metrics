@@ -50,6 +50,7 @@
         /// ID uzivatele z DB
         /// </summary>
         public int UserId { get; set; }
+        public string Username { get; set; }
         /// <summary>
         /// jmeno uzivatele
         /// </summary>

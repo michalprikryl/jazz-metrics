@@ -15,7 +15,7 @@
     </div>
 </div>
 
-@if (User.IsInRole("super-admin") || User.IsInRole("admin"))
+@if (User.IsInRole(AppController.RoleSuperAdmin) || User.IsInRole(AppController.RoleAdmin))
 {
     <div class="row mb-4">
         <div class="col-sm-12">
@@ -30,7 +30,7 @@
     </div>
 }
 
-@if (User.IsInRole("super-admin"))
+@if (User.IsInRole(AppController.RoleSuperAdmin))
 {
     <div class="row mb-4">
         <div class="col-sm-6">

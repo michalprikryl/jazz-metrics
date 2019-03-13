@@ -169,11 +169,21 @@ namespace WebAPI.Services.Metrics
             Metric metric = await Load(id, response);
             if (metric != null)
             {
-                Database.Metric.Remove(metric);
+                if (metric.ProjectMetric.Count == 0)
+                {
+                    Database.MetricColumn.RemoveRange(metric.MetricColumn);
 
-                await Database.SaveChangesAsync();
+                    Database.Metric.Remove(metric);
 
-                response.Message = "Metric was successfully deleted!";
+                    await Database.SaveChangesAsync();
+
+                    response.Message = "Metric was successfully deleted!";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Cannot delete metric, because some projects use this metric!";
+                }
             }
 
             return response;

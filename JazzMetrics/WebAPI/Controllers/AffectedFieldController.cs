@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AffectedFields;
 using WebAPI.Services.AffectedFields;
@@ -28,13 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(AffectedFieldModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]AffectedFieldModel model)
         {
             return await _affectedFieldService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, AffectedFieldModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]AffectedFieldModel model)
         {
             return await _affectedFieldService.Edit(model);
         }

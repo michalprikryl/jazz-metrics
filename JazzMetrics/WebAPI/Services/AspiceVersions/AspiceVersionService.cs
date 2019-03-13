@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Database.DAO;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AspiceVersions;
 using WebAPI.Services.Helpers;
@@ -102,11 +102,19 @@ namespace WebAPI.Services.AspiceVersions
             AspiceVersion aspiceVersion = await Load(id, response);
             if (aspiceVersion != null)
             {
-                Database.AspiceVersion.Remove(aspiceVersion);
+                if (aspiceVersion.AspiceProcess.Count == 0)
+                {
+                    Database.AspiceVersion.Remove(aspiceVersion);
 
-                await Database.SaveChangesAsync();
+                    await Database.SaveChangesAsync();
 
-                response.Message = "Automotive SPICE version was successfully deleted!";
+                    response.Message = "Automotive SPICE version was successfully deleted!";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Cannot delete Automotive SPICE version, because some Automotive SPICE process use this version!";
+                }
             }
 
             return response;

@@ -1,5 +1,6 @@
 ﻿@model CompanyViewModel
 @{
+    int userId = User.UserId();
     ViewData["Title"] = "Company setting";
     var admin = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "User is admin within company" };
     var nonAdmin = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "User has regular rights within company" };
@@ -7,87 +8,105 @@
 
 <partial name="Partials/_ErrorTable" />
 
-@if (User.CompanyId().HasValue)
+@if (Model.CanView)
 {
-    <div class="mb-3 d-flex flex-row justify-content-between align-items-center">
-        <span>@Html.Raw($"List of company '{Model.Name}' users.")</span>
+    @if (User.IsInRole(AppController.RoleAdmin) || User.IsInRole(AppController.RoleSuperAdmin))
+    {
+        <div class="mb-3 d-flex flex-row justify-content-between align-items-center">
+            <span>List of company '@Model.Name' users.</span>
 
-        <a href="#" class="btn btn-primary" data-toggle="collapse" data-target="#add-form">
-            <span class="fa fa-plus"></span>
-            Add user to company
-        </a>
-    </div>
-
-    <form asp-controller="Setting" asp-action="CompanyUserAdd" method="post" class="form-horizontal mb-3 collapse" role="form" id="add-form">
-
-        <div class="col-md-7 mx-auto">
-            <input name="CompanyId" type="hidden" value="@Model.Id" class="form-control" />
-
-            <div class="form-group">
-                <input name="Username" class="form-control" placeholder="Username" />
-            </div>
-
-            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add user</button>
+            <a href="#" class="btn btn-primary" data-toggle="collapse" data-target="#add-form">
+                <span class="fa fa-plus"></span>
+                Add user to company
+            </a>
         </div>
 
-    </form>
+        <form asp-controller="Setting" asp-action="CompanyUserAdd" method="post" class="form-horizontal mb-3 collapse" role="form" id="add-form">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Username</th>
-                <th scope="col">Identity</th>
-                <th scope="col">Admin</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Users != null && Model.Users.Count > 0)
-            {
-                @foreach (var item in Model.Users)
+            <div class="col-md-7 mx-auto">
+                <input name="CompanyId" type="hidden" value="@Model.Id" class="form-control" />
+
+                <div class="form-group">
+                    <input name="Username" class="form-control" placeholder="Username" />
+                </div>
+
+                <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add user</button>
+            </div>
+
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Identity</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Users != null && Model.Users.Count > 0)
+                {
+                    @foreach (var item in Model.Users)
+                    {
+                        <tr>
+                            <th scope="row">@item.UserId</th>
+                            <td>
+                                <a href="/User/Detail/@item.UserId" title="Display user's detail">@item.Username</a>
+                            </td>
+                            <td>@item.UserInfo</td>
+                            <td>
+                                <partial name="Partials/_Icon" model="@item.Admin ? admin : nonAdmin" />
+                            </td>
+                            <td scope="col">
+                                @if (userId != item.UserId)
+                                {
+                                    @if (item.Admin)
+                                    {
+                                        <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                    }
+
+                                    <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="javascript: deleteUser('../Setting/CompanyUser/Delete/@item.UserId')"></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <th scope="row">@item.UserId</th>
-                        <td>@item.Username</td>
-                        <td>@item.UserInfo</td>
-                        <td>
-                            <partial name="Partials/_Icon" model="@item.Admin ? admin : nonAdmin" />
-                        </td>
-                        <td scope="col">
-                            @if (item.Admin)
-                            {
-                                <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
-                            }
-                            else
-                            {
-                                <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
-                            }
-
-                            <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="javascript: deleteUser('../Setting/CompanyUser/Delete/@item.UserId')"></span>
-                        </td>
+                        <th scope="row" colspan="5" class="text-center">There are no company users!</th>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <th scope="row" colspan="5" class="text-center">There is no company users!</th>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <span>You don't have sufficient user rights to edit your company. If you want to edit company setting, ask company admin to grant proper user rights.</span>
+    }
 }
 else
 {
+    <div class="mb-3 d-flex flex-row justify-content-between align-items-center">
+        <span>You don't have any created company yet, so lets create one or ask your company admin to adding.</span>
+    </div>
+
+    <hr />
+
     <form asp-controller="Setting" asp-action="CompanyAdd" method="post" class="form-horizontal" role="form">
 
         <div class="col-md-7 mx-auto">
             <div class="form-group">
-                <input name="Name" class="form-control" placeholder="Name" />
+                <input name="Name" class="form-control" placeholder="Company name" />
             </div>
 
-            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add company</button>
+            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Create company</button>
         </div>
 
     </form>

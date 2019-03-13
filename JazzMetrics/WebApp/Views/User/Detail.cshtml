@@ -1,0 +1,37 @@
+﻿@model UserViewModel
+
+@{
+    int userId = User.UserId();
+    ViewData["Title"] = $"User #{Model.Id} detail";
+    var admin = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "User is admin within company" };
+    var nonAdmin = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "User has regular rights within company" };
+}
+
+<partial name="Partials/_ErrorTable" />
+
+@if (Model.CanView)
+{
+    <div class="mb-3 d-flex flex-row justify-content-between align-items-center">
+        @if (userId == Model.Id)
+        {
+            <span>You are logged in as this user.</span>
+
+            <a href="/User/Edit/@Model.Id" class="btn btn-primary">
+                <span class="fa fa-edit"></span>
+                Edit my user
+            </a>
+        }
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="jumbotron col-12">
+                <h1 class="display-3">@Model.Firstname @Model.Lastname</h1>
+                <p class="lead">Email: @Model.Email</p>
+                <hr class="my-4" />
+                <p class="lead">Username: @Model.Username</p>
+                <p class="lead">Admin: <partial name="Partials/_Icon" model="@Model.Admin ? admin : nonAdmin" /></p>
+            </div>
+        </div>
+    </div>
+}

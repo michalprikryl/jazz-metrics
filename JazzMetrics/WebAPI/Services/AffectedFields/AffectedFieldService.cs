@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Database;
+﻿using Database;
 using Database.DAO;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AffectedFields;
 using WebAPI.Services.Helpers;
@@ -99,11 +99,19 @@ namespace WebAPI.Services.AffectedFields
             AffectedField affectedField = await Load(id, response);
             if (affectedField != null)
             {
-                Database.AffectedField.Remove(affectedField);
+                if (affectedField.Metric.Count == 0)
+                {
+                    Database.AffectedField.Remove(affectedField);
 
-                await Database.SaveChangesAsync();
+                    await Database.SaveChangesAsync();
 
-                response.Message = "Affected field was successfully deleted!";
+                    response.Message = "Affected field was successfully deleted!";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Cannot delete affected field, because some metrics use this field!";
+                }
             }
 
             return response;

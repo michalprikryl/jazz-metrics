@@ -18,7 +18,12 @@
 
         public bool Validate
         {
-            get => !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password) && !string.IsNullOrEmpty(Firstname) && !string.IsNullOrEmpty(Lastname) && (!UseLdaplogin || !string.IsNullOrEmpty(LdapUrl));
+            get => !string.IsNullOrEmpty(Password) && ValidateEdit;
+        }
+
+        public bool ValidateEdit
+        {
+            get => !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Firstname) && !string.IsNullOrEmpty(Lastname) && (!UseLdaplogin || !string.IsNullOrEmpty(LdapUrl));
         }
     }
 }

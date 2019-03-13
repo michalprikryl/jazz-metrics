@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,8 +22,6 @@ namespace WebAPI.Services.Users
 {
     public class UserService : BaseDatabase, IUserService
     {
-        public static string CompanyClaim => "Company";
-
         private readonly IConfiguration _config;
         private readonly IErrorService _errorService;
         private readonly ISettingService _settingService;
@@ -118,27 +115,23 @@ namespace WebAPI.Services.Users
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.ValidateEdit)
             {
-                if (ValidateEmail(request.Email, response))
+                if (ValidateEmail(request.Email, response) && await CheckLanguage(request.LanguageId, response))
                 {
-                    request.Username = request.Username ?? request.Email;
-                    if (await CheckUsername(request.Username, response) && await CheckLanguage(request.LanguageId, response))
+                    User user = await Load(request.Id, response);
+                    if (user != null)
                     {
-                        User user = await Load(request.Id, response);
-                        if (user != null)
-                        {
-                            user.FirstName = request.Firstname;
-                            user.LastName = request.Lastname;
-                            user.Email = request.Email;
-                            user.UseLdaplogin = request.UseLdaplogin;
-                            user.LdapUrl = request.LdapUrl;
-                            user.LanguageId = request.LanguageId;
+                        user.FirstName = request.Firstname;
+                        user.LastName = request.Lastname;
+                        user.Email = request.Email;
+                        user.UseLdaplogin = request.UseLdaplogin;
+                        user.LdapUrl = request.UseLdaplogin ? request.LdapUrl : null;
+                        user.LanguageId = request.LanguageId;
 
-                            await Database.SaveChangesAsync();
+                        await Database.SaveChangesAsync();
 
-                            response.Message = "User was successfully edited!";
-                        }
+                        response.Message = "User was successfully edited!";
                     }
                 }
             }
@@ -198,6 +191,33 @@ namespace WebAPI.Services.Users
                     else if (string.Compare(item.PropertyName, "userRoleId", true) == 0)
                     {
                         user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == "user") || user.UserRole.Name == "admin" ? await GetUserRole("user") : await GetUserRole("admin");
+                    }
+                    else if (string.Compare(item.PropertyName, "password", true) == 0)
+                    {
+                        string[] passwords = item.Value.Split(";;;");
+                        if (passwords.Length == 2)
+                        {
+                            if (ComparePasswords(user, passwords[0]))
+                            {
+                                if (ValidatePassword(passwords[1], response))
+                                {
+                                    user.Password = PasswordHelper.EncodePassword(passwords[1], user.Salt);
+                                }
+                                else
+                                {
+                                    save = false;
+
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                save = response.Success = false;
+                                response.Message = "User's old password doesn't match!";
+
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -301,7 +321,7 @@ namespace WebAPI.Services.Users
             return result;
         }
 
-        public async Task<string> BuildToken(string username, int? companyId)
+        public async Task<string> BuildToken(string username)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -317,8 +337,7 @@ namespace WebAPI.Services.Users
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Email, username),
-                new Claim(CompanyClaim, companyId.ToString())
+                new Claim(JwtRegisteredClaimNames.UniqueName, username),
             };
 
             var token = new JwtSecurityToken(issuer, issuer, claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
@@ -379,9 +398,10 @@ namespace WebAPI.Services.Users
         private async Task CreateUserSession(User user, LoginResponseModel result)
         {
             result.Success = true;
-            result.Token = await BuildToken(user.Username, user.CompanyId);
+            result.Token = await BuildToken(user.Username);
             result.User = new UserCookieModel
             {
+                Username = user.Username,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 Lastname = user.LastName,

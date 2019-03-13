@@ -32,7 +32,7 @@ namespace WebApp.Services.Test
                 {
                     TestModel resultAPI = JsonConvert.DeserializeObject<TestModel>(await httpResult.Content.ReadAsStringAsync());
                     result.ConnectionDB = resultAPI.ConnectionDB;
-                    result.MessageDB = resultAPI.MessageDB ?? "Connection is correct.";
+                    result.MessageDB = resultAPI.MessageDB ?? "Connection attempt was successful.";
                     result.ConnectionApi = true;
                 }
                 else

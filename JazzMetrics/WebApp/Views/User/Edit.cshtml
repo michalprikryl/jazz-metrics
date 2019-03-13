@@ -1,0 +1,89 @@
+﻿@model UserWorkModel
+@{
+    ViewData["Title"] = $"User #{Model.Id} edit";
+    var headerModel = new ListHeaderViewModel { Path = $"/User/Detail/{Model.Id}", Button = "Back to user detail", CssClass = "fa-arrow-left" };
+}
+
+<partial name="Partials/_ErrorTable" />
+
+@if (Model.CanView)
+{
+    <partial name="Partials/_ListHead" model="@headerModel" />
+
+    <form asp-controller="user" asp-action="edit" method="post" class="form-horizontal" role="form">
+
+        <div class="col-md-10 mx-auto">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Firstname" class="control-label"></label>
+                    <input asp-for="Firstname" class="form-control" placeholder="Firstname" />
+                    <span asp-validation-for="Firstname" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Lastname" class="control-label"></label>
+                    <input asp-for="Lastname" class="form-control" placeholder="Lastname" />
+                    <span asp-validation-for="Lastname" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-check col-md-6">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="LanguageId" class="control-label"></label>
+                    <select asp-for="LanguageId" asp-items="Model.Languages" class="form-control"></select>
+                    <span asp-validation-for="LanguageId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row align-items-center">
+                <div class="form-group col-md-6">
+                    <input asp-for="UseLdaplogin" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#ldap-div" />
+                    <label asp-for="UseLdaplogin" class="form-check-label"></label>
+                </div>
+            </div>
+
+            <div class="form-row @Html.IsCollapsed(Model.LdapUrl)" id="ldap-div">
+                <div class="form-group col-md-12">
+                    <input asp-for="LdapUrl" class="form-control" placeholder="Paste LDAP URL" />
+                    <span asp-validation-for="LdapUrl" class="text-danger"></span>
+                </div>
+            </div>
+
+            <hr />
+
+            <p class="pointer font-weight-bold" title="click to change password" data-toggle="collapse" data-target="#password">Change password</p>
+
+            <div id="password" class="collapse">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="OldPassword" class="control-label"></label>
+                        <input asp-for="OldPassword" class="form-control" placeholder="Old password" />
+                        <span asp-validation-for="OldPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" class="form-control" placeholder="New password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="ConfirmPassword" class="control-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm new password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <hr />
+
+            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Save</button>
+        </div>
+
+    </form>
+}

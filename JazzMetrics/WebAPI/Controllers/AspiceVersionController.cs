@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WebAPI.Models;
 using WebAPI.Models.AspiceVersions;
 using WebAPI.Services.AspiceVersions;
@@ -28,13 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponseModelPost>> Post(AspiceVersionModel model)
+        public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]AspiceVersionModel model)
         {
             return await _aspiceVersionService.Create(model);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<BaseResponseModel>> Put(int id, AspiceVersionModel model)
+        public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]AspiceVersionModel model)
         {
             return await _aspiceVersionService.Edit(model);
         }
