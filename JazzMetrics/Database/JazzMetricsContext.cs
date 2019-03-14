@@ -22,9 +22,9 @@ namespace Database
         public virtual DbSet<ProjectMetric> ProjectMetric { get; set; }
         public virtual DbSet<ProjectMetricColumnValue> ProjectMetricColumnValue { get; set; }
         public virtual DbSet<ProjectMetricSnapshot> ProjectMetricSnapshot { get; set; }
+        public virtual DbSet<ProjectUser> ProjectUser { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
         public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<UserProject> UserProject { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseLazyLoadingProxies();
@@ -311,6 +311,29 @@ namespace Database
                     .HasConstraintName("FK_PROJECTMETRICVALUES_PROJECTMETRIC");
             });
 
+            modelBuilder.Entity<ProjectUser>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.JoinDate).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.ProjectUser)
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PROJECTUSER_PROJECT");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ProjectUser)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PROJECTUSER_USER");
+            });
+
             modelBuilder.Entity<Setting>(entity =>
             {
                 entity.HasIndex(e => new { e.SettingScope, e.SettingName })
@@ -386,30 +409,6 @@ namespace Database
                     .HasForeignKey(d => d.UserRoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USER_ROLE");
-            });
-
-            modelBuilder.Entity<UserProject>(entity =>
-            {
-                entity.HasKey(e => new { e.UserId, e.ProjectId })
-                    .HasName("PK__UserProj__00E9674138FCADC8");
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
-
-                entity.Property(e => e.JoinDate).HasColumnType("datetime2(3)");
-
-                entity.HasOne(d => d.Project)
-                    .WithMany(p => p.UserProject)
-                    .HasForeignKey(d => d.ProjectId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_USERPROJECT_PROJECT");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserProject)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_USERPROJECT_USER");
             });
 
             modelBuilder.Entity<UserRole>(entity =>

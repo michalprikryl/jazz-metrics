@@ -15,7 +15,7 @@
     </div>
 </div>
 
-@if (User.IsInRole(AppController.RoleSuperAdmin) || User.IsInRole(AppController.RoleAdmin))
+@if (User.IsAdmin())
 {
     <div class="row mb-4">
         <div class="col-sm-12">

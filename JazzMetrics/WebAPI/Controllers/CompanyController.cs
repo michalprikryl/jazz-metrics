@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Library.Models;
+using Library.Models.Company;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Company;
 using WebAPI.Services.Companies;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 
 namespace WebAPI.Controllers
 {
@@ -14,16 +14,16 @@ namespace WebAPI.Controllers
     {
         private readonly ICompanyService _companyService;
 
-        public CompanyController(IErrorService errorService, ICompanyService companyService) : base(errorService) => _companyService = companyService;
+        public CompanyController(IHelperService helperService, ICompanyService companyService) : base(helperService) => _companyService = companyService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CompanyModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<CompanyModel>>> Get(int id, bool lazy = true)
         {
             return await _companyService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<CompanyModel>>> Get(bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGetAll<CompanyModel>>> Get(bool lazy = true)
         {
             return await _companyService.GetAll(lazy);
         }
@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}"), AllowAnonymous]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _companyService.DropAsync(id);
+            return await _companyService.Drop(id);
         }
     }
 }

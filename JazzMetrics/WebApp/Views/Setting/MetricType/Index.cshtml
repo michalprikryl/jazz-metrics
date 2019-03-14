@@ -34,7 +34,7 @@
                         <a href="/Setting/MetricType/Edit/@item.Id">
                             <partial name="Partials/_Icon" model="@editModel" />
                         </a>
-                        @{ string endpoint = $"../Setting/MetricType/Delete/{item.Id}"; }
+                        @{ string endpoint = $"/Setting/MetricType/Delete/{item.Id}"; }
                         <span class="fas fa-trash-alt pointer" title="Delete metric type" onclick="javascript: deleteItem('@endpoint')"></span>
                     </td>
                 </tr>

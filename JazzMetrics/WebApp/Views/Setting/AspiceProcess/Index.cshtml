@@ -38,7 +38,7 @@
                         <a href="/Setting/AspiceProcess/Edit/@item.Id">
                             <partial name="Partials/_Icon" model="@editModel" />
                         </a>
-                        @{ string endpoint = $"../Setting/AspiceProcess/Delete/{item.Id}"; }
+                        @{ string endpoint = $"/Setting/AspiceProcess/Delete/{item.Id}"; }
                         <span class="fas fa-trash-alt pointer" title="Delete Automotive SPICE process" onclick="javascript: deleteItem('@endpoint')"></span>
                     </td>
                 </tr>

@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Library.Models.AffectedFields;
+using Library.Models.AspiceProcesses;
+using Library.Models.AspiceVersions;
+using Library.Models.Metric;
+using Library.Models.MetricType;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApp.Models.Setting.AffectedField;
-using WebApp.Models.Setting.AspiceProcess;
-using WebApp.Models.Setting.AspiceVersion;
-using WebApp.Models.Setting.Metric;
-using WebApp.Models.Setting.MetricType;
 using WebApp.Services.Crud;
 
 namespace WebApp.Services.Setting

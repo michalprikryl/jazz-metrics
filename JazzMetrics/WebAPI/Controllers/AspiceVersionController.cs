@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library.Models;
+using Library.Models.AspiceVersions;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.AspiceVersions;
 using WebAPI.Services.AspiceVersions;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 
 namespace WebAPI.Controllers
 {
@@ -13,16 +13,16 @@ namespace WebAPI.Controllers
     {
         private readonly IAspiceVersionService _aspiceVersionService;
 
-        public AspiceVersionController(IErrorService errorService, IAspiceVersionService aspiceVersionService) : base(errorService) => _aspiceVersionService = aspiceVersionService;
+        public AspiceVersionController(IHelperService helperService, IAspiceVersionService aspiceVersionService) : base(helperService) => _aspiceVersionService = aspiceVersionService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AspiceVersionModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<AspiceVersionModel>>> Get(int id, bool lazy = true)
         {
             return await _aspiceVersionService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<AspiceVersionModel>>> Get(bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGetAll<AspiceVersionModel>>> Get(bool lazy = true)
         {
             return await _aspiceVersionService.GetAll(lazy);
         }
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _aspiceVersionService.DropAsync(id);
+            return await _aspiceVersionService.Drop(id);
         }
     }
 }

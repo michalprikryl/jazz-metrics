@@ -1,18 +1,21 @@
-﻿using System;
+﻿using Database;
+using Database.DAO;
+using Library.Models;
+using Library.Models.ProjectMetrics;
+using Library.Models.Projects;
+using Library.Models.ProjectUsers;
+using Library.Networking;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Database;
-using Database.DAO;
-using Library.Networking;
-using Microsoft.EntityFrameworkCore;
 using WebAPI.Controllers;
-using WebAPI.Models;
-using WebAPI.Models.ProjectMetrics;
-using WebAPI.Models.Projects;
-using WebAPI.Models.Users;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.ProjectMetrics;
+using WebAPI.Services.ProjectUsers;
 using WebAPI.Services.Users;
 
 namespace WebAPI.Services.Projects
@@ -20,14 +23,18 @@ namespace WebAPI.Services.Projects
     public class ProjectService : BaseDatabase, IProjectService
     {
         private readonly IUserService _userService;
+        private readonly IProjectUserService _projectUserService;
         private readonly IProjectMetricService _projectMetricService;
 
-        public int CurrentUserId { get; set; }
+        public CurrentUser CurrentUser { get; set; }
 
-        public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService) : base(db)
+        public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService, IProjectUserService projectUserService, 
+            IHelperService helperService, IHttpContextAccessor contextAccessor) : base(db)
         {
             _userService = userService;
+            _projectUserService = projectUserService;
             _projectMetricService = projectMetricService;
+            CurrentUser = helperService.GetCurrentUser(contextAccessor.HttpContext.User.GetId());
         }
 
         public ProjectModel ConvertToModel(Project dbModel)
@@ -45,7 +52,7 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 Project project = new Project
                 {
@@ -56,14 +63,14 @@ namespace WebAPI.Services.Projects
 
                 await Database.Project.AddAsync(project);
 
-                UserProject userProject = new UserProject
+                ProjectUser userProject = new ProjectUser
                 {
                     JoinDate = DateTime.Now,
                     Project = project,
-                    UserId = CurrentUserId
+                    UserId = CurrentUser.Id
                 };
 
-                await Database.UserProject.AddAsync(userProject);
+                await Database.ProjectUser.AddAsync(userProject);
 
                 await Database.SaveChangesAsync();
 
@@ -79,7 +86,7 @@ namespace WebAPI.Services.Projects
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 
@@ -88,7 +95,7 @@ namespace WebAPI.Services.Projects
             {
                 if (project.ProjectMetric.Count == 0)
                 {
-                    Database.UserProject.RemoveRange(project.UserProject);
+                    Database.ProjectUser.RemoveRange(project.ProjectUser);
 
                     Database.Project.Remove(project);
 
@@ -110,7 +117,7 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 Project project = await Load(request.Id, response);
                 if (project != null)
@@ -132,34 +139,28 @@ namespace WebAPI.Services.Projects
             return response;
         }
 
-        public async Task<ProjectModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<ProjectModel>> Get(int id, bool lazy)
         {
-            ProjectModel response = new ProjectModel();
-            BaseResponseModel result = new BaseResponseModel();
+            var response = new BaseResponseModelGet<ProjectModel>();
 
-            Project project = await Load(id, result);
+            Project project = await Load(id, response);
             if (project != null)
             {
-                response = ConvertToModel(project);
+                response.Value = ConvertToModel(project);
 
                 if (!lazy)
                 {
-                    response.ProjectUsers = GetProjectUsers(project.UserProject);
-                    response.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
+                    response.Value.ProjectUsers = GetProjectUsers(project.ProjectUser);
+                    response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
                 }
-            }
-            else
-            {
-                response.Success = result.Success;
-                response.Message = result.Message;
             }
 
             return response;
         }
 
-        public async Task<BaseResponseModelGet<ProjectModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<ProjectModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGet<ProjectModel> { Values = new List<ProjectModel>() };
+            var response = new BaseResponseModelGetAll<ProjectModel> { Values = new List<ProjectModel>() };
 
             foreach (var item in await LoadUsersProjects())
             {
@@ -167,7 +168,7 @@ namespace WebAPI.Services.Projects
 
                 if (!lazy)
                 {
-                    project.ProjectUsers = GetProjectUsers(item.UserProject);
+                    project.ProjectUsers = GetProjectUsers(item.ProjectUser);
                     project.ProjectMetrics = GetProjectMetrics(item.ProjectMetric);
                 }
 
@@ -187,9 +188,9 @@ namespace WebAPI.Services.Projects
             }
             else
             {
-                User user = await Database.User.FirstAsync(u => u.Id == CurrentUserId);
-                if ((user.UserRole.Name == MainController.RoleUser && project.UserProject.All(p => p.UserId != CurrentUserId)) ||
-                    (user.UserRole.Name != MainController.RoleUser && project.UserProject.All(u => u.User.CompanyId != user.CompanyId)))
+                User user = await Database.User.FirstAsync(u => u.Id == CurrentUser.Id);
+                if ((user.UserRole.Name == MainController.RoleUser && project.ProjectUser.All(p => p.UserId != CurrentUser.Id)) ||
+                    (user.UserRole.Name != MainController.RoleUser && project.ProjectUser.All(u => u.User.CompanyId != user.CompanyId)))
                 {
                     project = null;
                     response.Success = false;
@@ -202,14 +203,14 @@ namespace WebAPI.Services.Projects
 
         public async Task<IEnumerable<Project>> LoadUsersProjects()
         {
-            User user = await Database.User.FirstAsync(u => u.Id == CurrentUserId);
+            User user = await Database.User.FirstAsync(u => u.Id == CurrentUser.Id);
             if (user.UserRole.Name == MainController.RoleUser)
             {
-                return user.UserProject.Select(u => u.Project);
+                return user.ProjectUser.Select(u => u.Project);
             }
             else
             {
-                return (await Database.Project.ToListAsync()).Where(p => p.UserProject.Any(u => u.User.CompanyId == user.CompanyId));
+                return (await Database.Project.ToListAsync()).Where(p => p.ProjectUser.Any(u => u.User.CompanyId == user.CompanyId));
             }
         }
 
@@ -218,7 +219,12 @@ namespace WebAPI.Services.Projects
             throw new NotImplementedException();
         }
 
-        private List<UserModel> GetProjectUsers(ICollection<UserProject> users) => users.Select(u => _userService.ConvertToModel(u.User)).ToList();
+        private List<ProjectUserModel> GetProjectUsers(ICollection<ProjectUser> users) => users.Select(u =>
+        {
+            ProjectUserModel projectUser = _projectUserService.ConvertToModel(u);
+            projectUser.User = _userService.ConvertToModel(u.User);
+            return projectUser;
+        }).ToList();
 
         private List<ProjectMetricModel> GetProjectMetrics(ICollection<ProjectMetric> metrics) => metrics.Select(m => _projectMetricService.ConvertToModel(m)).ToList();
     }

@@ -1,12 +1,12 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.AspiceProcesses;
+using Library.Models.AspiceVersions;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.AspiceProcesses;
-using WebAPI.Models.AspiceVersions;
 using WebAPI.Services.AspiceVersions;
 using WebAPI.Services.Helpers;
 
@@ -18,9 +18,9 @@ namespace WebAPI.Services.AspiceProcesses
 
         public AspiceProcessService(JazzMetricsContext db, IAspiceVersionService aspiceVersionService) : base(db) => _aspiceVersionService = aspiceVersionService;
 
-        public async Task<BaseResponseModelGet<AspiceProcessModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<AspiceProcessModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGet<AspiceProcessModel> { Values = new List<AspiceProcessModel>() };
+            var response = new BaseResponseModelGetAll<AspiceProcessModel> { Values = new List<AspiceProcessModel>() };
 
             foreach (var item in await Database.AspiceProcess.ToListAsync())
             {
@@ -37,22 +37,18 @@ namespace WebAPI.Services.AspiceProcesses
             return response;
         }
 
-        public async Task<AspiceProcessModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<AspiceProcessModel>> Get(int id, bool lazy)
         {
-            AspiceProcessModel response = new AspiceProcessModel();
+            var response = new BaseResponseModelGet<AspiceProcessModel>();
 
             AspiceProcess aspiceProcess = await Load(id, response);
             if (aspiceProcess != null)
             {
-                response.Id = aspiceProcess.Id;
-                response.Name = aspiceProcess.Name;
-                response.Shortcut = aspiceProcess.Shortcut;
-                response.Description = aspiceProcess.Description;
-                response.AspiceVersionId = aspiceProcess.AspiceVersionId;
+                response.Value = ConvertToModel(aspiceProcess);
 
                 if (!lazy)
                 {
-                    response.AspiceVersion = GetAspiceVersion(aspiceProcess.AspiceVersion);
+                    response.Value.AspiceVersion = GetAspiceVersion(aspiceProcess.AspiceVersion);
                 }
             }
 
@@ -63,7 +59,7 @@ namespace WebAPI.Services.AspiceProcesses
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 if (await CheckAspiceVersion(request.AspiceVersionId, response))
                 {
@@ -96,7 +92,7 @@ namespace WebAPI.Services.AspiceProcesses
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 if (await CheckAspiceVersion(request.AspiceVersionId, response))
                 {
@@ -123,7 +119,7 @@ namespace WebAPI.Services.AspiceProcesses
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

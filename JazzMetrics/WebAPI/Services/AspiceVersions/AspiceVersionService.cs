@@ -1,12 +1,12 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.AspiceVersions;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.AspiceVersions;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AspiceVersions
@@ -15,25 +15,22 @@ namespace WebAPI.Services.AspiceVersions
     {
         public AspiceVersionService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<AspiceVersionModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<AspiceVersionModel>> GetAll(bool lazy)
         {
-            return new BaseResponseModelGet<AspiceVersionModel>
+            return new BaseResponseModelGetAll<AspiceVersionModel>
             {
                 Values = (await Database.AspiceVersion.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
-        public async Task<AspiceVersionModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<AspiceVersionModel>> Get(int id, bool lazy)
         {
-            AspiceVersionModel response = new AspiceVersionModel();
+            var response = new BaseResponseModelGet<AspiceVersionModel>();
 
             AspiceVersion aspiceVersion = await Load(id, response);
             if (aspiceVersion != null)
             {
-                response.Id = aspiceVersion.Id;
-                response.ReleaseDate = aspiceVersion.ReleaseDate;
-                response.Description = aspiceVersion.Description;
-                response.VersionNumber = aspiceVersion.VersionNumber;
+                response.Value = ConvertToModel(aspiceVersion);
             }
 
             return response;
@@ -43,7 +40,7 @@ namespace WebAPI.Services.AspiceVersions
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 AspiceVersion aspiceVersion = new AspiceVersion
                 {
@@ -72,7 +69,7 @@ namespace WebAPI.Services.AspiceVersions
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 AspiceVersion aspiceVersion = await Load(request.Id, response);
                 if (aspiceVersion != null)
@@ -95,7 +92,7 @@ namespace WebAPI.Services.AspiceVersions
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

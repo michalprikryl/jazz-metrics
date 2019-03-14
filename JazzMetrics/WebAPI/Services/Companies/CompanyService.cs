@@ -1,13 +1,13 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.Company;
+using Library.Models.Users;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Company;
-using WebAPI.Models.Users;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.Users;
 
@@ -19,9 +19,9 @@ namespace WebAPI.Services.Companies
 
         public CompanyService(JazzMetricsContext db, IUserService userService) : base(db) => _userService = userService;
 
-        public async Task<BaseResponseModelGet<CompanyModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<CompanyModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGet<CompanyModel> { Values = new List<CompanyModel>() };
+            var response = new BaseResponseModelGetAll<CompanyModel> { Values = new List<CompanyModel>() };
 
             foreach (var item in await Database.Company.ToListAsync())
             {
@@ -38,18 +38,18 @@ namespace WebAPI.Services.Companies
             return response;
         }
 
-        public async Task<CompanyModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<CompanyModel>> Get(int id, bool lazy)
         {
-            CompanyModel response = new CompanyModel();
+            var response = new BaseResponseModelGet<CompanyModel>();
 
             Company company = await Load(id, response);
             if (company != null)
             {
-                response = ConvertToModel(company);
+                response.Value = ConvertToModel(company);
 
                 if (!lazy)
                 {
-                    response.Users = GetUsers(company.User);
+                    response.Value.Users = GetUsers(company.User);
                 }
             }
 
@@ -60,7 +60,7 @@ namespace WebAPI.Services.Companies
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 Company company = new Company
                 {
@@ -87,7 +87,7 @@ namespace WebAPI.Services.Companies
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 Company company = await Load(request.Id, response);
                 if (company != null)
@@ -108,7 +108,7 @@ namespace WebAPI.Services.Companies
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

@@ -1,5 +1,5 @@
 ﻿using Database.DAO;
-using WebAPI.Models.MetricType;
+using Library.Models.MetricType;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.MetricTypes

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Library.Models;
+using Library.Models.Error;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Error;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 
 namespace WebAPI.Controllers
 {
@@ -11,12 +11,12 @@ namespace WebAPI.Controllers
     [Route("api/error")]
     public class ErrorController : MainController
     {
-        public ErrorController(IErrorService errorService) : base(errorService) { }
+        public ErrorController(IHelperService helperService) : base(helperService) { }
 
         [HttpPost, AllowAnonymous]
         public async Task<ActionResult<BaseResponseModel>> Post([FromBody]ErrorModel value)
         {
-            return await ErrorService.SaveErrorToDB(value);
+            return await HelperService.SaveErrorToDB(value);
         }
     }
 }

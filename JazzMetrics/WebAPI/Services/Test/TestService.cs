@@ -1,9 +1,9 @@
 ﻿using Database;
+using Library.Models.Test;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using System;
-using WebAPI.Models.Test;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Test

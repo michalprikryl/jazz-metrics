@@ -2,8 +2,9 @@
 
 @{
     ViewData["Title"] = "Metrics";
-    var headerModel = new ListHeaderViewModel { Message = "List of Metrics.", Path = "/Setting/Metric/Add", Button = "Create new", CssClass = "fa-plus" };
     var editModel = new ResultViewModel { Color = "black", CssClass = "fa-edit", Message = "Edit Metric" };
+    var publicModel = new ResultViewModel { Color = "black", CssClass = "fa-users", Message = "Metric is public!" };
+    var headerModel = new ListHeaderViewModel { Message = "List of Metrics.", Path = "/Setting/Metric/Add", Button = "Create new", CssClass = "fa-plus" };
 }
 
 <partial name="Partials/_ErrorTable" />
@@ -40,8 +41,12 @@
                         <a href="/Setting/Metric/Edit/@item.Id">
                             <partial name="Partials/_Icon" model="@editModel" />
                         </a>
-                        @{ string endpoint = $"../Setting/Metric/Delete/{item.Id}"; }
+                        @{ string endpoint = $"/Setting/Metric/Delete/{item.Id}"; }
                         <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="javascript: deleteItem('@endpoint')"></span>
+                        @if (item.Public)
+                        {
+                            <partial name="Partials/_Icon" model="@publicModel" />
+                        }
                     </td>
                 </tr>
             }

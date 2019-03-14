@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Library.Models.User;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using WebApp.Controllers;
-using WebApp.Models.User;
 
 namespace WebApp
 {
@@ -79,11 +79,11 @@ namespace WebApp
             return date.ToString("yyyy-MM-dd");
         }
 
-        public static UserCookiesModel GetIdentity(this ClaimsPrincipal user)
+        public static UserCookieModel GetIdentity(this ClaimsPrincipal user)
         {
             if (user.Identity.IsAuthenticated)
             {
-                return new UserCookiesModel
+                return new UserCookieModel
                 {
                     Username = user.FindFirstValue(ClaimTypes.GivenName),
                     Email = user.FindFirstValue(ClaimTypes.Email),
@@ -98,6 +98,11 @@ namespace WebApp
             {
                 return null;
             }
+        }
+
+        public static bool IsAdmin(this ClaimsPrincipal user)
+        {
+            return user.IsInRole(AppController.RoleAdmin) || user.IsInRole(AppController.RoleSuperAdmin);
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.AffectedFields;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.AffectedFields;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AffectedFields
@@ -15,24 +15,22 @@ namespace WebAPI.Services.AffectedFields
     {
         public AffectedFieldService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<AffectedFieldModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<AffectedFieldModel>> GetAll(bool lazy)
         {
-            return new BaseResponseModelGet<AffectedFieldModel>
+            return new BaseResponseModelGetAll<AffectedFieldModel>
             {
                 Values = (await Database.AffectedField.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
-        public async Task<AffectedFieldModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<AffectedFieldModel>> Get(int id, bool lazy)
         {
-            AffectedFieldModel response = new AffectedFieldModel();
+            var response = new BaseResponseModelGet<AffectedFieldModel>();
 
             AffectedField affectedField = await Load(id, response);
             if (affectedField != null)
             {
-                response.Id = affectedField.Id;
-                response.Name = affectedField.Name;
-                response.Description = affectedField.Description;
+                response.Value = ConvertToModel(affectedField);
             }
 
             return response;
@@ -42,7 +40,7 @@ namespace WebAPI.Services.AffectedFields
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 AffectedField affectedField = new AffectedField
                 {
@@ -70,7 +68,7 @@ namespace WebAPI.Services.AffectedFields
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 AffectedField affectedField = await Load(request.Id, response);
                 if (affectedField != null)
@@ -92,7 +90,7 @@ namespace WebAPI.Services.AffectedFields
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

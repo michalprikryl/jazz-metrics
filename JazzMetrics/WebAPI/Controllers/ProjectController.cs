@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Library.Models;
+using Library.Models.Projects;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Projects;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Projects;
 
 namespace WebAPI.Controllers
@@ -14,20 +13,19 @@ namespace WebAPI.Controllers
     {
         private readonly IProjectService _projectService;
 
-        public ProjectController(IErrorService errorService, IProjectService projectService, IHttpContextAccessor contextAccessor) : base(errorService)
+        public ProjectController(IHelperService helperService, IProjectService projectService) : base(helperService)
         {
             _projectService = projectService;
-            _projectService.CurrentUserId = contextAccessor.HttpContext.User.GetId();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<ProjectModel>>> Get(int id, bool lazy = true)
         {
             return await _projectService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<ProjectModel>>> Get(bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGetAll<ProjectModel>>> Get(bool lazy = true)
         {
             return await _projectService.GetAll(lazy);
         }
@@ -47,7 +45,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _projectService.DropAsync(id);
+            return await _projectService.Drop(id);
         }
     }
 }

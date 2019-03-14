@@ -1,12 +1,12 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.MetricType;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.MetricType;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.MetricTypes
@@ -15,24 +15,22 @@ namespace WebAPI.Services.MetricTypes
     {
         public MetricTypeService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<MetricTypeModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<MetricTypeModel>> GetAll(bool lazy)
         {
-            return new BaseResponseModelGet<MetricTypeModel>
+            return new BaseResponseModelGetAll<MetricTypeModel>
             {
                 Values = (await Database.MetricType.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
             };
         }
 
-        public async Task<MetricTypeModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<MetricTypeModel>> Get(int id, bool lazy)
         {
-            MetricTypeModel response = new MetricTypeModel();
+            var response = new BaseResponseModelGet<MetricTypeModel>();
 
             MetricType metricType = await Load(id, response);
             if (metricType != null)
             {
-                response.Id = metricType.Id;
-                response.Name = metricType.Name;
-                response.Description = metricType.Description;
+                response.Value = ConvertToModel(metricType);
             }
 
             return response;
@@ -42,7 +40,7 @@ namespace WebAPI.Services.MetricTypes
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 MetricType metricType = new MetricType
                 {
@@ -70,7 +68,7 @@ namespace WebAPI.Services.MetricTypes
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 MetricType metricType = await Load(request.Id, response);
                 if (metricType != null)
@@ -92,7 +90,7 @@ namespace WebAPI.Services.MetricTypes
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 

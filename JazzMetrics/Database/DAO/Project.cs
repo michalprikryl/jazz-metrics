@@ -8,7 +8,7 @@ namespace Database.DAO
         public Project()
         {
             ProjectMetric = new HashSet<ProjectMetric>();
-            UserProject = new HashSet<UserProject>();
+            ProjectUser = new HashSet<ProjectUser>();
         }
 
         public int Id { get; set; }
@@ -17,6 +17,6 @@ namespace Database.DAO
         public DateTime CreateDate { get; set; }
 
         public virtual ICollection<ProjectMetric> ProjectMetric { get; set; }
-        public virtual ICollection<UserProject> UserProject { get; set; }
+        public virtual ICollection<ProjectUser> ProjectUser { get; set; }
     }
 }

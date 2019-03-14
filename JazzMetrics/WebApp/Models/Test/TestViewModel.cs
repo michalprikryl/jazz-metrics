@@ -1,4 +1,5 @@
-﻿using WebApp.Models.Partials;
+﻿using Library.Models.Test;
+using WebApp.Models.Partials;
 
 namespace WebApp.Models.Test
 {

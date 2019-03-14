@@ -1,4 +1,5 @@
-﻿using Library.Networking;
+﻿using Library.Models.User;
+using Library.Networking;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Models;
-using WebApp.Models.User;
 using WebApp.Services.Error;
 
 namespace WebApp.Controllers
@@ -33,7 +33,7 @@ namespace WebApp.Controllers
         /// <summary>
         /// uzivatel nacteny v http contextu
         /// </summary>
-        public UserCookiesModel MyUser
+        public UserCookieModel MyUser
         {
             get => User.GetIdentity();
         }
@@ -83,7 +83,7 @@ namespace WebApp.Controllers
             }
         }
 
-        protected async Task UserLogin(UserCookiesModel user, string token)
+        protected async Task UserLogin(UserCookieModel user, string token)
         {
             List<Claim> claims = new List<Claim>
             {

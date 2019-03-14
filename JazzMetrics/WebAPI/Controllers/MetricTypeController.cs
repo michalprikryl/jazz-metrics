@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library.Models;
+using Library.Models.MetricType;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.MetricType;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.MetricTypes;
 
 namespace WebAPI.Controllers
@@ -13,16 +13,16 @@ namespace WebAPI.Controllers
     {
         private readonly IMetricTypeService _metricTypeService;
 
-        public MetricTypeController(IErrorService errorService, IMetricTypeService metricTypeService) : base(errorService) => _metricTypeService = metricTypeService;
+        public MetricTypeController(IHelperService helperService, IMetricTypeService metricTypeService) : base(helperService) => _metricTypeService = metricTypeService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<MetricTypeModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<MetricTypeModel>>> Get(int id, bool lazy = true)
         {
             return await _metricTypeService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<MetricTypeModel>>> Get(bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGetAll<MetricTypeModel>>> Get(bool lazy = true)
         {
             return await _metricTypeService.GetAll(lazy);
         }
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _metricTypeService.DropAsync(id);
+            return await _metricTypeService.Drop(id);
         }
     }
 }

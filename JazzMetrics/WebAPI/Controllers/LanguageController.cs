@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Library.Models;
+using Library.Models.Language;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Language;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Language;
 
 namespace WebAPI.Controllers
@@ -14,13 +14,13 @@ namespace WebAPI.Controllers
     {
         private readonly ILanguageService _languageService;
 
-        public LanguageController(IErrorService errorService, ILanguageService languageService) : base(errorService)
+        public LanguageController(IHelperService helperService, ILanguageService languageService) : base(helperService)
         {
             _languageService = languageService;
         }
 
         [HttpGet, AllowAnonymous]
-        public async Task<ActionResult<BaseResponseModelGet<LanguageResponseModel>>> Get()
+        public async Task<ActionResult<BaseResponseModelGetAll<LanguageModel>>> Get()
         {
             return await _languageService.GetAllLanguages();
         }

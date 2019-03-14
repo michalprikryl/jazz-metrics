@@ -1,5 +1,8 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.User;
+using Library.Models.Users;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,9 +15,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Users;
-using WebAPI.Services.Error;
+using WebAPI.Controllers;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.Setting;
 
@@ -23,19 +25,19 @@ namespace WebAPI.Services.Users
     public class UserService : BaseDatabase, IUserService
     {
         private readonly IConfiguration _config;
-        private readonly IErrorService _errorService;
+        private readonly IHelperService _helperService;
         private readonly ISettingService _settingService;
 
-        public UserService(JazzMetricsContext db, ISettingService settingService, IConfiguration config, IErrorService errorService) : base(db)
+        public UserService(JazzMetricsContext db, ISettingService settingService, IConfiguration config, IHelperService helperService) : base(db)
         {
             _config = config;
-            _errorService = errorService;
+            _helperService = helperService;
             _settingService = settingService;
         }
 
-        public async Task<BaseResponseModelGet<UserModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<UserModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGet<UserModel> { Values = new List<UserModel>() };
+            var response = new BaseResponseModelGetAll<UserModel> { Values = new List<UserModel>() };
 
             foreach (var item in await Database.User.ToListAsync())
             {
@@ -45,14 +47,14 @@ namespace WebAPI.Services.Users
             return response;
         }
 
-        public async Task<UserModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<UserModel>> Get(int id, bool lazy)
         {
-            UserModel response = new UserModel();
+            var response = new BaseResponseModelGet<UserModel>();
 
             User user = await Load(id, response);
             if (user != null)
             {
-                response = ConvertToModel(user);
+                response.Value = ConvertToModel(user);
             }
 
             return response;
@@ -62,7 +64,7 @@ namespace WebAPI.Services.Users
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 if (ValidateEmail(request.Email, response) && ValidatePassword(request.Password, response))
                 {
@@ -86,11 +88,11 @@ namespace WebAPI.Services.Users
 
                         if (request.CompanyId.HasValue)
                         {
-                            user.UserRole = await GetUserRole("admin");
+                            user.UserRole = await GetUserRole(MainController.RoleAdmin);
                         }
                         else
                         {
-                            user.UserRole = await GetUserRole("user");
+                            user.UserRole = await GetUserRole(MainController.RoleUser);
                         }
 
                         await Database.User.AddAsync(user);
@@ -115,7 +117,7 @@ namespace WebAPI.Services.Users
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.ValidateEdit)
+            if (request.ValidateEdit())
             {
                 if (ValidateEmail(request.Email, response) && await CheckLanguage(request.LanguageId, response))
                 {
@@ -144,14 +146,14 @@ namespace WebAPI.Services.Users
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 
             User user = await Load(id, response);
             if (user != null)
             {
-                Database.UserProject.RemoveRange(user.UserProject);
+                Database.ProjectUser.RemoveRange(user.ProjectUser);
 
                 Database.User.Remove(user);
 
@@ -190,7 +192,11 @@ namespace WebAPI.Services.Users
                     }
                     else if (string.Compare(item.PropertyName, "userRoleId", true) == 0)
                     {
-                        user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == "user") || user.UserRole.Name == "admin" ? await GetUserRole("user") : await GetUserRole("admin");
+                        if (user.UserRole.Name != MainController.RoleSuperAdmin)
+                        {
+                            user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == MainController.RoleUser) || user.UserRole.Name == MainController.RoleAdmin 
+                                ? await GetUserRole(MainController.RoleUser) : await GetUserRole(MainController.RoleAdmin);
+                        }
                     }
                     else if (string.Compare(item.PropertyName, "password", true) == 0)
                     {
@@ -285,11 +291,11 @@ namespace WebAPI.Services.Users
         /// </summary>
         /// <param name="model">prijate informace o uzivateli</param>
         /// <returns></returns>
-        public async Task<LoginResponseModel> CheckUser(LoginRequestModel model)
+        public async Task<BaseResponseModelGet<UserIdentityModel>> CheckUser(LoginRequestModel model)
         {
-            LoginResponseModel result = new LoginResponseModel();
+            var result = new BaseResponseModelGet<UserIdentityModel> { Value = new UserIdentityModel() };
 
-            if (model.Validate)
+            if (model.Validate())
             {
                 model.Username = model.Username.Trim();
                 model.Password = model.Password.Trim();
@@ -299,10 +305,11 @@ namespace WebAPI.Services.Users
                 {
                     if ((user.UseLdaplogin && CheckLdapLogin(user.LdapUrl, model.Username, model.Password)) || ComparePasswords(user, model.Password))
                     {
-                        await CreateUserSession(user, result);
+                        await CreateUserSession(user, result.Value);
                     }
                     else
                     {
+                        result.Success = false;
                         result.Message = "Incorrect credentials!";
                     }
                 }
@@ -383,7 +390,7 @@ namespace WebAPI.Services.Users
             //    {
             //        if (e.Message.Trim() != "The user name or password is incorrect.")
             //        {
-            //            await _errorService.SaveErrorToDB(new ErrorModel(e, module: "LDAPLogin", function: "ADSIAuth", message: $"UID-{user};PASSWD-{password};URL-{url}"));
+            //            await _helperService.SaveErrorToDB(new ErrorModel(e, module: "LDAPLogin", function: "ADSIAuth", message: $"UID-{user};PASSWD-{password};URL-{url}"));
             //        }
             //    }
             //    finally
@@ -395,15 +402,14 @@ namespace WebAPI.Services.Users
             return login;
         }
 
-        private async Task CreateUserSession(User user, LoginResponseModel result)
+        private async Task CreateUserSession(User user, UserIdentityModel result)
         {
-            result.Success = true;
             result.Token = await BuildToken(user.Id);
             result.User = new UserCookieModel
             {
                 Username = user.Username,
                 Email = user.Email,
-                FirstName = user.FirstName,
+                Firstname = user.FirstName,
                 Lastname = user.LastName,
                 Role = user.UserRole.Name,
                 UserId = user.Id,

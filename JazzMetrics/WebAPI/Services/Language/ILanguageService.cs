@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Language;
+﻿using Library.Models;
+using Library.Models.Language;
+using System.Threading.Tasks;
 
 namespace WebAPI.Services.Language
 {
     public interface ILanguageService
     {
-        Task<BaseResponseModelGet<LanguageResponseModel>> GetAllLanguages();
+        Task<BaseResponseModelGetAll<LanguageModel>> GetAllLanguages();
     }
 }

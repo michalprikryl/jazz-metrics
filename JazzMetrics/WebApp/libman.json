@@ -11,6 +11,7 @@
       "destination": "wwwroot/lib/bootstrap-datepicker",
       "files": [
         "css/bootstrap-datepicker.css",
+        "css/bootstrap-datepicker.css.map",
         "js/bootstrap-datepicker.min.js",
         "locales/bootstrap-datepicker.en-GB.min.js"
       ]

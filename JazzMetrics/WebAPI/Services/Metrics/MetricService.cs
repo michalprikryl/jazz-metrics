@@ -1,37 +1,43 @@
 ﻿using Database;
 using Database.DAO;
+using Library.Models;
+using Library.Models.AffectedFields;
+using Library.Models.AspiceProcesses;
+using Library.Models.Metric;
+using Library.Models.MetricType;
 using Library.Networking;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.AffectedFields;
-using WebAPI.Models.AspiceProcesses;
-using WebAPI.Models.Metric;
-using WebAPI.Models.MetricType;
 using WebAPI.Services.AffectedFields;
 using WebAPI.Services.AspiceProcesses;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.MetricTypes;
 
 namespace WebAPI.Services.Metrics
 {
-    public class MetricService : BaseDatabase, IMetricService
+    public class MetricService : BaseDatabase, IMetricService, IUser
     {
         private readonly IMetricTypeService _metricTypeService;
         private readonly IAspiceProcessService _aspiceProcessService;
         private readonly IAffectedFieldService _affectedFieldService;
 
-        public MetricService(JazzMetricsContext db, IAspiceProcessService aspiceProcessService, IMetricTypeService metricTypeService, IAffectedFieldService affectedFieldService) : base(db)
+        public CurrentUser CurrentUser { get; set; }
+
+        public MetricService(JazzMetricsContext db, IAspiceProcessService aspiceProcessService, IMetricTypeService metricTypeService, IAffectedFieldService affectedFieldService, 
+            IHttpContextAccessor contextAccessor, IHelperService helperService) : base(db)
         {
+            _metricTypeService = metricTypeService;
             _aspiceProcessService = aspiceProcessService;
             _affectedFieldService = affectedFieldService;
-            _metricTypeService = metricTypeService;
+            CurrentUser = helperService.GetCurrentUser(contextAccessor.HttpContext.User.GetId());
         }
 
-        public async Task<BaseResponseModelGet<MetricModel>> GetAll(bool lazy)
+        public async Task<BaseResponseModelGetAll<MetricModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGet<MetricModel> { Values = new List<MetricModel>() };
+            var response = new BaseResponseModelGetAll<MetricModel> { Values = new List<MetricModel>() };
 
             foreach (var item in await Database.Metric.ToListAsync())
             {
@@ -50,27 +56,21 @@ namespace WebAPI.Services.Metrics
             return response;
         }
 
-        public async Task<MetricModel> Get(int id, bool lazy)
+        public async Task<BaseResponseModelGet<MetricModel>> Get(int id, bool lazy)
         {
-            MetricModel response = new MetricModel();
-            BaseResponseModel result = new BaseResponseModel();
+            var response = new BaseResponseModelGet<MetricModel>();
 
-            Metric metric = await Load(id, result);
+            Metric metric = await Load(id, response);
             if (metric != null)
             {
-                response = ConvertToModel(metric);
+                response.Value = ConvertToModel(metric);
 
                 if (!lazy)
                 {
-                    response.MetricType = GetMetricType(metric.MetricType);
-                    response.AspiceProcess = GetAspiceProcess(metric.AspiceProcess);
-                    response.AffectedField = GetAffectedField(metric.AffectedField);
+                    response.Value.MetricType = GetMetricType(metric.MetricType);
+                    response.Value.AspiceProcess = GetAspiceProcess(metric.AspiceProcess);
+                    response.Value.AffectedField = GetAffectedField(metric.AffectedField);
                 }
-            }
-            else
-            {
-                response.Success = result.Success;
-                response.Message = result.Message;
             }
 
             return response;
@@ -80,7 +80,7 @@ namespace WebAPI.Services.Metrics
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 if (await CheckAspiceProcess(request.AspiceProcessId, response))
                 {
@@ -97,7 +97,9 @@ namespace WebAPI.Services.Metrics
                                     Identificator = request.Identificator,
                                     AspiceProcessId = request.AspiceProcessId,
                                     AffectedFieldId = request.AffectedFieldId,
-                                    MetricTypeId = request.MetricTypeId
+                                    MetricTypeId = request.MetricTypeId,
+                                    Public = CurrentUser.CompanyId.HasValue ? request.Public : true,
+                                    CompanyId = CurrentUser.CompanyId
                                 };
 
                                 await Database.Metric.AddAsync(metric);
@@ -124,7 +126,7 @@ namespace WebAPI.Services.Metrics
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            if (request.Validate)
+            if (request.Validate())
             {
                 if (await CheckAspiceProcess(request.AspiceProcessId, response))
                 {
@@ -143,6 +145,7 @@ namespace WebAPI.Services.Metrics
                                     metric.AspiceProcessId = request.AspiceProcessId;
                                     metric.AffectedFieldId = request.AffectedFieldId;
                                     metric.MetricTypeId = request.MetricTypeId;
+                                    metric.Public = CurrentUser.CompanyId.HasValue ? request.Public : true;
 
                                     await Database.SaveChangesAsync();
 
@@ -162,7 +165,7 @@ namespace WebAPI.Services.Metrics
             return response;
         }
 
-        public async Task<BaseResponseModel> DropAsync(int id)
+        public async Task<BaseResponseModel> Drop(int id)
         {
             BaseResponseModel response = new BaseResponseModel();
 
@@ -282,7 +285,9 @@ namespace WebAPI.Services.Metrics
                 Identificator = dbModel.Identificator,
                 AspiceProcessId = dbModel.AspiceProcessId,
                 AffectedFieldId = dbModel.AffectedFieldId,
-                MetricTypeId = dbModel.MetricTypeId
+                MetricTypeId = dbModel.MetricTypeId,
+                CompanyId = dbModel.CompanyId,
+                Public = dbModel.Public
             };
         }
     }

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library.Models;
+using Library.Models.Metric;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Metric;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Metrics;
 
 namespace WebAPI.Controllers
@@ -13,16 +13,16 @@ namespace WebAPI.Controllers
     {
         private readonly IMetricService _metricService;
 
-        public MetricController(IErrorService errorService, IMetricService metricService) : base(errorService) => _metricService = metricService;
+        public MetricController(IHelperService helperService, IMetricService metricService) : base(helperService) => _metricService = metricService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<MetricModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<MetricModel>>> Get(int id, bool lazy = true)
         {
             return await _metricService.Get(id, lazy);
         }
 
         [HttpGet]
-        public async Task<ActionResult<BaseResponseModelGet<MetricModel>>> Get(bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGetAll<MetricModel>>> Get(bool lazy = true)
         {
             return await _metricService.GetAll(lazy);
         }
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
-            return await _metricService.DropAsync(id);
+            return await _metricService.Drop(id);
         }
     }
 }

@@ -1,6 +1,7 @@
+/*
 USE JazzMetrics
 GO
-
+*/
 /*
 USE pri0115;
 GO
@@ -20,15 +21,17 @@ INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt]
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
     ('Franta', 'Novak', 'admin', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 2, 2, 0, 1)
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
+    ('Franta', 'Novak', 'superadmin', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)
+INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
     ('Michal', 'Prikryl', 'm.p.from.h@seznam.cz', 'm.p.from.h@seznam.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)
 
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Number', 'Metric values are numbers of value/type groups of artefact.')
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage', 'Metric is percentage - coverage of some artefact with another artefact etc.')
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage (test)', 'Metric is percentage - coverage of some artefact with test case or if artefact was tested etc.')
 
-INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('PM', '')
-INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Traceability', '')
-INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Quality', '')
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('PM', 'This metric affected field provides project management status.')
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Traceability', 'This metric affected field provides tracebility status.')
+INSERT INTO [AffectedField] ([Name], [Description]) VALUES ('Quality', 'This metric affected field provides quality assurance status.')
 
 INSERT INTO [AspiceVersion] ([VersionNumber], [ReleaseDate], [Description]) VALUES ('3.1', '2017-11-01', 'Automotive SPICE 3.1')
 
@@ -49,3 +52,9 @@ INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSet
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Password', '')
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('ErrorEmail', 'Email', 'michal.prikryl@post.cz')
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('TokenExpiration', 'TokenExpirationMinutes', '1440')
+
+INSERT INTO [Project] ([Name], [Description], [CreateDate]) VALUES ('Master thesis', 'Some type of master thesis.', GETDATE())
+
+INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (2, 1, GETDATE())
+INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (3, 1, GETDATE())
+INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (4, 1, GETDATE())

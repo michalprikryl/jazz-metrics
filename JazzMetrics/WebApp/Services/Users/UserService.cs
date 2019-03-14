@@ -1,8 +1,9 @@
-﻿using Library.Networking;
+﻿using Library.Models;
+using Library.Models.User;
+using Library.Networking;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using WebApp.Models;
 using WebApp.Models.User;
 
 namespace WebApp.Services.Users
@@ -18,25 +19,25 @@ namespace WebApp.Services.Users
         /// </summary>
         /// <param name="model">data, ktere chci poslat na API, jejich vlastnosti musi odpovidat objektu z API</param>
         /// <returns></returns>
-        public async Task<UserIdentityModel> AuthenticateUser(LoginViewModel model)
+        public async Task<BaseResponseModelGet<UserIdentityModel>> AuthenticateUser(LoginViewModel model)
         {
-            UserIdentityModel result = new UserIdentityModel();
+            var result = new BaseResponseModelGet<UserIdentityModel>();
 
             await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
             {
-                result = JsonConvert.DeserializeObject<UserIdentityModel>(await httpResult.Content.ReadAsStringAsync());
+                result = JsonConvert.DeserializeObject<BaseResponseModelGet<UserIdentityModel>>(await httpResult.Content.ReadAsStringAsync());
             }, "login");
 
             return result;
         }
 
-        public async Task<BaseApiResultPost> FindUserIdByUsername(string username, string jwt)
+        public async Task<BaseResponseModelPost> FindUserIdByUsername(string username, string jwt)
         {
-            BaseApiResultPost result = new BaseApiResultPost();
+            BaseResponseModelPost result = new BaseResponseModelPost();
 
             await GetToAPI(GetParametersList(GetParameter("username", username)), async httpResult =>
             {
-                result = JsonConvert.DeserializeObject<BaseApiResultPost>(await httpResult.Content.ReadAsStringAsync());
+                result = JsonConvert.DeserializeObject<BaseResponseModelPost>(await httpResult.Content.ReadAsStringAsync());
             }, jwt: jwt);
 
             return result;

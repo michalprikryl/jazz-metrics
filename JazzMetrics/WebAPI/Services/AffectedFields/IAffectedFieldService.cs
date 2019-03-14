@@ -1,5 +1,5 @@
 ﻿using Database.DAO;
-using WebAPI.Models.AffectedFields;
+using Library.Models.AffectedFields;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AffectedFields

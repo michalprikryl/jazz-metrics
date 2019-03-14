@@ -1,11 +1,11 @@
-﻿using Library.Networking;
+﻿using Library.Models;
+using Library.Models.Users;
+using Library.Networking;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Users;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Users;
 
 namespace WebAPI.Controllers
@@ -16,10 +16,10 @@ namespace WebAPI.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IErrorService errorService, IUserService userService) : base(errorService) => _userService = userService;
+        public UserController(IHelperService helperService, IUserService userService) : base(helperService) => _userService = userService;
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> Get(int id, bool lazy = true)
+        public async Task<ActionResult<BaseResponseModelGet<UserModel>>> Get(int id, bool lazy = true)
         {
             return await _userService.Get(id, lazy);
         }

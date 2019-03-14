@@ -1,20 +1,18 @@
-﻿using System;
+﻿using Database;
+using Database.DAO;
+using Library.Models;
+using Library.Models.ProjectMetrics;
+using Library.Networking;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Database;
-using Database.DAO;
-using Library.Networking;
-using WebAPI.Models;
-using WebAPI.Models.ProjectMetrics;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.ProjectMetrics
 {
     public class ProjectMetricService : BaseDatabase, IProjectMetricService
     {
-        public ProjectMetricService(JazzMetricsContext db) : base(db)
-        {
-        }
+        public ProjectMetricService(JazzMetricsContext db) : base(db) { }
 
         public ProjectMetricModel ConvertToModel(ProjectMetric dbModel)
         {
@@ -37,7 +35,7 @@ namespace WebAPI.Services.ProjectMetrics
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponseModel> DropAsync(int id)
+        public Task<BaseResponseModel> Drop(int id)
         {
             throw new NotImplementedException();
         }
@@ -47,12 +45,12 @@ namespace WebAPI.Services.ProjectMetrics
             throw new NotImplementedException();
         }
 
-        public Task<ProjectMetricModel> Get(int id, bool lazy)
+        public Task<BaseResponseModelGet<ProjectMetricModel>> Get(int id, bool lazy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<BaseResponseModelGet<ProjectMetricModel>> GetAll(bool lazy)
+        public Task<BaseResponseModelGetAll<ProjectMetricModel>> GetAll(bool lazy)
         {
             throw new NotImplementedException();
         }

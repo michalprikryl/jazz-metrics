@@ -1,12 +1,11 @@
-﻿using System.Threading.Tasks;
-using WebApp.Models;
-using WebApp.Models.Error;
+﻿using Library.Models;
+using Library.Models.Error;
+using System.Threading.Tasks;
 
 namespace WebApp.Services.Error
 {
     public interface IErrorService
     {
-        Task<BaseApiResult> CreateError(ErrorJsModel model, string userID);
-        Task<BaseApiResult> CreateError(ErrorModel model);
+        Task<BaseResponseModel> CreateError(ErrorModel model);
     }
 }

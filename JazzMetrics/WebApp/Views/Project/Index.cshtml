@@ -2,7 +2,14 @@
 
 @{
     ViewData["Title"] = "Projects";
-    var headerModel = new ListHeaderViewModel { Message = "List of project, which you are member.", Path = "/Project/Add", Button = "Create new project", CssClass = "fa-plus" };
+    bool admin = User.IsAdmin();
+    var headerModel = new ListHeaderViewModel
+    {
+        Message = admin ? "List of all company's projects." : "List of project, which you are member.",
+        Path = "/Project/Add",
+        Button = "Create new project",
+        CssClass = "fa-plus"
+    };
     var editModel = new ResultViewModel { Color = "black", CssClass = "fa-edit", Message = "Edit project" };
 }
 
@@ -32,15 +39,23 @@
                     <th scope="row">@item.Id</th>
                     <td>@item.Name</td>
                     <td>@item.CreateDate</td>
-                    <td>@item.ProjectMetricsCount</td>
-                    <td>@item.ProjectUsersCount</td>
+                    <td>
+                        <a href="/Project/Metric/@item.Id" title="List of projects's metrics">
+                            @item.ProjectMetricsCount
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Project/User/@item.Id" title="List of projects's users">
+                            @item.ProjectUsersCount
+                        </a>
+                    </td>
                     <td scope="col">
-                        @if (User.IsInRole(AppController.RoleAdmin) || User.IsInRole(AppController.RoleSuperAdmin))
+                        @if (admin)
                         {
                             <a href="/Project/Edit/@item.Id">
                                 <partial name="Partials/_Icon" model="@editModel" />
                             </a>
-                            <span class="fas fa-trash-alt pointer" title="Delete project" onclick="javascript: deleteItem('../Project/Delete/@item.Id')"></span>
+                            <span class="fas fa-trash-alt pointer" title="Delete project" onclick="javascript: deleteItem('/Project/Delete/@item.Id')"></span>
                         }
                     </td>
                 </tr>

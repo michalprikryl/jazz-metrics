@@ -1,9 +1,11 @@
 /*CLEAN UP*/
 
+/*
 USE JazzMetrics;
 GO
+*/
 
-DROP TABLE [UserProject];
+DROP TABLE [ProjectUser];
 DROP TABLE [User];
 DROP TABLE [UserRole];
 DROP TABLE [Language];

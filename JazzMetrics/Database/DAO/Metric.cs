@@ -18,6 +18,7 @@ namespace Database.DAO
         public int AspiceProcessId { get; set; }
         public int AffectedFieldId { get; set; }
         public int? CompanyId { get; set; }
+        public bool Public { get; set; }
 
         public virtual AffectedField AffectedField { get; set; }
         public virtual AspiceProcess AspiceProcess { get; set; }

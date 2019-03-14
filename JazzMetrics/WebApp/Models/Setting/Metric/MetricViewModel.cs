@@ -39,6 +39,9 @@ namespace WebApp.Models.Setting.Metric
         [Required(ErrorMessage = "Choose metric affected field, please!")]
         public string AffectedFieldId { get; set; }
         public List<SelectListItem> AffectedFields { get; set; }
+
+        [Display(Name = "Public metric (users from any other company can use this metric)")]
+        public bool Public { get; set; }
     }
 
     public class MetricViewModel
@@ -53,5 +56,6 @@ namespace WebApp.Models.Setting.Metric
         public string AspiceProcess { get; set; }
         public int AffectedFieldId { get; set; }
         public string AffectedField { get; set; }
+        public bool Public { get; set; }
     }
 }

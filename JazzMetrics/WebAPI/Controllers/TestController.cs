@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Library.Models.Test;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Models.Test;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Test;
 
 namespace WebAPI.Controllers
@@ -12,7 +12,7 @@ namespace WebAPI.Controllers
     {
         private readonly ITestService _testService;
 
-        public TestController(IErrorService errorService, ITestService testService) : base(errorService)
+        public TestController(IHelperService helperService, ITestService testService) : base(helperService)
         {
             _testService = testService;
         }

@@ -1,9 +1,9 @@
 ﻿using Database;
+using Library.Models;
+using Library.Models.Language;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAPI.Models;
-using WebAPI.Models.Language;
 using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Language
@@ -12,11 +12,11 @@ namespace WebAPI.Services.Language
     {
         public LanguageService(JazzMetricsContext db) : base(db) { }
 
-        public async Task<BaseResponseModelGet<LanguageResponseModel>> GetAllLanguages()
+        public async Task<BaseResponseModelGetAll<LanguageModel>> GetAllLanguages()
         {
-            return new BaseResponseModelGet<LanguageResponseModel>
+            return new BaseResponseModelGetAll<LanguageModel>
             {
-                Values = await Database.Language.Select(l => new LanguageResponseModel
+                Values = await Database.Language.Select(l => new LanguageModel
                 {
                     Id = l.Id,
                     Iso6391code = l.Iso6391code,

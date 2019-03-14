@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Library.Models;
+using Library.Models.Company;
+using Library.Models.Error;
+using Library.Models.Users;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApp.Models;
-using WebApp.Models.Error;
-using WebApp.Models.Setting.Company;
 using WebApp.Models.User;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
@@ -50,7 +51,7 @@ namespace WebApp.Controllers
             {
                 if (model.Password == model.ConfirmPassword)
                 {
-                    BaseApiResultPost resultCompany = null;
+                    BaseResponseModelPost resultCompany = null;
                     if (!string.IsNullOrEmpty(model.Company))
                     {
                         resultCompany = await _crudService.Create(new CompanyModel { Name = model.Company }, null, SettingService.CompanyEntity);
@@ -59,7 +60,7 @@ namespace WebApp.Controllers
 
                     if (resultCompany == null || resultCompany.Success)
                     {
-                        BaseApiResultPost result = await _crudService.Create(model, null, UserService.UserEntity);
+                        BaseResponseModelPost result = await _crudService.Create(model, null, UserService.UserEntity);
 
                         if (!result.Success && resultCompany != null)
                         {
@@ -118,14 +119,14 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    UserIdentityModel identity = await _userService.AuthenticateUser(model);
-                    if (identity == null)
+                    var result = await _userService.AuthenticateUser(model);
+                    if (result == null)
                     {
                         model.MessageList.Add(new Tuple<string, bool>("Server is not accessible.", true));
                     }
-                    else if (identity.Success && identity.User != null && !string.IsNullOrEmpty(identity.Token))
+                    else if (result.Success && result.Value.User != null && !string.IsNullOrEmpty(result.Value.Token))
                     {
-                        Task login = UserLogin(identity.User, identity.Token);
+                        Task login = UserLogin(result.Value.User, result.Value.Token);
 
                         if (Url.IsLocalUrl(returnUrl))
                         {
@@ -140,7 +141,7 @@ namespace WebApp.Controllers
                     {
                         ModelState.Remove("Password");
 
-                        model.MessageList.Add(new Tuple<string, bool>(identity.Message ?? "Incorrect username or password.", true));
+                        model.MessageList.Add(new Tuple<string, bool>(result.Message ?? "Incorrect username or password.", true));
                     }
                 }
                 catch (Exception e)
@@ -176,14 +177,14 @@ namespace WebApp.Controllers
             var response = await _crudService.Get<UserModel>(id, Token, UserService.UserEntity);
             if (response.Success)
             {
-                if (MyUser.CompanyId == response.CompanyId || User.IsInRole(RoleSuperAdmin))
+                if (MyUser.CompanyId == response.Value.CompanyId || User.IsInRole(RoleSuperAdmin))
                 {
-                    model.Id = response.Id;
-                    model.Username = response.Username;
-                    model.Firstname = response.Firstname;
-                    model.Lastname = response.Lastname;
-                    model.Email = response.Email;
-                    model.Admin = response.Admin;
+                    model.Id = response.Value.Id;
+                    model.Username = response.Value.Username;
+                    model.Firstname = response.Value.Firstname;
+                    model.Lastname = response.Value.Lastname;
+                    model.Email = response.Value.Email;
+                    model.Admin = response.Value.Admin;
                 }
                 else
                 {
@@ -212,13 +213,13 @@ namespace WebApp.Controllers
 
                 if (response.Success)
                 {
-                    model.Id = response.Id;
-                    model.Firstname = response.Firstname;
-                    model.Lastname = response.Lastname;
-                    model.Email = response.Email;
-                    model.UseLdaplogin = response.UseLdaplogin;
-                    model.LdapUrl = response.LdapUrl;
-                    model.LanguageId = response.LanguageId.ToString();
+                    model.Id = response.Value.Id;
+                    model.Firstname = response.Value.Firstname;
+                    model.Lastname = response.Value.Lastname;
+                    model.Email = response.Value.Email;
+                    model.UseLdaplogin = response.Value.UseLdaplogin;
+                    model.LdapUrl = response.Value.LdapUrl;
+                    model.LanguageId = response.Value.LanguageId.ToString();
                 }
                 else
                 {

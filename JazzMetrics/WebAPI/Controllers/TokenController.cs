@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 using WebAPI.Services.Users;
 
 namespace WebAPI.Controllers
@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
     {
         private readonly IUserService _userService;
 
-        public TokenController(IErrorService errorService, IUserService userService) : base(errorService)
+        public TokenController(IHelperService helperService, IUserService userService) : base(helperService)
         {
             _userService = userService;
         }

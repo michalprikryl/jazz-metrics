@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Library.Models.AffectedFields;
+using Library.Models.AspiceProcesses;
+using Library.Models.AspiceVersions;
+using Library.Models.Company;
+using Library.Models.Metric;
+using Library.Models.MetricType;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -95,12 +101,12 @@ namespace WebApp.Controllers
         {
             AffectedFieldWorkModel model = new AffectedFieldWorkModel();
 
-            AffectedFieldModel result = await _crudService.Get<AffectedFieldModel>(id, Token, SettingService.AffectedFieldEntity);
+            var result = await _crudService.Get<AffectedFieldModel>(id, Token, SettingService.AffectedFieldEntity);
             if (result.Success)
             {
                 model.Id = id;
-                model.Name = result.Name;
-                model.Description = result.Description;
+                model.Name = result.Value.Name;
+                model.Description = result.Value.Description;
             }
             else
             {
@@ -195,12 +201,12 @@ namespace WebApp.Controllers
         {
             MetricTypeWorkModel model = new MetricTypeWorkModel();
 
-            MetricTypeModel result = await _crudService.Get<MetricTypeModel>(id, Token, SettingService.MetricTypeEntity);
+            var result = await _crudService.Get<MetricTypeModel>(id, Token, SettingService.MetricTypeEntity);
             if (result.Success)
             {
                 model.Id = id;
-                model.Name = result.Name;
-                model.Description = result.Description;
+                model.Name = result.Value.Name;
+                model.Description = result.Value.Description;
             }
             else
             {
@@ -300,13 +306,13 @@ namespace WebApp.Controllers
         {
             AspiceVersionWorkModel model = new AspiceVersionWorkModel();
 
-            AspiceVersionModel result = await _crudService.Get<AspiceVersionModel>(id, Token, SettingService.AspiceVersionEntity);
+            var result = await _crudService.Get<AspiceVersionModel>(id, Token, SettingService.AspiceVersionEntity);
             if (result.Success)
             {
                 model.Id = id;
-                model.ReleaseDate = result.ReleaseDate.ToShortDateString();
-                model.Description = result.Description;
-                model.VersionNumber = result.VersionNumber;
+                model.Description = result.Value.Description;
+                model.VersionNumber = result.Value.VersionNumber;
+                model.ReleaseDate = result.Value.ReleaseDate.ToShortDateString();
             }
             else
             {
@@ -412,14 +418,14 @@ namespace WebApp.Controllers
 
             Task select = GetAspiceVersions(model);
 
-            AspiceProcessModel result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity, false);
+            var result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity, false);
             if (result.Success)
             {
                 model.Id = id;
-                model.Name = result.Name;
-                model.Shortcut = result.Shortcut;
-                model.Description = result.Description;
-                model.AspiceVersionId = result.AspiceVersion.Id.ToString();
+                model.Name = result.Value.Name;
+                model.Shortcut = result.Value.Shortcut;
+                model.Description = result.Value.Description;
+                model.AspiceVersionId = result.Value.AspiceVersion.Id.ToString();
             }
             else
             {
@@ -473,6 +479,7 @@ namespace WebApp.Controllers
 
         #region Metrics
         [HttpGet("Metric")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> Metric()
         {
             MetricListModel model = new MetricListModel();
@@ -485,6 +492,7 @@ namespace WebApp.Controllers
                     {
                         Id = a.Id,
                         Name = a.Name,
+                        Public = a.Public,
                         Description = a.Description,
                         Identificator = a.Identificator,
                         AffectedFieldId = a.AffectedField.Id,
@@ -504,6 +512,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("Metric/Add")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> MetricAdd()
         {
             MetricWorkModel model = new MetricWorkModel();
@@ -514,6 +523,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("Metric/Add")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> MetricAddPost(MetricWorkModel model)
         {
             Task select = GetMetricSelects(model);
@@ -535,22 +545,24 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("Metric/Edit/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> MetricEdit(int id)
         {
             MetricWorkModel model = new MetricWorkModel();
 
             Task select = GetMetricSelects(model);
 
-            MetricModel result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
+            var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
             if (result.Success)
             {
                 model.Id = id;
-                model.Name = result.Name;
-                model.Description = result.Description;
-                model.Identificator = result.Identificator;
-                model.MetricTypeId = result.MetricType.Id.ToString();
-                model.AspiceProcessId = result.AspiceProcess.Id.ToString();
-                model.AffectedFieldId = result.AffectedField.Id.ToString();
+                model.Name = result.Value.Name;
+                model.Public = result.Value.Public;
+                model.Description = result.Value.Description;
+                model.Identificator = result.Value.Identificator;
+                model.MetricTypeId = result.Value.MetricType.Id.ToString();
+                model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
+                model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
             }
             else
             {
@@ -563,6 +575,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("Metric/Edit/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> MetricEditPost(int id, MetricWorkModel model)
         {
             Task select = GetMetricSelects(model);
@@ -584,6 +597,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("Metric/Delete/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> MetricDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, SettingService.MetricEntity));
@@ -640,9 +654,9 @@ namespace WebApp.Controllers
                 var result = await _crudService.Get<CompanyModel>(MyUser.CompanyId.Value, Token, SettingService.CompanyEntity, false);
                 if (result.Success)
                 {
-                    model.Id = result.Id;
-                    model.Name = result.Name;
-                    model.Users = result.Users.Select(a =>
+                    model.Id = result.Value.Id;
+                    model.Name = result.Value.Name;
+                    model.Users = result.Value.Users.Select(a =>
                         new CompanyUser
                         {
                             UserId = a.Id,

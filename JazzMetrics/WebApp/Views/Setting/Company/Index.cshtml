@@ -10,7 +10,7 @@
 
 @if (Model.CanView)
 {
-    @if (User.IsInRole(AppController.RoleAdmin) || User.IsInRole(AppController.RoleSuperAdmin))
+    @if (User.IsAdmin())
     {
         <div class="mb-3 d-flex flex-row justify-content-between align-items-center">
             <span>List of company '@Model.Name' users.</span>
@@ -64,14 +64,14 @@
                                 {
                                     @if (item.Admin)
                                     {
-                                        <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                        <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="javascript: updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
                                     }
                                     else
                                     {
-                                        <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="javascript: updateUser('../Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                        <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="javascript: updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
                                     }
 
-                                    <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="javascript: deleteUser('../Setting/CompanyUser/Delete/@item.UserId')"></span>
+                                    <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="javascript: deleteUser('/Setting/CompanyUser/Delete/@item.UserId')"></span>
                                 }
                             </td>
                         </tr>

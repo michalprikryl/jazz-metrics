@@ -1,0 +1,87 @@
+﻿@model ProjectUserListModel
+
+@{
+    int userId = User.UserId();
+    bool adminAccount = User.IsAdmin();
+    ViewData["Title"] = $"Project #'{Model.Id}' users";
+    var admin = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "User is admin within company and project" };
+    var nonAdmin = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "User has regular rights within company and project" };
+}
+
+<partial name="Partials/_ErrorTable" />
+
+<div class="mb-3 d-flex flex-row justify-content-between align-items-center">
+    <span>Users of project '@Model.Name'.</span>
+
+    @if (adminAccount)
+    {
+        <a href="#" class="btn btn-primary" data-toggle="collapse" data-target="#add-form">
+            <span class="fa fa-plus"></span>
+            Add user to project
+        </a>
+    }
+</div>
+
+@if (adminAccount)
+{
+    <form asp-controller="Project" asp-action="ProjectUserAdd" method="post" class="form-horizontal mb-3 collapse" role="form" id="add-form">
+
+        <div class="col-md-7 mx-auto">
+            <input asp-for="User.ProjectId" name="ProjectId" type="hidden" />
+
+            <div class="form-group">
+                <input asp-for="User.Username" name="Username" class="form-control" placeholder="Username" />
+            </div>
+
+            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add user</button>
+        </div>
+
+    </form>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Identity</th>
+            <th scope="col">Join date</th>
+            <th scope="col">Admin</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Users != null && Model.Users.Count > 0)
+        {
+            @foreach (var item in Model.Users)
+            {
+                <tr>
+                    <th scope="row">@item.UserId</th>
+                    <td>
+                        <a href="/User/Detail/@item.UserId" title="Display user's detail">@item.Username</a>
+                    </td>
+                    <td>@item.UserInfo</td>
+                    <td>@item.JoinDate</td>
+                    <td>
+                        <partial name="Partials/_Icon" model="@item.Admin ? admin : nonAdmin" />
+                    </td>
+                    <td scope="col">
+                        @if (adminAccount)
+                        {
+                            string obj = $"{{\"userId\": {item.UserId}, \"projectId\": {Model.Id}}}";
+                            <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="javascript: deleteUser('/Project/User/Delete', 'project', '@obj')"></span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <th scope="row" colspan="5" class="text-center">There are no project users!</th>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="~/js/dataWork.js" asp-append-version="true"></script>

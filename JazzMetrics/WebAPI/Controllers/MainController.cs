@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services.Error;
+using WebAPI.Services.Helper;
 
 namespace WebAPI.Controllers
 {
@@ -11,11 +11,11 @@ namespace WebAPI.Controllers
         public const string RoleAdmin = "admin";
         public const string RoleSuperAdmin = "super-admin";
 
-        public IErrorService ErrorService { get; }
+        public IHelperService HelperService { get; }
 
-        public MainController(IErrorService errorService)
+        public MainController(IHelperService helperService)
         {
-            ErrorService = errorService;
+            HelperService = helperService;
         }
     }
 }

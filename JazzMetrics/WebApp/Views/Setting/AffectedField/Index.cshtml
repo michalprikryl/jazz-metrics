@@ -34,7 +34,7 @@
                         <a href="/Setting/AffectedField/Edit/@item.Id">
                             <partial name="Partials/_Icon" model="@editModel" />
                         </a>
-                        @{ string endpoint = $"../Setting/AffectedField/Delete/{item.Id}"; }
+                        @{ string endpoint = $"/Setting/AffectedField/Delete/{item.Id}"; }
                         <span class="fas fa-trash-alt pointer" title="Delete affected field" onclick="javascript: deleteItem('@endpoint')"></span>
                     </td>
                 </tr>

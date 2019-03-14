@@ -6,9 +6,7 @@ namespace WebApp.Controllers
 {
     public class HomeController : AppController
     {
-        public HomeController(IErrorService errorService) : base(errorService)
-        {
-        }
+        public HomeController(IErrorService errorService) : base(errorService) { }
 
         public IActionResult Index()
         {
@@ -23,20 +21,6 @@ namespace WebApp.Controllers
 
             ViewData["Message"] = "Your application description page.";
 
-            return View();
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        [Authorize(Roles = "admin")]
-        public IActionResult Privacy()
-        {
             return View();
         }
     }
