@@ -163,3 +163,9 @@ a:hover {
 .pointer {
     cursor: pointer;
 }
+
+.plus-icon {
+    font-size: 35px;
+    margin-top: 1%;
+    margin-bottom: 2%;
+}

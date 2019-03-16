@@ -603,6 +603,20 @@ namespace WebApp.Controllers
             return Json(await _crudService.Drop(id, Token, SettingService.MetricEntity));
         }
 
+        [HttpPost("Metric/AddColumn")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public IActionResult AddNewMetricColumn([FromBody] NewMetricColumn model)
+        {
+            if (model.Type.ToLower().Contains("coverage"))
+            {
+                return PartialView("Metric/Partials/CoverageMetricColumn", new MetricCoverageColumn { Index = model.Index });
+            }
+            else
+            {
+                return PartialView("Metric/Partials/MetricColumn", new MetricColumn { Index = model.Index });
+            }
+        }
+
         private async Task GetMetricSelects(MetricWorkModel model)
         {
             Task[] tasks = new Task[3];

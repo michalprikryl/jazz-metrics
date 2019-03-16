@@ -5,6 +5,7 @@
 }
 <partial name="Partials/_ErrorTable" />
 <partial name="Partials/_ListHead" model="@headerModel" />
+
 <form asp-controller="Setting" asp-action="MetricEditPost" method="post" class="form-horizontal" role="form">
     <input asp-for="Id" type="hidden" />
     <div class="col-md-7 mx-auto">
@@ -38,7 +39,19 @@
             <textarea asp-for="Description" class="form-control"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-
+        <div id="columns">
+            @for (int i = 0; i < Model.NumberColumns.Count; i++)
+            {
+                <partial name="Metric/Partials/MetricColumn" model="Model.NumberColumns[i]" />
+            }
+            @for (int i = 0; i < Model.CoverageColumns.Count; i++)
+            {
+                <partial name="Metric/Partials/CoverageMetricColumn" model="Model.CoverageColumns[i]" />
+            }
+        </div>
+        <div class="form-row d-flex justify-content-center">
+            <span class="fas fa-plus plus-icon pointer" title="Add new metric property" onclick="javascript: addColumn()"></span>
+        </div>
         <div class="form-row">
             <div class="form-group col-md-12">
                 <input asp-for="Public" class="form-control-input" type="checkbox" />
@@ -49,3 +62,4 @@
         <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Save</button>
     </div>
 </form>
+<script src="~/js/metricForm.js" asp-append-version="true"></script>

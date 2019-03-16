@@ -1,0 +1,17 @@
+﻿@model MetricColumn
+
+@{ string column = $"nc_{Model.Index}"; }
+
+<div class="form-group number-column" id="@column">
+    <input value="@Model.Id" name="NumberColumns[@Model.Index].Id" type="hidden" />
+    <input value="@Model.Index" name="NumberColumns[@Model.Index].Index" type="hidden" />
+    <input value="False" name="NumberColumns[@Model.Index].Deleted" id="del-@column" type="hidden" />
+
+    <label asp-for="Name1" class="control-label"></label>
+    <div class="input-group">
+        <input name="NumberColumns[@Model.Index].Name1" value="@Model.Name1" type="text" class="form-control" />
+        <div class="input-group-append">
+            <span class="input-group-text pointer" title="Drop attribute" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
+        </div>
+    </div>
+</div>

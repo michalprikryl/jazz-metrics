@@ -42,6 +42,15 @@ namespace WebApp.Models.Setting.Metric
 
         [Display(Name = "Public metric (users from any other company can use this metric)")]
         public bool Public { get; set; }
+
+        public List<MetricColumn> NumberColumns { get; set; }
+        public List<MetricCoverageColumn> CoverageColumns { get; set; }
+
+        public MetricWorkModel()
+        {
+            NumberColumns = new List<MetricColumn>();
+            CoverageColumns = new List<MetricCoverageColumn>();
+        }
     }
 
     public class MetricViewModel
@@ -57,5 +66,31 @@ namespace WebApp.Models.Setting.Metric
         public int AffectedFieldId { get; set; }
         public string AffectedField { get; set; }
         public bool Public { get; set; }
+    }
+
+    public class NewMetricColumn
+    {
+        public int Index { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class MetricColumn
+    {
+        public int Id { get; set; }
+
+        public int Index { get; set; }
+
+        [Display(Name = "Attribute name")]
+        public string Name1 { get; set; }
+
+        public bool Deleted { get; set; }
+    }
+
+    public class MetricCoverageColumn : MetricColumn
+    {
+        public int Id2 { get; set; }
+
+        [Display(Name = "Attribute name")]
+        public string Name2 { get; set; }
     }
 }
