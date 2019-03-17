@@ -41,7 +41,7 @@ namespace WebAPI.Services.Metrics
         {
             var response = new BaseResponseModelGetAll<MetricModel> { Values = new List<MetricModel>() };
 
-            foreach (var item in await Database.Metric.ToListAsync())
+            foreach (var item in await Database.Metric.Where(m => m.Public || m.CompanyId == CurrentUser.CompanyId).ToListAsync())
             {
                 MetricModel metric = ConvertToModel(item);
 
@@ -108,13 +108,31 @@ namespace WebAPI.Services.Metrics
                                         CompanyId = CurrentUser.CompanyId
                                     };
 
-                                    await Database.MetricColumn.AddRangeAsync(request.Columns.Select(c =>
-                                        new MetricColumn
+                                    for (int i = 0; i < request.Columns.Count; i++)
+                                    {
+                                        MetricColumn metricColumn = new MetricColumn
                                         {
-                                            Name = c.Name,
+                                            Name = request.Columns[i].Name,
                                             Metric = metric,
-                                            PairMetricColumnId = c.PairMetricColumnId
-                                        }));
+                                        };
+
+                                        if (request.Columns[i].PairMetricColumnId.HasValue)
+                                        {
+                                            MetricColumn pairMetricColumn = new MetricColumn
+                                            {
+                                                Name = request.Columns[++i].Name,
+                                                Divisor = true,
+                                                Metric = metric,
+                                            };
+
+                                            metricColumn.Divisor = false;
+                                            metricColumn.PairMetricColumn = pairMetricColumn;
+
+                                            await Database.MetricColumn.AddAsync(pairMetricColumn);
+                                        }
+
+                                        await Database.MetricColumn.AddAsync(metricColumn);
+                                    }
 
                                     await Database.Metric.AddAsync(metric);
 
@@ -150,7 +168,7 @@ namespace WebAPI.Services.Metrics
                         if (await CheckAffectedField(request.AffectedFieldId, response))
                         {
                             Metric metric = await Load(request.Id, response);
-                            if (metric != null)
+                            if (metric != null && CheckMetricForCrud(metric, response))
                             {
                                 if (await CheckMetricIdentificator(request.Identificator, response, metric.Id))
                                 {
@@ -161,6 +179,8 @@ namespace WebAPI.Services.Metrics
                                     metric.AffectedFieldId = request.AffectedFieldId;
                                     metric.MetricTypeId = request.MetricTypeId;
                                     metric.Public = CurrentUser.CompanyId.HasValue ? request.Public : true;
+
+                                    //TODO editace column
 
                                     await Database.SaveChangesAsync();
 
@@ -185,7 +205,7 @@ namespace WebAPI.Services.Metrics
             BaseResponseModel response = new BaseResponseModel();
 
             Metric metric = await Load(id, response);
-            if (metric != null)
+            if (metric != null && CheckMetricForCrud(metric, response))
             {
                 if (metric.ProjectMetric.Count == 0)
                 {
@@ -214,7 +234,7 @@ namespace WebAPI.Services.Metrics
 
         public async Task<Metric> Load(int id, BaseResponseModel response)
         {
-            Metric metric = await Database.Metric.FirstOrDefaultAsync(a => a.Id == id);
+            Metric metric = await Database.Metric.FirstOrDefaultAsync(m => m.Id == id && (m.CompanyId == CurrentUser.CompanyId || m.Public));
             if (metric == null)
             {
                 response.Success = false;
@@ -224,9 +244,24 @@ namespace WebAPI.Services.Metrics
             return metric;
         }
 
+        private bool CheckMetricForCrud(Metric metric, BaseResponseModel response)
+        {
+            if (metric.CompanyId != CurrentUser.CompanyId)
+            {
+                response.Success = false;
+                response.Message = "Metric belongs to different company!";
+
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         private bool CheckMetricColumns(List<MetricColumnModel> columns, BaseResponseModel response)
         {
-            if (columns.Count > 0)
+            if (columns != null && columns.Count > 0)
             {
                 if (columns.All(c => c.Validate()))
                 {
@@ -236,7 +271,6 @@ namespace WebAPI.Services.Metrics
                 {
                     response.Success = false;
                     response.Message = "Some of metric columns are note valid!";
-
                 }
             }
             else

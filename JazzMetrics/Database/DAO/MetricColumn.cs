@@ -12,8 +12,9 @@ namespace Database.DAO
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public int MetricId { get; set; }
+        public bool? Divisor { get; set; }
         public int? PairMetricColumnId { get; set; }
+        public int MetricId { get; set; }
 
         public virtual Metric Metric { get; set; }
         public virtual MetricColumn PairMetricColumn { get; set; }

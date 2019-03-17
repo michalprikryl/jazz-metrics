@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public int MetricId { get; set; }
         public int? PairMetricColumnId { get; set; }
+        public bool? Divisor { get; set; }
 
         public bool Validate() => !string.IsNullOrEmpty(Name);
     }

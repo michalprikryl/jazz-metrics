@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Library.Models.Metric;
+using Library.Models.MetricColumn;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace WebApp.Models.Setting.Metric
 {
@@ -50,6 +53,36 @@ namespace WebApp.Models.Setting.Metric
         {
             NumberColumns = new List<MetricColumn>();
             CoverageColumns = new List<MetricCoverageColumn>();
+        }
+
+        public MetricModel TranslateToMetricModelForCreate()
+        {
+            MetricModel model = new MetricModel
+            {
+                Id = Id,
+                Identificator = Identificator,
+                Name = Name,
+                Description = Description,
+                MetricTypeId = int.Parse(MetricTypeId),
+                AspiceProcessId = int.Parse(AspiceProcessId),
+                AffectedFieldId = int.Parse(AffectedFieldId),
+                Public = Public,
+                Columns = new List<MetricColumnModel>()
+            };
+
+            model.Columns.AddRange(NumberColumns.Select(n =>
+                new MetricColumnModel
+                {
+                    Name = n.Name1
+                }));
+
+            foreach (var item in CoverageColumns)
+            {
+                model.Columns.Add(new MetricColumnModel { Name = item.Name1, PairMetricColumnId = 0 });
+                model.Columns.Add(new MetricColumnModel { Name = item.Name2, PairMetricColumnId = 0 });
+            }
+
+            return model;
         }
     }
 

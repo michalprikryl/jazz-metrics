@@ -530,7 +530,7 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _crudService.Create(model, Token, SettingService.MetricEntity);
+                var result = await _crudService.Create(model.TranslateToMetricModelForCreate(), Token, SettingService.MetricEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }

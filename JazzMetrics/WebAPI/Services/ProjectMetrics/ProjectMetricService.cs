@@ -194,7 +194,7 @@ namespace WebAPI.Services.ProjectMetrics
             }
             else
             {
-                if (projectMetric.Metric.Public || projectMetric.Metric.CompanyId != CurrentUser.CompanyId)
+                if (projectMetric.Metric.CompanyId != CurrentUser.CompanyId)
                 {
                     projectMetric = null;
                     response.Success = false;

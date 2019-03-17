@@ -1,8 +1,3 @@
-/*
-CREATE DATABASE JazzMetrics;
-GO
-*/
-
 CREATE TABLE [User]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
@@ -157,8 +152,9 @@ CREATE TABLE [MetricColumn]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
 	[Name] nvarchar(512) NOT NULL,
-	[MetricID] int NOT NULL,
+	[Divisor] bit NULL,
 	[PairMetricColumnID] int NULL,
+	[MetricID] int NOT NULL,
 	PRIMARY KEY ([ID])
 )
 GO

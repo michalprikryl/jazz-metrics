@@ -251,7 +251,7 @@ namespace WebApp.Controllers
         [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> ProjectMetricAdd(int id)
         {
-            ProjectMetricWorkModel model = new ProjectMetricWorkModel();
+            ProjectMetricWorkModel model = new ProjectMetricWorkModel { ProjectId = id };
 
             await GetMetrics(model);
 
@@ -355,9 +355,13 @@ namespace WebApp.Controllers
         {
             model.Metrics = await _projectService.GetMetricsForSelect(Token);
 
-            if (model.Metrics == null || model.Metrics.Count == 0)
+            if (model.Metrics == null)
             {
                 AddMessageToModel(model, "Cannot retrieve metrics, press F5 please.");
+            }
+            else if(model.Metrics.Count == 0)
+            {
+                AddMessageToModel(model, "Your company doesn't have any metrics, please create at least one.");
             }
         }
         #endregion
