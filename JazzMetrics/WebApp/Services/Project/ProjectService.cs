@@ -1,9 +1,15 @@
 ﻿using Library.Models;
+using Library.Models.Metric;
 using Library.Models.ProjectUsers;
 using Library.Networking;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using WebApp.Services.Crud;
+using WebApp.Services.Setting;
 
 namespace WebApp.Services.Project
 {
@@ -13,7 +19,9 @@ namespace WebApp.Services.Project
         public const string ProjectUserEntity = "projectuser";
         public const string ProjectMetricEntity = "projectmetric";
 
-        public ProjectService(IConfiguration config) : base(config) { }
+        private readonly ICrudService _crudService;
+
+        public ProjectService(IConfiguration config, ICrudService crudService) : base(config) => _crudService = crudService;
 
         public async Task<BaseResponseModelGet<ProjectUserModel>> GetProjectUser(int userId, int projectId, string jwt)
         {
@@ -25,6 +33,24 @@ namespace WebApp.Services.Project
             }, ProjectUserEntity, jwt: jwt);
 
             return result;
+        }
+
+        public async Task<List<SelectListItem>> GetMetricsForSelect(string jwt)
+        {
+            var response = await _crudService.GetAll<MetricModel>(jwt, SettingService.MetricEntity);
+            if (response.Success)
+            {
+                return response.Values.Select(v =>
+                    new SelectListItem
+                    {
+                        Value = v.Id.ToString(),
+                        Text = v.ToString()
+                    }).ToList();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

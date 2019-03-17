@@ -46,6 +46,11 @@ namespace WebApp
             return string.IsNullOrEmpty(value) ? "collapse" : string.Empty;
         }
 
+        public static string IsCollapsed(this IHtmlHelper html, bool value)
+        {
+            return value ? string.Empty : "collapse";
+        }
+
         /// <summary>
         /// vrati username z uzivatelskych udaju
         /// </summary>

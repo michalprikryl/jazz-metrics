@@ -1,6 +1,8 @@
 ﻿using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
+using Library.Models.MetricColumn;
 using Library.Models.MetricType;
+using System.Collections.Generic;
 
 namespace Library.Models.Metric
 {
@@ -20,6 +22,10 @@ namespace Library.Models.Metric
         public AffectedFieldModel AffectedField { get; set; }
         public AspiceProcessModel AspiceProcess { get; set; }
 
+        public List<MetricColumnModel> Columns { get; set; }
+
         public bool Validate() => !string.IsNullOrEmpty(Identificator) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Description);
+
+        public override string ToString() => $"{Name} ({Identificator})";
     }
 }

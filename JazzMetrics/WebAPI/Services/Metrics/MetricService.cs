@@ -4,11 +4,13 @@ using Library.Models;
 using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
 using Library.Models.Metric;
+using Library.Models.MetricColumn;
 using Library.Models.MetricType;
 using Library.Networking;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Services.AffectedFields;
 using WebAPI.Services.AspiceProcesses;
@@ -26,7 +28,7 @@ namespace WebAPI.Services.Metrics
 
         public CurrentUser CurrentUser { get; set; }
 
-        public MetricService(JazzMetricsContext db, IAspiceProcessService aspiceProcessService, IMetricTypeService metricTypeService, IAffectedFieldService affectedFieldService, 
+        public MetricService(JazzMetricsContext db, IAspiceProcessService aspiceProcessService, IMetricTypeService metricTypeService, IAffectedFieldService affectedFieldService,
             IHttpContextAccessor contextAccessor, IHelperService helperService) : base(db)
         {
             _metricTypeService = metricTypeService;
@@ -48,6 +50,7 @@ namespace WebAPI.Services.Metrics
                     metric.MetricType = GetMetricType(item.MetricType);
                     metric.AspiceProcess = GetAspiceProcess(item.AspiceProcess);
                     metric.AffectedField = GetAffectedField(item.AffectedField);
+                    metric.Columns = GetMetricColumns(item.MetricColumn);
                 }
 
                 response.Values.Add(metric);
@@ -70,6 +73,7 @@ namespace WebAPI.Services.Metrics
                     response.Value.MetricType = GetMetricType(metric.MetricType);
                     response.Value.AspiceProcess = GetAspiceProcess(metric.AspiceProcess);
                     response.Value.AffectedField = GetAffectedField(metric.AffectedField);
+                    response.Value.Columns = GetMetricColumns(metric.MetricColumn);
                 }
             }
 
@@ -90,24 +94,35 @@ namespace WebAPI.Services.Metrics
                         {
                             if (await CheckMetricIdentificator(request.Identificator, response))
                             {
-                                Metric metric = new Metric
+                                if (CheckMetricColumns(request.Columns, response))
                                 {
-                                    Name = request.Name,
-                                    Description = request.Description,
-                                    Identificator = request.Identificator,
-                                    AspiceProcessId = request.AspiceProcessId,
-                                    AffectedFieldId = request.AffectedFieldId,
-                                    MetricTypeId = request.MetricTypeId,
-                                    Public = CurrentUser.CompanyId.HasValue ? request.Public : true,
-                                    CompanyId = CurrentUser.CompanyId
-                                };
+                                    Metric metric = new Metric
+                                    {
+                                        Name = request.Name,
+                                        Description = request.Description,
+                                        Identificator = request.Identificator,
+                                        AspiceProcessId = request.AspiceProcessId,
+                                        AffectedFieldId = request.AffectedFieldId,
+                                        MetricTypeId = request.MetricTypeId,
+                                        Public = CurrentUser.CompanyId.HasValue ? request.Public : true,
+                                        CompanyId = CurrentUser.CompanyId
+                                    };
 
-                                await Database.Metric.AddAsync(metric);
+                                    await Database.MetricColumn.AddRangeAsync(request.Columns.Select(c =>
+                                        new MetricColumn
+                                        {
+                                            Name = c.Name,
+                                            Metric = metric,
+                                            PairMetricColumnId = c.PairMetricColumnId
+                                        }));
 
-                                await Database.SaveChangesAsync();
+                                    await Database.Metric.AddAsync(metric);
 
-                                response.Id = metric.Id;
-                                response.Message = "Metric was successfully created!";
+                                    await Database.SaveChangesAsync();
+
+                                    response.Id = metric.Id;
+                                    response.Message = "Metric was successfully created!";
+                                }
                             }
                         }
                     }
@@ -209,6 +224,30 @@ namespace WebAPI.Services.Metrics
             return metric;
         }
 
+        private bool CheckMetricColumns(List<MetricColumnModel> columns, BaseResponseModel response)
+        {
+            if (columns.Count > 0)
+            {
+                if (columns.All(c => c.Validate()))
+                {
+                    return true;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Some of metric columns are note valid!";
+
+                }
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Metric must have at least one column!";
+            }
+
+            return false;
+        }
+
         private async Task<bool> CheckAspiceProcess(int aspiceProcessId, BaseResponseModel response)
         {
             if (await Database.AspiceProcess.AnyAsync(a => a.Id == aspiceProcessId))
@@ -275,6 +314,8 @@ namespace WebAPI.Services.Metrics
 
         private AffectedFieldModel GetAffectedField(AffectedField affectedField) => _affectedFieldService.ConvertToModel(affectedField);
 
+        private List<MetricColumnModel> GetMetricColumns(ICollection<MetricColumn> metricColumns) => metricColumns.Select(c => ConvertMetricColumn(c)).ToList();
+
         public MetricModel ConvertToModel(Metric dbModel)
         {
             return new MetricModel
@@ -290,5 +331,14 @@ namespace WebAPI.Services.Metrics
                 Public = dbModel.Public
             };
         }
+
+        public MetricColumnModel ConvertMetricColumn(MetricColumn metricColumn) =>
+            new MetricColumnModel
+            {
+                Id = metricColumn.Id,
+                Name = metricColumn.Name,
+                MetricId = metricColumn.MetricId,
+                PairMetricColumnId = metricColumn.PairMetricColumnId
+            };
     }
 }

@@ -20,6 +20,7 @@ using WebAPI.Services.Log;
 using WebAPI.Services.Metrics;
 using WebAPI.Services.MetricTypes;
 using WebAPI.Services.ProjectMetrics;
+using WebAPI.Services.ProjectMetricSnapshots;
 using WebAPI.Services.Projects;
 using WebAPI.Services.ProjectUsers;
 using WebAPI.Services.Setting;
@@ -33,7 +34,7 @@ namespace WebAPI
         /// <summary>
         /// nazev connectionstringu databaze v appsettings.json
         /// </summary>
-        public static string ConnectionStringName = "JazzMetricsDatabase";
+        public const string ConnectionStringName = "JazzMetricsDatabase";
 
         public Startup(IConfiguration configuration)
         {
@@ -79,10 +80,11 @@ namespace WebAPI
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IMetricTypeService, MetricTypeService>();
             services.AddScoped<IProjectUserService, ProjectUserService>();
-            services.AddScoped<IAspiceVersionService, AspiceVersionService>(); 
+            services.AddScoped<IAspiceVersionService, AspiceVersionService>();
             services.AddScoped<IAspiceProcessService, AspiceProcessService>();
             services.AddScoped<IProjectMetricService, ProjectMetricService>();
-            services.AddScoped<IAffectedFieldService, AffectedFieldService>();
+            services.AddScoped<IAffectedFieldService, AffectedFieldService>(); 
+            services.AddScoped<IProjectMetricSnapshotService, ProjectMetricSnapshotService>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

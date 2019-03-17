@@ -1,6 +1,8 @@
 ﻿using Library.Models.Metric;
+using Library.Models.ProjectMetricSnapshots;
 using Library.Models.Projects;
 using System;
+using System.Collections.Generic;
 
 namespace Library.Models.ProjectMetrics
 {
@@ -19,5 +21,9 @@ namespace Library.Models.ProjectMetrics
 
         public MetricModel Metric { get; set; }
         public ProjectModel Project { get; set; }
+
+        public List<ProjectMetricSnapshotModel> Snapshots { get; set; }
+
+        public bool Validate() => !string.IsNullOrEmpty(DataUrl) && !string.IsNullOrEmpty(DataUsername) && (DataPassword != null || DataPassword != string.Empty);
     }
 }

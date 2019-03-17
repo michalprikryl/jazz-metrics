@@ -1,4 +1,5 @@
-﻿using Library.Models.Projects;
+﻿using Library.Models.ProjectMetrics;
+using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Project;
+using WebApp.Models.Project.ProjectMetric;
 using WebApp.Models.Project.ProjectUser;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
@@ -131,7 +133,7 @@ namespace WebApp.Controllers
         #endregion
 
         #region Project's users
-        [HttpGet("User/{id}")]
+        [HttpGet("{id}/User")]
         public async Task<IActionResult> ProjectUsers(int id)
         {
             ProjectUserListModel model = new ProjectUserListModel
@@ -207,6 +209,155 @@ namespace WebApp.Controllers
             else
             {
                 return Json(result);
+            }
+        }
+        #endregion
+
+        #region Project's metrics
+        [HttpGet("{id}/Metric")]
+        public async Task<IActionResult> ProjectMetrics(int id)
+        {
+            ProjectMetricListModel model = new ProjectMetricListModel();
+
+            CheckTempData(model);
+
+            var result = await _crudService.Get<ProjectModel>(id, Token, ProjectService.ProjectEntity, false);
+            if (result.Success)
+            {
+                model.Id = result.Value.Id;
+                model.Name = result.Value.Name;
+                model.Metrics = result.Value.ProjectMetrics.Select(m =>
+                    new ProjectMetricViewModel
+                    {
+                        CreateDate = m.CreateDate,
+                        LastUpdateDate = m.LastUpdateDate,
+                        MetricId = m.MetricId,
+                        MetricInfo = m.Metric.ToString(),
+                        ProjectMetricId = m.Id,
+                        Public = m.Metric.Public,
+                        Warning = m.Warning,
+                        CanEdit = m.Metric.CompanyId == MyUser.CompanyId
+                    }).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Metric/Index", model);
+        }
+
+        [HttpGet("{id}/Metric/Add")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> ProjectMetricAdd(int id)
+        {
+            ProjectMetricWorkModel model = new ProjectMetricWorkModel();
+
+            await GetMetrics(model);
+
+            return View("Metric/Add", model);
+        }
+
+        [HttpPost("{id}/Metric/Add")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> ProjectMetricAdd(int id, ProjectMetricWorkModel model)
+        {
+            Task task = GetMetrics(model);
+
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(model.DataPassword))
+                {
+                    model.ProjectId = id;
+
+                    var result = await _crudService.Create(model, Token, ProjectService.ProjectMetricEntity);
+
+                    AddMessageToModel(model, result.Message, !result.Success);
+                }
+                else
+                {
+                    AddMessageToModel(model, "Paste your password, please!");
+                }
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            await Task.WhenAll(task);
+
+            return View("Metric/Add", model);
+        }
+
+        [HttpGet("{projectId}/Metric/Edit/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> ProjectMetricEdit(int projectId, int id)
+        {
+            ProjectMetricWorkModel model = new ProjectMetricWorkModel();
+
+            Task task = GetMetrics(model);
+
+            var result = await _crudService.Get<ProjectMetricModel>(id, Token, ProjectService.ProjectMetricEntity);
+            if (result.Success)
+            {
+                model.Id = id;
+                model.ProjectId = projectId;
+                model.DataUrl = result.Value.DataUrl;
+                model.DataUsername = result.Value.DataUsername;
+                model.DataPassword = result.Value.DataPassword;
+                model.MetricId = result.Value.MetricId.ToString();
+                model.Warning = result.Value.Warning;
+                model.MinimalWarningValue = result.Value.MinimalWarningValue;
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            await Task.WhenAll(task);
+
+            return View("Metric/Edit", model);
+        }
+
+        [HttpPost("{projectId}/Metric/Edit/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> ProjectMetricEdit(int projectId, int id, ProjectMetricWorkModel model)
+        {
+            Task task = GetMetrics(model);
+
+            if (ModelState.IsValid)
+            {
+                model.Id = id;
+                model.ProjectId = projectId;
+
+                var result = await _crudService.Edit(id, model, Token, ProjectService.ProjectMetricEntity);
+
+                AddMessageToModel(model, result.Message, !result.Success);
+            }
+            else
+            {
+                AddModelStateErrors(model);
+            }
+
+            await Task.WhenAll(task);
+
+            return View("Metric/Edit", model);
+        }
+
+        [HttpPost("{projectId}/Metric/Delete/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> ProjectMetricDelete(int projectId, int id)
+        {
+            return Json(await _crudService.Drop(id, Token, ProjectService.ProjectMetricEntity));
+        }
+
+        private async Task GetMetrics(ProjectMetricWorkModel model)
+        {
+            model.Metrics = await _projectService.GetMetricsForSelect(Token);
+
+            if (model.Metrics == null || model.Metrics.Count == 0)
+            {
+                AddMessageToModel(model, "Cannot retrieve metrics, press F5 please.");
             }
         }
         #endregion

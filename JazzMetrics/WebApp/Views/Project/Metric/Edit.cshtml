@@ -1,0 +1,49 @@
+﻿@model ProjectMetricWorkModel
+@{
+    ViewData["Title"] = "Project metric - Edit";
+    var headerModel = new ListHeaderViewModel { Path = $"/Project/{Model.ProjectId}/Metric", Button = "Back to project metrics", CssClass = "fa-arrow-left" };
+}
+<partial name="Partials/_ErrorTable" />
+<partial name="Partials/_ListHead" model="@headerModel" />
+
+<form asp-controller="Project" asp-action="ProjectMetricAdd" method="post" class="form-horizontal" role="form">
+    <div class="col-md-7 mx-auto">
+        <div class="form-group">
+            <label asp-for="DataUrl" class="control-label"></label>
+            <input asp-for="DataUrl" class="form-control" />
+            <span asp-validation-for="DataUrl" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DataUsername" class="control-label"></label>
+            <input asp-for="DataUsername" class="form-control" />
+            <span asp-validation-for="DataUsername" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DataPassword" class="control-label"></label>
+            <input asp-for="DataPassword" class="form-control" />
+            <span asp-validation-for="DataPassword" class="text-danger"></span>
+            <small id="emailHelp" class="form-text text-muted">If you type new password, old password will be replaced by this.</small>
+        </div>
+        <div class="form-group">
+            <label asp-for="MetricId" class="control-label"></label>
+            <select asp-for="MetricId" asp-items="Model.Metrics" class="form-control"></select>
+            <span asp-validation-for="MetricId" class="text-danger"></span>
+        </div>
+
+        <div class="form-row align-items-center">
+            <div class="form-group col-md-12">
+                <input asp-for="Warning" class="form-control-input" type="checkbox" data-toggle="collapse" data-target="#warning-div" />
+                <label asp-for="Warning" class="form-check-label"></label>
+            </div>
+        </div>
+
+        <div class="form-row @Html.IsCollapsed(Model.Warning)" id="warning-div">
+            <div class="form-group col-md-12">
+                <input asp-for="MinimalWarningValue" class="form-control" placeholder="Minimal value for warning" />
+                <span asp-validation-for="MinimalWarningValue" class="text-danger"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Save</button>
+    </div>
+</form>

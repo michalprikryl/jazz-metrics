@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using WebAPI.Controllers;
 using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
+using WebAPI.Services.Metrics;
 using WebAPI.Services.ProjectMetrics;
 using WebAPI.Services.ProjectUsers;
 using WebAPI.Services.Users;
@@ -23,15 +24,17 @@ namespace WebAPI.Services.Projects
     public class ProjectService : BaseDatabase, IProjectService
     {
         private readonly IUserService _userService;
+        private readonly IMetricService _metricService;
         private readonly IProjectUserService _projectUserService;
         private readonly IProjectMetricService _projectMetricService;
 
         public CurrentUser CurrentUser { get; set; }
 
-        public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService, IProjectUserService projectUserService, 
-            IHelperService helperService, IHttpContextAccessor contextAccessor) : base(db)
+        public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService, IProjectUserService projectUserService,
+            IHelperService helperService, IHttpContextAccessor contextAccessor, IMetricService metricService) : base(db)
         {
             _userService = userService;
+            _metricService = metricService;
             _projectUserService = projectUserService;
             _projectMetricService = projectMetricService;
             CurrentUser = helperService.GetCurrentUser(contextAccessor.HttpContext.User.GetId());
@@ -123,7 +126,7 @@ namespace WebAPI.Services.Projects
                 if (project != null)
                 {
                     project.Name = request.Name;
-                    project.Description = request.Description; ;
+                    project.Description = request.Description;
 
                     await Database.SaveChangesAsync();
 
@@ -220,12 +223,17 @@ namespace WebAPI.Services.Projects
         }
 
         private List<ProjectUserModel> GetProjectUsers(ICollection<ProjectUser> users) => users.Select(u =>
-        {
-            ProjectUserModel projectUser = _projectUserService.ConvertToModel(u);
-            projectUser.User = _userService.ConvertToModel(u.User);
-            return projectUser;
-        }).ToList();
+            {
+                ProjectUserModel projectUser = _projectUserService.ConvertToModel(u);
+                projectUser.User = _userService.ConvertToModel(u.User);
+                return projectUser;
+            }).ToList();
 
-        private List<ProjectMetricModel> GetProjectMetrics(ICollection<ProjectMetric> metrics) => metrics.Select(m => _projectMetricService.ConvertToModel(m)).ToList();
+        private List<ProjectMetricModel> GetProjectMetrics(ICollection<ProjectMetric> metrics) => metrics.Select(m =>
+            {
+                ProjectMetricModel projectMetric = _projectMetricService.ConvertToModel(m);
+                projectMetric.Metric = _metricService.ConvertToModel(m.Metric);
+                return projectMetric;
+            }).ToList();
     }
 }

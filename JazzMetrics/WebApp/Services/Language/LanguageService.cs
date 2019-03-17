@@ -11,9 +11,9 @@ namespace WebApp.Services.Language
 {
     public class LanguageService : ClientApi, ILanguageService
     {
-        private readonly ICrudService _crudService;
+        private const string LanguageEntity = "language";
 
-        private static string LanguageEntity => "language";
+        private readonly ICrudService _crudService;
 
         public LanguageService(IConfiguration config, ICrudService crudService) : base(config, LanguageEntity) => _crudService = crudService;
 
