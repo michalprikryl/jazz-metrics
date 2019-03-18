@@ -1,8 +1,10 @@
 ﻿@model MetricListModel
 
 @{
+    var companyId = User.CompanyId();
     ViewData["Title"] = "Metrics";
     var editModel = new ResultViewModel { Color = "black", CssClass = "fa-edit", Message = "Edit Metric" };
+    var detailModel = new ResultViewModel { Color = "black", CssClass = "fa-info", Message = "Detail of Metric" };
     var publicModel = new ResultViewModel { Color = "black", CssClass = "fa-users", Message = "Metric is public!" };
     var headerModel = new ListHeaderViewModel { Message = "List of Metrics.", Path = "/Setting/Metric/Add", Button = "Create new", CssClass = "fa-plus" };
 }
@@ -38,11 +40,20 @@
                     <td>@item.MetricType</td>
                     <td>@item.AffectedField</td>
                     <td scope="col">
-                        <a href="/Setting/Metric/Edit/@item.Id">
-                            <partial name="Partials/_Icon" model="@editModel" />
-                        </a>
-                        @{ string endpoint = $"/Setting/Metric/Delete/{item.Id}"; }
-                        <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="javascript: deleteItem('@endpoint')"></span>
+                        @if (item.CompanyId == companyId)
+                        {
+                            <a href="/Setting/Metric/Edit/@item.Id">
+                                <partial name="Partials/_Icon" model="@editModel" />
+                            </a>
+                            <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="javascript: deleteItem('/Setting/Metric/Delete/@item.Id')"></span>
+                        }
+                        else
+                        {
+                            <a href="/Setting/Metric/Detail/@item.Id">
+                                <partial name="Partials/_Icon" model="@detailModel" />
+                            </a>
+                        }
+
                         @if (item.Public)
                         {
                             <partial name="Partials/_Icon" model="@publicModel" />

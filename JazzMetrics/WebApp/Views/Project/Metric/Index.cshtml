@@ -54,11 +54,11 @@
                     <td>
                         @if (item.CanEdit)
                         {
-                            <a href="/Setting/Metric/Edit/@item.MetricId" title="Display user's detail">@item.MetricInfo</a>
+                            <a href="/Setting/Metric/Edit/@item.MetricId" title="Edit metric">@item.MetricInfo</a>
                         }
                         else
                         {
-                            <a href="/Setting/Metric/Detail/@item.MetricId" title="Display user's detail">@item.MetricInfo</a> @*TODO detail*@
+                            <a href="/Setting/Metric/Detail/@item.MetricId" title="Display metric's detail">@item.MetricInfo</a>
                         }
                     </td>
                     <td>@item.CreateDate</td>

@@ -55,9 +55,64 @@ namespace WebApp.Models.Setting.Metric
             CoverageColumns = new List<MetricCoverageColumn>();
         }
 
-        public MetricModel TranslateToMetricModelForCreate()
+        public void DropDeletedColumns()
         {
-            MetricModel model = new MetricModel
+            NumberColumns.RemoveAll(m => m.Deleted);
+            CoverageColumns.RemoveAll(m => m.Deleted);
+        }
+
+        public MetricModel TranslateToMetricModel()
+        {
+            MetricModel model = GetMetricModel();
+
+            model.Columns.AddRange(NumberColumns.Select(n =>
+                new MetricColumnModel
+                {
+                    Id = n.Id,
+                    Name = n.Name1
+                }));
+
+            foreach (var item in CoverageColumns)
+            {
+                model.Columns.Add(new MetricColumnModel { Id = item.Id, Name = item.Name1, PairMetricColumnId = 0 });
+                model.Columns.Add(new MetricColumnModel { Id = item.Id2, Name = item.Name2,PairMetricColumnId = 0 });
+            }
+
+            return model;
+        }
+
+        public void LoadMetricColumns(List<MetricColumnModel> columns)
+        {
+            int i = 0;
+            foreach (var item in columns.Where(c => !c.Divisor.HasValue))
+            {
+                NumberColumns.Add(new MetricColumn
+                {
+                    Id = item.Id,
+                    Index = i++,
+                    Name1 = item.Name,
+                    Deleted = false
+                });
+            }
+
+            i = 0;
+            foreach (var item in columns.Where(c => c.PairMetricColumnId.HasValue))
+            {
+                var secondColumn = columns.First(c => c.Id == item.PairMetricColumnId.Value);
+                CoverageColumns.Add(new MetricCoverageColumn
+                {
+                    Id = item.Id,
+                    Id2 = secondColumn.Id,
+                    Index = i++,
+                    Name1 = item.Name,
+                    Name2 = secondColumn.Name,
+                    Deleted = false
+                });
+            }
+        }
+
+        private MetricModel GetMetricModel() =>
+            new MetricModel
             {
                 Id = Id,
                 Identificator = Identificator,
@@ -69,21 +124,6 @@ namespace WebApp.Models.Setting.Metric
                 Public = Public,
                 Columns = new List<MetricColumnModel>()
             };
-
-            model.Columns.AddRange(NumberColumns.Select(n =>
-                new MetricColumnModel
-                {
-                    Name = n.Name1
-                }));
-
-            foreach (var item in CoverageColumns)
-            {
-                model.Columns.Add(new MetricColumnModel { Name = item.Name1, PairMetricColumnId = 0 });
-                model.Columns.Add(new MetricColumnModel { Name = item.Name2, PairMetricColumnId = 0 });
-            }
-
-            return model;
-        }
     }
 
     public class MetricViewModel
@@ -99,6 +139,7 @@ namespace WebApp.Models.Setting.Metric
         public int AffectedFieldId { get; set; }
         public string AffectedField { get; set; }
         public bool Public { get; set; }
+        public int? CompanyId { get; set; }
     }
 
     public class NewMetricColumn
@@ -123,7 +164,7 @@ namespace WebApp.Models.Setting.Metric
     {
         public int Id2 { get; set; }
 
-        [Display(Name = "Attribute name")]
+        [Display(Name = "Attribute 1 and 2 names")]
         public string Name2 { get; set; }
     }
 }

@@ -9,6 +9,9 @@
 
     <label asp-for="Name1" class="control-label"></label>
     <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text" title="bar chart with other columns"><i class="fa fa-chart-bar"></i></span>
+        </div>
         <input name="NumberColumns[@Model.Index].Name1" value="@Model.Name1" type="text" class="form-control" />
         <div class="input-group-append">
             <span class="input-group-text pointer" title="Drop attribute" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>

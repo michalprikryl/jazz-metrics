@@ -180,7 +180,44 @@ namespace WebAPI.Services.Metrics
                                     metric.MetricTypeId = request.MetricTypeId;
                                     metric.Public = CurrentUser.CompanyId.HasValue ? request.Public : true;
 
-                                    //TODO editace column
+                                    //smazane
+                                    var deletedIds = metric.MetricColumn.Select(c => c.Id).Except(request.Columns.Select(c => c.Id));
+                                    Database.MetricColumn.RemoveRange(metric.MetricColumn.Where(c => deletedIds.Contains(c.Id)));
+
+                                    //nove a editovane
+                                    for (int i = 0; i < request.Columns.Count; i++)
+                                    {
+                                        if (request.Columns[i].Id == 0)
+                                        {
+                                            MetricColumn metricColumn = new MetricColumn
+                                            {
+                                                Name = request.Columns[i].Name,
+                                                Metric = metric,
+                                            };
+
+                                            if (request.Columns[i].PairMetricColumnId.HasValue)
+                                            {
+                                                MetricColumn pairMetricColumn = new MetricColumn
+                                                {
+                                                    Name = request.Columns[++i].Name,
+                                                    Divisor = true,
+                                                    Metric = metric,
+                                                };
+
+                                                metricColumn.Divisor = false;
+                                                metricColumn.PairMetricColumn = pairMetricColumn;
+
+                                                await Database.MetricColumn.AddAsync(pairMetricColumn);
+                                            }
+
+                                            await Database.MetricColumn.AddAsync(metricColumn);
+                                        }
+                                        else
+                                        {
+                                            var column = metric.MetricColumn.First(c => c.Id == request.Columns[i].Id);
+                                            column.Name = request.Columns[i].Name;
+                                        }
+                                    }
 
                                     await Database.SaveChangesAsync();
 
@@ -371,6 +408,7 @@ namespace WebAPI.Services.Metrics
             {
                 Id = metricColumn.Id,
                 Name = metricColumn.Name,
+                Divisor = metricColumn.Divisor,
                 MetricId = metricColumn.MetricId,
                 PairMetricColumnId = metricColumn.PairMetricColumnId
             };

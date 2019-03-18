@@ -500,7 +500,8 @@ namespace WebApp.Controllers
                         AspiceProcessId = a.AspiceProcess.Id,
                         AspiceProcess = a.AspiceProcess.ToString(),
                         MetricTypeId = a.MetricType.Id,
-                        MetricType = a.MetricType.ToString()
+                        MetricType = a.MetricType.ToString(),
+                        CompanyId = a.CompanyId
                     }).ToList();
             }
             else
@@ -509,6 +510,34 @@ namespace WebApp.Controllers
             }
 
             return View("Metric/Index", model);
+        }
+
+        [HttpGet("Metric/Detail/{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
+        public async Task<IActionResult> MetricDetail(int id) //TODO
+        {
+            MetricWorkModel model = new MetricWorkModel();
+
+            var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
+            if (result.Success)
+            {
+                model.Id = id;
+                model.Name = result.Value.Name;
+                model.Public = result.Value.Public;
+                model.Description = result.Value.Description;
+                model.Identificator = result.Value.Identificator;
+                model.MetricTypeId = result.Value.MetricType.Id.ToString();
+                model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
+                model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
+
+                model.LoadMetricColumns(result.Value.Columns);
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Metric/Detail", model);
         }
 
         [HttpGet("Metric/Add")]
@@ -528,9 +557,11 @@ namespace WebApp.Controllers
         {
             Task select = GetMetricSelects(model);
 
+            model.DropDeletedColumns();
+
             if (ModelState.IsValid)
             {
-                var result = await _crudService.Create(model.TranslateToMetricModelForCreate(), Token, SettingService.MetricEntity);
+                var result = await _crudService.Create(model.TranslateToMetricModel(), Token, SettingService.MetricEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }
@@ -563,6 +594,8 @@ namespace WebApp.Controllers
                 model.MetricTypeId = result.Value.MetricType.Id.ToString();
                 model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
                 model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
+
+                model.LoadMetricColumns(result.Value.Columns);
             }
             else
             {
@@ -580,9 +613,11 @@ namespace WebApp.Controllers
         {
             Task select = GetMetricSelects(model);
 
+            model.DropDeletedColumns();
+
             if (ModelState.IsValid)
             {
-                var result = await _crudService.Edit(id, model, Token, SettingService.MetricEntity);
+                var result = await _crudService.Edit(id, model.TranslateToMetricModel(), Token, SettingService.MetricEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
             }

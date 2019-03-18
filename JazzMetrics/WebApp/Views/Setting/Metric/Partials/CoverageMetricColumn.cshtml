@@ -8,22 +8,22 @@
     <input value="@Model.Index" name="CoverageColumns[@Model.Index].Index" type="hidden" />
     <input value="False" name="CoverageColumns[@Model.Index].Deleted" id="del-@column" type="hidden" />
 
-    <div class="form-group col-md-6 pr-0">
-        <label asp-for="Name1" class="control-label"></label>
+    <div class="form-group input-1 pr-0">
+        <label asp-for="Name2" class="control-label"></label>
         <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" title="line chart - trend metric"><i class="fa fa-chart-line"></i></span>
+            </div>
             <input name="CoverageColumns[@Model.Index].Name1" value="@Model.Name1" type="text" class="form-control" />
             <div class="input-group-append">
-                <span class="input-group-text pointer" title="Second column divides first column"><i class="fa fa-divide"></i></span>
+                <span class="input-group-text border-radius" title="Second column divides first column"><i class="fa fa-divide"></i></span>
             </div>
         </div>
     </div>
-    @*<div class="form-group col-md-1 mt-4 d-flex flex-row justify-content-center align-items-center">
-            <span class="fas fa-divide plus-icon" title="Second column divides first column"></span>
-        </div>*@
-    <div class="form-group col-md-6 pl-0">
-        <label asp-for="Name2" class="control-label"></label>
-        <div class="input-group">
-            <input name="CoverageColumns[@Model.Index].Name2" value="@Model.Name2" type="text" class="form-control" />
+
+    <div class="form-group input-2 pl-0">
+        <div class="input-group margin-input">
+            <input name="CoverageColumns[@Model.Index].Name2" value="@Model.Name2" type="text" class="form-control border-radius-left" />
             <div class="input-group-append">
                 <span class="input-group-text pointer" title="Drop attributes" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
             </div>
