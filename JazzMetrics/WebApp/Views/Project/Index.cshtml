@@ -37,7 +37,11 @@
             {
                 <tr>
                     <th scope="row">@item.Id</th>
-                    <td>@item.Name</td>
+                    <td>
+                        <a href="/Project/@item.Id/Dashboard" title="Project dashboard">
+                            @item.Name
+                        </a>
+                    </td>
                     <td>@item.CreateDate</td>
                     <td>
                         <a href="/Project/@item.Id/Metric" title="List of projects's metrics">

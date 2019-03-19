@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebAPI.Controllers;
 using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
 
@@ -89,6 +90,11 @@ namespace WebAPI.Services.ProjectUsers
             ProjectUser projectUser = await Load(id, response);
             if (projectUser != null)
             {
+                if (projectUser.User.UserRole.Name == MainController.RoleAdmin)
+                {
+                    projectUser.User.UserRole = await Database.UserRole.FirstAsync(r => r.Name == MainController.RoleUser);
+                }
+
                 Database.ProjectUser.Remove(projectUser);
 
                 await Database.SaveChangesAsync();

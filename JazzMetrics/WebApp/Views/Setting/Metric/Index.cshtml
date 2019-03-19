@@ -4,7 +4,6 @@
     var companyId = User.CompanyId();
     ViewData["Title"] = "Metrics";
     var editModel = new ResultViewModel { Color = "black", CssClass = "fa-edit", Message = "Edit Metric" };
-    var detailModel = new ResultViewModel { Color = "black", CssClass = "fa-info", Message = "Detail of Metric" };
     var publicModel = new ResultViewModel { Color = "black", CssClass = "fa-users", Message = "Metric is public!" };
     var headerModel = new ListHeaderViewModel { Message = "List of Metrics.", Path = "/Setting/Metric/Add", Button = "Create new", CssClass = "fa-plus" };
 }
@@ -34,7 +33,11 @@
             {
                 <tr>
                     <th scope="row">@item.Id</th>
-                    <td>@item.Name</td>
+                    <td>
+                        <a href="/Setting/Metric/Detail/@item.Id" title="Detail of metric">
+                            @item.Name
+                        </a>
+                    </td>
                     <td>@item.Identificator</td>
                     <td>@item.AspiceProcess</td>
                     <td>@item.MetricType</td>
@@ -46,12 +49,6 @@
                                 <partial name="Partials/_Icon" model="@editModel" />
                             </a>
                             <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="javascript: deleteItem('/Setting/Metric/Delete/@item.Id')"></span>
-                        }
-                        else
-                        {
-                            <a href="/Setting/Metric/Detail/@item.Id">
-                                <partial name="Partials/_Icon" model="@detailModel" />
-                            </a>
                         }
 
                         @if (item.Public)

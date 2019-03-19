@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Project;
+using WebApp.Models.Project.Dashboard;
 using WebApp.Models.Project.ProjectMetric;
 using WebApp.Models.Project.ProjectUser;
 using WebApp.Services.Crud;
@@ -129,6 +130,30 @@ namespace WebApp.Controllers
         public async Task<IActionResult> ProjectDelete(int id)
         {
             return Json(await _crudService.Drop(id, Token, ProjectService.ProjectEntity));
+        }
+        #endregion
+
+        #region Projects dashboard
+        [HttpGet("{id}/Dashboard")]
+        public async Task<IActionResult> Dashboard(int id)
+        {
+            ProjectDashboardViewModel model = new ProjectDashboardViewModel();
+
+            var result = await _crudService.Get<ProjectModel>(id, Token, ProjectService.ProjectEntity, false);
+            if (result.Success)
+            {
+                ProjectModel value = result.Value;
+
+                model.Id = value.Id;
+                model.Name = value.Name;
+                model.Description = value.Description;
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Dashboard/Index", model);
         }
         #endregion
 
@@ -359,7 +384,7 @@ namespace WebApp.Controllers
             {
                 AddMessageToModel(model, "Cannot retrieve metrics, press F5 please.");
             }
-            else if(model.Metrics.Count == 0)
+            else if (model.Metrics.Count == 0)
             {
                 AddMessageToModel(model, "Your company doesn't have any metrics, please create at least one.");
             }

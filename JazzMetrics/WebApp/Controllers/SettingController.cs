@@ -514,9 +514,9 @@ namespace WebApp.Controllers
 
         [HttpGet("Metric/Detail/{id}")]
         [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
-        public async Task<IActionResult> MetricDetail(int id) //TODO
+        public async Task<IActionResult> MetricDetail(int id)
         {
-            MetricWorkModel model = new MetricWorkModel();
+            MetricDetailViewModel model = new MetricDetailViewModel();
 
             var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
             if (result.Success)
@@ -524,11 +524,12 @@ namespace WebApp.Controllers
                 model.Id = id;
                 model.Name = result.Value.Name;
                 model.Public = result.Value.Public;
+                model.CompanyId = result.Value.CompanyId;
                 model.Description = result.Value.Description;
                 model.Identificator = result.Value.Identificator;
-                model.MetricTypeId = result.Value.MetricType.Id.ToString();
-                model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
-                model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
+                model.MetricType = result.Value.MetricType.ToString();
+                model.AspiceProcess = result.Value.AspiceProcess.ToString();
+                model.AffectedField = result.Value.AffectedField.ToString();
 
                 model.LoadMetricColumns(result.Value.Columns);
             }
@@ -586,16 +587,24 @@ namespace WebApp.Controllers
             var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
             if (result.Success)
             {
-                model.Id = id;
-                model.Name = result.Value.Name;
-                model.Public = result.Value.Public;
-                model.Description = result.Value.Description;
-                model.Identificator = result.Value.Identificator;
-                model.MetricTypeId = result.Value.MetricType.Id.ToString();
-                model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
-                model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
+                if (result.Value.CompanyId == MyUser.CompanyId)
+                {
+                    model.Id = id;
+                    model.Name = result.Value.Name;
+                    model.Public = result.Value.Public;
+                    model.Description = result.Value.Description;
+                    model.Identificator = result.Value.Identificator;
+                    model.MetricTypeId = result.Value.MetricType.Id.ToString();
+                    model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
+                    model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
 
-                model.LoadMetricColumns(result.Value.Columns);
+                    model.LoadMetricColumns(result.Value.Columns);
+                }
+                else
+                {
+                    model.CanView = false;
+                    AddMessageToModel(model, "You can't edit this metric!");
+                }
             }
             else
             {

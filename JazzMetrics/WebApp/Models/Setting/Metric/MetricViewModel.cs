@@ -75,7 +75,7 @@ namespace WebApp.Models.Setting.Metric
             foreach (var item in CoverageColumns)
             {
                 model.Columns.Add(new MetricColumnModel { Id = item.Id, Name = item.Name1, PairMetricColumnId = 0 });
-                model.Columns.Add(new MetricColumnModel { Id = item.Id2, Name = item.Name2,PairMetricColumnId = 0 });
+                model.Columns.Add(new MetricColumnModel { Id = item.Id2, Name = item.Name2, PairMetricColumnId = 0 });
             }
 
             return model;
@@ -166,5 +166,30 @@ namespace WebApp.Models.Setting.Metric
 
         [Display(Name = "Attribute 1 and 2 names")]
         public string Name2 { get; set; }
+    }
+
+    public class MetricDetailViewModel : ViewModel
+    {
+        public int Id { get; set; }
+        public string Identificator { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string MetricType { get; set; }
+        public string AspiceProcess { get; set; }
+        public string AffectedField { get; set; }
+        public bool Public { get; set; }
+        public int? CompanyId { get; set; }
+        public List<string> Columns { get; set; }
+
+        public void LoadMetricColumns(List<MetricColumnModel> columns)
+        {
+            Columns = columns.Where(c => !c.Divisor.HasValue).Select(c => $"'{c.Name}' (type - number)").ToList();
+
+            foreach (var item in columns.Where(c => c.PairMetricColumnId.HasValue))
+            {
+                var secondColumn = columns.First(c => c.Id == item.PairMetricColumnId.Value);
+                Columns.Add($"'{item.Name}' divided by '{secondColumn.Name}' (type - coverage)");
+            }
+        }
     }
 }
