@@ -47,7 +47,7 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -83,28 +83,28 @@ namespace WebAPI
             services.AddScoped<IAspiceVersionService, AspiceVersionService>();
             services.AddScoped<IAspiceProcessService, AspiceProcessService>();
             services.AddScoped<IProjectMetricService, ProjectMetricService>();
-            services.AddScoped<IAffectedFieldService, AffectedFieldService>(); 
-            services.AddScoped<IProjectMetricSnapshotService, ProjectMetricSnapshotService>(); 
+            services.AddScoped<IAffectedFieldService, AffectedFieldService>();
+            services.AddScoped<IProjectMetricSnapshotService, ProjectMetricSnapshotService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            app.UseHsts();
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-            //}
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts();
+                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            }
 
             app.UseAuthentication();
-            //app.UseHttpsRedirection(); //TODO https a origins
+            app.UseHttpsRedirection();
             app.UseCors(options => options
-                        //.WithOrigins("http://localhost:60001", "http://localhost:20260", "http://localhost:58771")
-                        .AllowAnyOrigin()
+                        .WithOrigins("https://localhost:5002", "http://localhost:5003", "https://jazz-metrics.azurewebsites.net")
+                        //.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

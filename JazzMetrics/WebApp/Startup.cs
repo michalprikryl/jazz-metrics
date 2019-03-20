@@ -76,7 +76,7 @@ namespace WebApp
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection(); TODO https
+            app.UseHttpsRedirection();
 
             app.UseStatusCodePagesWithRedirects("/error/{0}"); //http error stranky
 
