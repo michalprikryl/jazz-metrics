@@ -101,12 +101,16 @@
         </footer>
     </div>
 
+    <button onclick="topFunction()" id="top-button" title="Go to top">Top</button>
+
     <environment include="Development">
         <script src="~/lib/jquery/jquery.min.js"></script>
         <script src="~/lib/bootstrap/js/bootstrap.js"></script>
         <script src="~/lib/sweet-alert/sweetalert.min.js"></script>
         <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
         <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.en-GB.min.js"></script>
+        <script src="~/lib/moment-js/moment.min.js"></script>
+        <script src="~/lib/chart-js/Chart.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
@@ -128,6 +132,12 @@
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.en-GB.min.js"
                 asp-fallback-src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.en-GB.min.js">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+                asp-fallback-src="~/lib/moment-js/moment.min.js">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"
+                asp-fallback-src="~/lib/chart-js/Chart.min.js">
         </script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>

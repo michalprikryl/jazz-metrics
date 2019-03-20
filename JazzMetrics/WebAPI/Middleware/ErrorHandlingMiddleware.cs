@@ -1,4 +1,5 @@
-﻿using Library.Models;
+﻿using Library;
+using Library.Models;
 using Library.Models.Error;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

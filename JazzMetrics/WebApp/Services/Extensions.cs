@@ -1,7 +1,6 @@
 ﻿using Library.Models.User;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -77,11 +76,6 @@ namespace WebApp
         public static string EnglishNumber(this decimal number)
         {
             return number.ToString().Replace(",", ".");
-        }
-
-        public static string EnglishDateString(this DateTime date)
-        {
-            return date.ToString("yyyy-MM-dd");
         }
 
         public static UserCookieModel GetIdentity(this ClaimsPrincipal user)

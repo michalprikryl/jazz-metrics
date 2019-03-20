@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Security.Claims;
 
-namespace WebAPI
+namespace Library
 {
     /// <summary>
     /// rozsirujici metody
@@ -20,7 +21,7 @@ namespace WebAPI
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
-        internal static string ParseException(this Exception e)
+        public static string ParseException(this Exception e)
         {
             return e != null ? $"{e.GetType().Name}{Environment.NewLine}{e.Message}{Environment.NewLine}{e.InnerException?.Message ?? string.Empty}" : string.Empty;
         }
@@ -30,9 +31,19 @@ namespace WebAPI
         /// </summary>
         /// <param name="date">datum, ktere chci prevest na string</param>
         /// <returns></returns>
-        internal static string GetDateTimeString(this DateTime date)
+        public static string GetDateTimeString(this DateTime date)
         {
             return date.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        /// <summary>
+        /// vraci string formatu "MMM dd, yyyy hh:mm:ss tt"
+        /// </summary>
+        /// <param name="date">datum, ktere chci prevest na string</param>
+        /// <returns></returns>
+        public static string GetDateTimeStringLong(this DateTime date)
+        {
+            return date.ToString("MMM dd, yyyy hh:mm:ss tt", CultureInfo.GetCultureInfo("en"));
         }
 
         /// <summary>
@@ -40,9 +51,21 @@ namespace WebAPI
         /// </summary>
         /// <param name="user">uzivatelsky kontext</param>
         /// <returns></returns>
-        internal static int GetId(this ClaimsPrincipal user)
+        public static int GetId(this ClaimsPrincipal user)
         {
-            return int.TryParse(user.FindFirstValue(UserIdClaim), out int id) ? id : 0;
+            return int.TryParse(user.FindFirst(UserIdClaim)?.Value ?? "0", out int id) ? id : 0;
+        }
+
+        public static string Reverse(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return string.Empty;
+            }
+
+            char[] array = text.ToCharArray();
+            Array.Reverse(array);
+            return new string(array);
         }
     }
 }

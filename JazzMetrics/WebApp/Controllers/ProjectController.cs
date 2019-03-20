@@ -147,6 +147,8 @@ namespace WebApp.Controllers
                 model.Id = value.Id;
                 model.Name = value.Name;
                 model.Description = value.Description;
+
+                model.FillMetricsWithTestValues();
             }
             else
             {

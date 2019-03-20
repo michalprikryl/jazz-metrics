@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace WebAPI.Services.Helpers
+namespace Library.Security
 {
     /// <summary>
     /// trida pro praci s hesly
@@ -14,7 +14,7 @@ namespace WebAPI.Services.Helpers
         /// </summary>
         /// <param name="length">pozadovana delka retezce</param>
         /// <returns></returns>
-        public static string GeneratePassword(int length)    
+        public static string GeneratePassword(int length)
         {
             const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -35,7 +35,7 @@ namespace WebAPI.Services.Helpers
         /// <param name="pass">heslo</param>
         /// <param name="salt">salt z DB nebo tak</param>
         /// <returns></returns>
-        public static string EncodePassword(string pass, string salt) 
+        public static string EncodePassword(string pass, string salt)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(pass);
             byte[] src = Encoding.Unicode.GetBytes(salt);
@@ -55,7 +55,7 @@ namespace WebAPI.Services.Helpers
         /// </summary>
         /// <param name="pass"></param>
         /// <returns></returns>
-        private static string EncodePasswordMd5(string pass)   
+        private static string EncodePasswordMd5(string pass)
         {
             MD5 md5 = new MD5CryptoServiceProvider();
             byte[] originalBytes = Encoding.Default.GetBytes(pass);
@@ -63,5 +63,9 @@ namespace WebAPI.Services.Helpers
 
             return BitConverter.ToString(encodedBytes);
         }
+
+        public static string Base64Encode(string plainText) => Convert.ToBase64String(Encoding.UTF8.GetBytes(plainText)).Reverse();
+
+        public static string Base64Decode(string base64EncodedData) => Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedData.Reverse()));
     }
 }

@@ -4,8 +4,7 @@ body {
     padding-bottom: 20px;
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
+/*generic*/
 .body-content {
     padding-top: 10px;
     padding-left: 15px;
@@ -16,6 +15,50 @@ body {
     justify-content: center !important;
 }
 
+.color-dark-grey {
+    color: darkgrey;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.logo-text {
+    font-size: 1.5em;
+}
+
+.nav-link {
+    font-weight: bold;
+}
+
+.pointer {
+    cursor: pointer;
+}
+/*END of generic*/
+
+/*scroll to top*/
+#top-button {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: black; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+}
+
+    #top-button:hover {
+        background-color: #555; /* Add a dark-grey background on hover */
+    }
+/*END of scroll to top*/
+
+/*alerts*/
 .alerttable {
     width: 100%;
     text-align: center;
@@ -46,22 +89,7 @@ body {
         -moz-border-radius: 10px;
         border-radius: 10px;
     }
-
-.color-light-grey {
-    color: lightgrey;
-}
-
-.color-dark-grey {
-    color: darkgrey;
-}
-
-a:hover {
-    text-decoration: none;
-}
-
-.logo-text {
-    font-size: 1.5em;
-}
+/*END of alerts*/
 
 /*processing animation*/
 .work {
@@ -155,14 +183,7 @@ a:hover {
         transform: rotate(-360deg);
     }
 }
-
-.close-button {
-    cursor: pointer;
-}
-
-.pointer {
-    cursor: pointer;
-}
+/*END of processing animation*/
 
 /*coverage metric inputs*/
 .plus-icon {
@@ -199,3 +220,29 @@ a:hover {
     padding-right: 5px;
 }
 /*END of coverage metric inputs*/
+
+/*project dashboard*/
+.center-name {
+    position: absolute;
+    left: 49.7%;
+    transform: translate(-50%,0);
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;
+    height: 10%;
+    top: 45%;
+}
+
+.carousel-item {
+    padding-left: 10px;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+/*END of project dashboard*/

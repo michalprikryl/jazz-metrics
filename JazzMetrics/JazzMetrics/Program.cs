@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Library.Security;
+using System;
+using System.Globalization;
 
 namespace JazzMetrics
 {
@@ -8,10 +10,14 @@ namespace JazzMetrics
         {
             //Console.WriteLine(JwtKeyGenerator.GenerateJwtKey());
 
-            int? i = 10;
-            Console.WriteLine(i.ToString());
+            string name = "libor";
+            string n = PasswordHelper.Base64Encode(name);
+            Console.WriteLine(n);
+            string r = PasswordHelper.Base64Decode(n);
+            Console.WriteLine(r);
 
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(DateTime.Now.ToString("MMM dd, yyyy hh:mm:ss tt", CultureInfo.GetCultureInfo("en")));
+
             Console.ReadKey();
         }
     }

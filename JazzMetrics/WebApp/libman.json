@@ -48,6 +48,22 @@
     {
       "library": "sweetalert@2.1.2",
       "destination": "wwwroot/lib/sweet-alert"
+    },
+    {
+      "library": "Chart.js@2.7.3",
+      "destination": "wwwroot/lib/chart-js",
+      "files": [
+        "Chart.min.js"
+
+      ]
+    },
+    {
+      "library": "moment.js@2.24.0",
+      "destination": "wwwroot/lib/moment-js",
+      "files": [
+        "locale/en-gb.js",
+        "moment.min.js"
+      ]
     }
   ]
 }

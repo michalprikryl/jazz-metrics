@@ -13,15 +13,89 @@
     <div>
         <a href="/Project" class="btn btn-primary">
             <span class="fa fa-arrow-left"></span>
-            Back to project
+            Back to projects
         </a>
 
         @if (adminAccount)
         {
             <a href="/Project/@Model.Id/Metric/Add" class="btn btn-primary">
                 <span class="fa fa-plus"></span>
-                Add metric to projects
+                Add metric to project
             </a>
         }
     </div>
 </div>
+
+@{ int chartCount = 0; }
+@for (int i = 0; i < Model.Metrics.Count; i++)
+{
+    string parent = $"parent-{i}", metric = $"metric-{i}";
+
+    <hr />
+    <div id="@parent">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary" onclick="showMetric('@metric')">
+                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Show
+                </label>
+                <label class="btn btn-secondary active" onclick="hideMetric('@metric')">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Hide
+                </label>
+            </div>
+            <text class="font-weight-bold lead center-name">@Model.Metrics[i].MetricInfo</text>
+            <span class="fa fa-info mr-2" title="@Model.Metrics[i].MetricDescription"></span>
+        </div>
+
+        <div id="@metric" class="collapse">
+            @for (int j = 0; j < Model.Metrics[i].MetricColumns.Count; j++)
+            {
+                var labels = Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Labels));
+                @if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Line)
+                {
+                    <canvas id="chart-@chartCount"></canvas>
+                    <script>
+                        setTimeout(() =>
+                            makeLineChart('chart-@(chartCount++)', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[0])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[0]')
+                            , 500);
+                    </script>
+                }
+                else if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Bar)
+                {
+                    <div id="carouselControls" class="carousel slide" data-ride="carousel" data-interval="false">
+                        <div class="carousel-inner">
+                            @for (int k = 0; k < Model.Metrics[i].MetricColumns[j].Values.Count; k++)
+                            {
+                                <div class="carousel-item @Html.Raw(k == Model.Metrics[i].MetricColumns[j].Values.Count - 1 ? "active" : "")">
+                                    <canvas id="chart-@chartCount"></canvas>
+                                    <script>
+                                        setTimeout(() =>
+                                            makeBarChart('chart-@(chartCount++)', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]')
+                                            , 500);
+                                    </script>
+                                </div>
+                            }
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev" title="back to history">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next" title="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <hr>
+                    <div class="text-center">
+                        <p>Unsupported metric type!</p>
+                    </div>
+                    <hr>
+                }
+            }
+        </div>
+    </div>
+}
+
+<script src="~/js/charts.js"></script>

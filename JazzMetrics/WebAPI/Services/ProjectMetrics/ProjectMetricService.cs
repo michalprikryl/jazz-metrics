@@ -1,9 +1,11 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.ProjectMetrics;
 using Library.Models.ProjectMetricSnapshots;
 using Library.Networking;
+using Library.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -60,7 +62,7 @@ namespace WebAPI.Services.ProjectMetrics
                         LastUpdateDate = DateTime.Now,
                         DataUrl = request.DataUrl,
                         DataUsername = request.DataUsername,
-                        DataPassword = PasswordHelper.EncodePassword(request.DataPassword, string.Empty),
+                        DataPassword = PasswordHelper.Base64Encode(request.DataPassword),
                         Warning = request.Warning,
                         MinimalWarningValue = request.Warning ? request.MinimalWarningValue ?? 0 : default(decimal?)
                     };
@@ -124,7 +126,7 @@ namespace WebAPI.Services.ProjectMetrics
 
                         if (!string.IsNullOrEmpty(request.DataPassword))
                         {
-                            projectMetric.DataPassword = PasswordHelper.EncodePassword(request.DataPassword, string.Empty);
+                            projectMetric.DataPassword = PasswordHelper.Base64Encode(request.DataPassword);
                         }
 
                         await Database.SaveChangesAsync();
