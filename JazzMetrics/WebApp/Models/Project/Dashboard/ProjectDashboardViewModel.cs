@@ -107,6 +107,15 @@ namespace WebApp.Models.Project.Dashboard
     }
 
     /// <summary>
+    /// trida pro generovani canvasu s grafem
+    /// </summary>
+    public class ChartModel
+    {
+        public string ChartId { get; set; }
+        public string MetricInfo { get; set; }
+    }
+
+    /// <summary>
     /// podporovane druhy grafu
     /// </summary>
     public enum ChartType

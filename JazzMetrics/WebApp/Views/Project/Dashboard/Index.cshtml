@@ -52,10 +52,11 @@
                 var labels = Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Labels));
                 @if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Line)
                 {
-                    <canvas id="chart-@chartCount"></canvas>
+                    string chart = $"chart-{chartCount++}";
+                    <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
                     <script>
                         setTimeout(() =>
-                            makeLineChart('chart-@(chartCount++)', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[0])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[0]')
+                            makeLineChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[0])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[0]')
                             , 500);
                     </script>
                 }
@@ -65,11 +66,12 @@
                         <div class="carousel-inner">
                             @for (int k = 0; k < Model.Metrics[i].MetricColumns[j].Values.Count; k++)
                             {
+                                string chart = $"chart-{chartCount++}";
                                 <div class="carousel-item @Html.Raw(k == Model.Metrics[i].MetricColumns[j].Values.Count - 1 ? "active" : "")">
-                                    <canvas id="chart-@chartCount"></canvas>
+                                    <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
                                     <script>
                                         setTimeout(() =>
-                                            makeBarChart('chart-@(chartCount++)', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]')
+                                            makeBarChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]')
                                             , 500);
                                     </script>
                                 </div>

@@ -64,6 +64,13 @@
         "locale/en-gb.js",
         "moment.min.js"
       ]
+    },
+    {
+      "library": "popper.js@1.14.7",
+      "destination": "wwwroot/lib/popper-js",
+      "files": [
+        "umd/popper.min.js"
+      ]
     }
   ]
 }

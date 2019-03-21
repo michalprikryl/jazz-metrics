@@ -1,4 +1,6 @@
-﻿function showMetric(id) {
+﻿const charts = [];
+
+function showMetric(id) {
     $(`#${id}`).collapse('show');
 }
 
@@ -7,12 +9,13 @@ function hideMetric(id) {
 }
 
 function random_rgba() {
-    var o = Math.round, r = Math.random, s = 255;
+    const o = Math.round, r = Math.random, s = 255;
     return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',0.3)';
 }
 
 function makeBarChart(canvasId, data, labels, title) {
     const colors = labels.map(() => random_rgba());
+
     new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'bar',
         data: {
@@ -26,7 +29,7 @@ function makeBarChart(canvasId, data, labels, title) {
             }]
         },
         options: {
-            ...getCommonOptions(title),
+            ...getCommonOptions(title/*, canvasId*/),
             scales: {
                 yAxes: [{
                     ticks: {
@@ -72,7 +75,7 @@ function makeLineChart(canvasId, data, labels, title) {
             }]
         },
         options: {
-            ...getCommonOptions(title),
+            ...getCommonOptions(title/*, canvasId*/),
             scales: {
                 xAxes: [{
                     type: 'time',
@@ -108,24 +111,48 @@ function makeLineChart(canvasId, data, labels, title) {
     });
 }
 
-function getCommonOptions(title) {
+function getCommonOptions(title/*, canvasId*/) {
     return {
         layout: {
             padding: {
                 left: 30,
                 right: 30,
-                top: 30,
+                top: 0,
                 bottom: 30
             }
         },
         animation: {
-            duration: 3000
+            duration: 3000/*,
+            onComplete: animation => {
+                if (charts.some(item => item.id === canvasId && item.base64.length < 1000) || charts.every(item => item.id !== canvasId)) {
+                    const idx = charts.findIndex(item => item.id === canvasId);
+                    idx !== -1 && charts.splice(idx, 1);
+                    charts.push({
+                        id: canvasId,
+                        base64: animation.chart.toBase64Image()
+                    });
+                }
+            }*/
         },
         title: {
             display: true,
             text: title || ''
         }
     };
+}
+
+function saveChartToPng(id, name = 'export') {
+    const chart = document.getElementById(id);//charts.find((item) => item.id === id);
+    if (chart) {
+        const link = document.createElement("a");
+        link.setAttribute("href", chart.toDataURL("image")/*base64*/);
+        link.setAttribute("download", `${name.replace(new RegExp(' ', 'g'), '_')}__${id}.png`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        swal('Error', 'Unknown chart to export! Try again, please.', 'warning');
+    }
 }
 
 /*
