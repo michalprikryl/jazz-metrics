@@ -1,4 +1,6 @@
-﻿@{
+﻿@model HomeViewModel
+
+@{
     var user = User.GetIdentity();
     ViewData["Title"] = "Main page";
 }
@@ -9,6 +11,17 @@
 </div>
 
 <div class="row justify-content-md-center">
+    <div class="col-md-8">
+        <h2>Projects</h2>
+        <ul class="list-group">
+            @for (int i = 0; i < Model.Projects.Count; i++)
+            {
+                <li class="list-group-item" title="@Model.Projects[i].ProjectDescription">
+                    <a href="/Project/@Model.Projects[i].ProjectId/Dashboard">@Model.Projects[i].ProjectName</a>
+                </li>
+            }
+        </ul>
+    </div>
     <div class="col-md-4">
         <h2>IBM Jazz metrics</h2>
         <p>
@@ -19,5 +32,5 @@
 </div>
 
 <address>
-    <strong>Support:</strong>   <a href="mailto:michal.prikryl@post.cz">michal.prikryl@post.cz</a><br />
+    <strong>Support:</strong> <a href="mailto:michal.prikryl@post.cz">michal.prikryl@post.cz</a><br />
 </address>

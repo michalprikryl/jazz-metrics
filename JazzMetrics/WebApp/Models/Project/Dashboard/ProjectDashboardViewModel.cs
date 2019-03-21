@@ -69,7 +69,38 @@ namespace WebApp.Models.Project.Dashboard
                 }
             };
 
-            Metrics = new List<MetricDataModel> { metric };
+            MetricColumnModel columnCoverage2 = new MetricColumnModel
+            {
+                Type = ChartType.Line,
+                Labels = new List<string>
+                {
+                    "2019-01-08 09:30:26.123",
+                    "2019-01-08 09:35:26.123",
+                    "2019-01-08 10:30:26.123",
+                    "2019-01-08 11:45:26.123",
+                    "2019-01-08 12:51:26.123",
+                    "2019-01-08 13:25:26.123",
+                    "2019-01-09 05:35:26.123",
+                    "2019-01-09 06:21:26.123"
+                },
+                Titles = new List<string> { "" },
+                Values = new List<List<decimal>>
+                {
+                    new List<decimal>{ 40, 5, 65, 55, 88, 44, 36, 77 }
+                }
+            };
+
+            MetricDataModel metric2 = new MetricDataModel
+            {
+                MetricInfo = "M02 - other useful metric",
+                MetricDescription = "Description about other useful metric",
+                MetricColumns = new List<MetricColumnModel>
+                {
+                    columnCoverage2
+                }
+            };
+
+            Metrics = new List<MetricDataModel> { metric, metric2 };
         }
     }
 

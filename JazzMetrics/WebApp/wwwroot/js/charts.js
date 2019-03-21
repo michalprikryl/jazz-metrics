@@ -1,5 +1,7 @@
 ﻿const charts = [];
 
+//Chart.defaults.global.plugins.colorschemes.scheme = 'brewer.RdPu4';
+
 function showMetric(id) {
     $(`#${id}`).collapse('show');
 }
@@ -13,8 +15,13 @@ function random_rgba() {
     return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',0.3)';
 }
 
-function makeBarChart(canvasId, data, labels, title) {
-    const colors = labels.map(() => random_rgba());
+let colors, loadedId = '';
+function makeBarChart(canvasId, data, labels, title, id) {
+    if (loadedId !== id) {
+        console.log(loadedId + ' ' + id);
+        loadedId = id;
+        colors = labels.map(() => random_rgba());
+    }
 
     new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'bar',

@@ -33,7 +33,7 @@
 
     <hr />
     <div id="@parent">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-secondary" onclick="showMetric('@metric')">
                     <input type="radio" name="options" id="option1" autocomplete="off" checked> Show
@@ -71,7 +71,7 @@
                                     <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
                                     <script>
                                         setTimeout(() =>
-                                            makeBarChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]')
+                                            makeBarChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]', '@j')
                                             , 500);
                                     </script>
                                 </div>
