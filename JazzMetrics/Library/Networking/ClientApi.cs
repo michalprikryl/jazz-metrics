@@ -53,6 +53,8 @@ namespace Library.Networking
             ServerUrl = config["ServerApiUrl"];
         }
 
+        public static string GetHttpBasicHeader(string username, string password) => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+
         /// <summary>
         /// posle HTTP POST pozadavek na dany controller
         /// </summary>
