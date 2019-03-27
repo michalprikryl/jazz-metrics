@@ -1,7 +1,9 @@
 ﻿using Database;
 using Database.DAO;
 using Library;
+using Library.Jazz;
 using Library.Models;
+using Library.Models.Error;
 using Library.Models.ProjectMetrics;
 using Library.Models.Projects;
 using Library.Models.ProjectUsers;
@@ -24,7 +26,9 @@ namespace WebAPI.Services.Projects
 {
     public class ProjectService : BaseDatabase, IProjectService
     {
+        private readonly IJazzService _jazzService;
         private readonly IUserService _userService;
+        private readonly IHelperService _helperService;
         private readonly IMetricService _metricService;
         private readonly IProjectUserService _projectUserService;
         private readonly IProjectMetricService _projectMetricService;
@@ -32,9 +36,11 @@ namespace WebAPI.Services.Projects
         public CurrentUser CurrentUser { get; set; }
 
         public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService, IProjectUserService projectUserService,
-            IHelperService helperService, IHttpContextAccessor contextAccessor, IMetricService metricService) : base(db)
+            IHelperService helperService, IHttpContextAccessor contextAccessor, IMetricService metricService, IJazzService jazzService) : base(db)
         {
+            _jazzService = jazzService;
             _userService = userService;
+            _helperService = helperService;
             _metricService = metricService;
             _projectUserService = projectUserService;
             _projectMetricService = projectMetricService;
@@ -177,6 +183,62 @@ namespace WebAPI.Services.Projects
                 }
 
                 response.Values.Add(project);
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> CreateSnapshots()
+        {
+            BaseResponseModel response = new BaseResponseModel { Message = "Update of all projects metrics ended successfully. For more detailed result check project metric log." };
+
+            List<Task> tasks = new List<Task>();
+            foreach (var item in Database.Project)
+            {
+                tasks.Add(CreateSnapshots(item.Id, item));
+            }
+
+            await Task.WhenAll(tasks);
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> CreateSnapshots(int id, Project project = null)
+        {
+            BaseResponseModel response = new BaseResponseModel { Message = "Update of all project metrics ended successfully. For more detailed result check project metric log." };
+
+            project = project ?? await Load(id, response);
+            if (project != null)
+            {
+                foreach (var item in project.ProjectMetric)
+                {
+                    await CreateSnapshot(project.Id, item.Id, item);
+                }
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModel> CreateSnapshot(int id, int projectMetricId, ProjectMetric projectMetric = null)
+        {
+            BaseResponseModel response = new BaseResponseModel { Message = "Creating of a snapshot ended successfully. For more detailed result check project metric log." };
+
+            try
+            {
+                projectMetric = projectMetric ?? await _projectMetricService.Load(id, response);
+                if (projectMetric != null)
+                {
+                    await _jazzService.CreateSnapshot(projectMetric);
+
+                    await Database.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.Message = "Creating of a snapshot was not successfull! Please try again later.";
+                await _helperService.SaveErrorToDB(new ErrorModel(e, message: "task - all projects", module: "ProjectService", function: "CreateSnapshots"));
+                projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Within processing of snapshot for project metric #{projectMetric.Id} occured and error!"));
             }
 
             return response;

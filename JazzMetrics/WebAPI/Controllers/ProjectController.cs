@@ -47,5 +47,23 @@ namespace WebAPI.Controllers
         {
             return await _projectService.Drop(id);
         }
+
+        [HttpPost("ProjectMetric")]
+        public async Task<ActionResult<BaseResponseModel>> PostSnapshotAllProjects()
+        {
+            return await _projectService.CreateSnapshots();
+        }
+
+        [HttpPost("{id}/ProjectMetric")]
+        public async Task<ActionResult<BaseResponseModel>> PostSnapshotAll(int id)
+        {
+            return await _projectService.CreateSnapshots(id);
+        }
+
+        [HttpPost("{id}/ProjectMetric/{projectMetricId}")]
+        public async Task<ActionResult<BaseResponseModel>> PostSnapshotOne(int id, int projectMetricId)
+        {
+            return await _projectService.CreateSnapshot(id, projectMetricId);
+        }
     }
 }

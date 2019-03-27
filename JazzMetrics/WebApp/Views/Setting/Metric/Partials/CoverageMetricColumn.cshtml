@@ -13,7 +13,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text" title="line chart - trend metric"><i class="fa fa-chart-line"></i></span>
             </div>
-            <input name="CoverageColumns[@Model.Index].Value" value="@Model.Value" type="text" title="XML tag value - dividend" class="form-control" />
+            <input name="CoverageColumns[@Model.Index].Value" value="@Model.Value" type="text" title="XML tag value - dividend (you can define multiple values divided by semicolon)" class="form-control" />
             <div class="input-group-append">
                 <span class="input-group-text border-radius" title="Second column divides first column"><i class="fa fa-divide"></i></span>
             </div>
@@ -22,7 +22,8 @@
 
     <div class="form-group input-2 pl-0 mb-1">
         <div class="input-group margin-input">
-            <input name="CoverageColumns[@Model.Index].DivisorValue" value="@Model.DivisorValue" type="text" title="XML tag value - divisor" class="form-control border-radius-left" />
+            <input name="CoverageColumns[@Model.Index].DivisorValue" value="@Model.DivisorValue" type="text" title="XML tag value - divisor (you can define multiple values divided by semicolon)"
+                   class="form-control border-radius-left" />
             <div class="input-group-append">
                 <span class="input-group-text pointer" title="Drop attributes" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
             </div>

@@ -47,8 +47,8 @@ namespace JazzMetrics
             url = "https://158.196.141.113/rs/query/7/dataservice?report=7&limit=-1&basicAuthenticationEnabled=true";
 
             JazzService jazz = new JazzService();
-            var task = jazz.CreateSnapshot(url, "mprikryl", "heslo");
-            task.Wait();
+            //var task = jazz.CreateSnapshot(url, "mprikryl", "heslo");
+            //task.Wait();
             //Console.WriteLine(task.Result);
 
             Console.WriteLine("\nEND");

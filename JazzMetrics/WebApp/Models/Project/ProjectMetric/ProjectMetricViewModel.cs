@@ -37,7 +37,6 @@ namespace WebApp.Models.Project.ProjectMetric
         public decimal? MinimalWarningValue { get; set; }
 
         [Display(Name = "Metric")]
-        [Required(ErrorMessage = "Choose metric, please!")]
         public string MetricId { get; set; }
         public List<SelectListItem> Metrics { get; set; }
     }

@@ -9,6 +9,7 @@ namespace Database.DAO
         public string Message { get; set; }
         public bool Warning { get; set; }
         public int ProjectMetricId { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public virtual ProjectMetric ProjectMetric { get; set; }
     }

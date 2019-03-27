@@ -33,7 +33,6 @@ namespace WebApp.Models.Setting.Metric
         public string RequirementGroup { get; set; }
 
         [Display(Name = "Metric type")]
-        [Required(ErrorMessage = "Choose metric type, please!")]
         public string MetricTypeId { get; set; }
         public List<SelectListItem> MetricTypes { get; set; }
 

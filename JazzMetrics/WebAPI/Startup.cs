@@ -1,4 +1,5 @@
 ﻿using Database;
+using Library.Jazz;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,7 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -69,6 +70,7 @@ namespace WebAPI
             services.AddDbContext<JazzMetricsContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringName)));
 
             services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IJazzService, JazzService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
             services.AddScoped<IHelperService, HelperService>();

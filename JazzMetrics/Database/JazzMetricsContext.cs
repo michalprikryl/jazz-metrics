@@ -310,6 +310,8 @@ namespace Database
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime2(3)");
+
                 entity.Property(e => e.Message).IsRequired();
 
                 entity.Property(e => e.ProjectMetricId).HasColumnName("ProjectMetricID");

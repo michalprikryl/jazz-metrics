@@ -182,6 +182,7 @@ CREATE TABLE [ProjectMetricLog]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
 	[Message] nvarchar(MAX) NOT NULL,
+	[CreateDate] datetime2(3) NOT NULL,
 	[Warning] bit NOT NULL,
 	[ProjectMetricID] int NOT NULL,
 	PRIMARY KEY ([ID])
