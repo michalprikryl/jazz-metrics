@@ -7,6 +7,7 @@ namespace Database.DAO
     {
         public ProjectMetric()
         {
+            ProjectMetricLog = new HashSet<ProjectMetricLog>();
             ProjectMetricSnapshot = new HashSet<ProjectMetricSnapshot>();
         }
 
@@ -23,6 +24,7 @@ namespace Database.DAO
 
         public virtual Metric Metric { get; set; }
         public virtual Project Project { get; set; }
+        public virtual ICollection<ProjectMetricLog> ProjectMetricLog { get; set; }
         public virtual ICollection<ProjectMetricSnapshot> ProjectMetricSnapshot { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Database.DAO
 {
@@ -14,6 +15,7 @@ namespace Database.DAO
         public string Identificator { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string RequirementGroup { get; set; }
         public int MetricTypeId { get; set; }
         public int AspiceProcessId { get; set; }
         public int AffectedFieldId { get; set; }

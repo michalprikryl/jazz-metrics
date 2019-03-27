@@ -1,31 +1,48 @@
 ﻿async function addColumn() {
-    const result = await swal({
-        icon: 'info',
-        title: 'Question',
-        text: 'Which property type you want to create? Please choose one.',
-        buttons: {
-            cancel: true,
-            type1: {
-                text: "Number column",
-                value: "number"
-            },
-            type2: {
-                text: "Coverage",
-                value: "coverage"
-            }
-        }
-    });
-
-    if (result) {
+    const select = document.getElementById("MetricTypeId");
+    if (select) {
+        console.log(select);
+        const isNumberColumn = select.options[select.selectedIndex].text.toLowerCase().startsWith('number');
         const request = {
-            index: document.getElementsByClassName(result === 'number' ? 'number-column' : 'coverage-column').length,
-            type: result
+            index: document.getElementsByClassName(isNumberColumn ? 'number-column' : 'coverage-column').length,
+            type: isNumberColumn ? 'number' : 'coverage'
         };
 
         const response = await postToServer('/Setting/Metric/AddColumn', undefined, request);
         document.getElementById('columns').insertAdjacentHTML('beforeend', response);
 
         hideProcessing();
+    } else {
+        swal('Error', 'Unknown metric type!', 'error');
+    }
+}
+
+let selectedTypeId;
+!function () {
+    selectedTypeId = document.getElementById("MetricTypeId").value;
+}();
+
+async function onSelectChange() {
+    const select = document.getElementById("MetricTypeId");
+    const isNumberColumn = select.options[select.selectedIndex].text.toLowerCase().startsWith('number');
+    if (document.getElementsByClassName(isNumberColumn ? 'coverage-column' : 'number-column').length > 0) {
+        const result = await swal({
+            title: 'Are you sure?',
+            text: 'You change a metric type to different type. If you really want to do this, all your metric columns must be deleted. Do you want to change metric type?',
+            icon: "warning",
+            buttons: ["Cancel", "Yes, change!"]
+        });
+
+        if (result) {
+            selectedTypeId = select.value;
+
+            const columns = document.getElementById('columns');
+            while (columns.firstChild) {
+                columns.removeChild(columns.firstChild);
+            }
+        } else {
+            select.value = selectedTypeId;
+        }
     }
 }
 

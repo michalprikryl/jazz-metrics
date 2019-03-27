@@ -71,6 +71,7 @@ CREATE TABLE [Metric]
 	[Identificator] nvarchar(32) NOT NULL,
 	[Name] nvarchar(512) NOT NULL,
 	[Description] nvarchar(MAX) NOT NULL,
+	[RequirementGroup] nvarchar(128) NOT NULL,
 	[MetricTypeID] int NOT NULL,
 	[AspiceProcessID] int NOT NULL,
 	[AffectedFieldID] int NOT NULL,
@@ -151,9 +152,11 @@ GO
 CREATE TABLE [MetricColumn]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
-	[Name] nvarchar(512) NOT NULL,
-	[Divisor] bit NULL,
-	[PairMetricColumnID] int NULL,
+	[Value] nvarchar(1024) NOT NULL,
+	[FieldName] nvarchar(1024) NOT NULL,
+	[NumberFieldName] nvarchar(1024) NOT NULL,
+	[DivisorValue] nvarchar(1024) NULL,
+	[DivisorFieldName] nvarchar(1024) NULL,
 	[MetricID] int NOT NULL,
 	PRIMARY KEY ([ID])
 )
@@ -172,6 +175,15 @@ CREATE TABLE [Company]
 (
 	[ID] int NOT NULL IDENTITY(1,1),
 	[Name] nvarchar(512) NOT NULL,
+	PRIMARY KEY ([ID])
+)
+GO
+CREATE TABLE [ProjectMetricLog]
+(
+	[ID] int NOT NULL IDENTITY(1,1),
+	[Message] nvarchar(MAX) NOT NULL,
+	[Warning] bit NOT NULL,
+	[ProjectMetricID] int NOT NULL,
 	PRIMARY KEY ([ID])
 )
 GO
@@ -204,9 +216,9 @@ ALTER TABLE [MetricColumn] ADD CONSTRAINT [FK_METRICCOLUMN_METRIC] FOREIGN KEY (
 GO
 ALTER TABLE [ProjectMetricColumnValue] ADD CONSTRAINT [FK_PROJECTMETRICVALUE_METRICCOLUMN] FOREIGN KEY ([MetricColumnID]) REFERENCES [MetricColumn] ([ID])
 GO
-ALTER TABLE [MetricColumn] ADD CONSTRAINT [FK_METRICCOLUMN_METRICCOLUMN] FOREIGN KEY ([PairMetricColumnID]) REFERENCES [MetricColumn] ([ID])
-GO
 ALTER TABLE [User] ADD CONSTRAINT [FK_USER_COMPANY] FOREIGN KEY ([CompanyID]) REFERENCES [Company] ([ID])
 GO
 ALTER TABLE [Metric] ADD CONSTRAINT [FK_METRIC_COMPANY] FOREIGN KEY ([CompanyID]) REFERENCES [Company] ([ID])
+GO
+ALTER TABLE [ProjectMetricLog] ADD CONSTRAINT [FK_PROJECTMETRICLOG_PROJECTMETRIC] FOREIGN KEY ([ProjectMetricID]) REFERENCES [ProjectMetric] ([ID])
 GO

@@ -12,6 +12,7 @@ DROP TABLE [Language];
 DROP TABLE [AppError];
 DROP TABLE [ProjectMetricColumnValue];
 DROP TABLE [ProjectMetricSnapshot];
+DROP TABLE [ProjectMetricLog];
 DROP TABLE [ProjectMetric];
 DROP TABLE [Project];
 DROP TABLE [MetricColumn];

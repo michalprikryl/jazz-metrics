@@ -2,19 +2,43 @@
 
 @{ string column = $"nc_{Model.Index}"; }
 
-<div class="form-group number-column" id="@column">
+<div class="number-column" id="@column">
     <input value="@Model.Id" name="NumberColumns[@Model.Index].Id" type="hidden" />
     <input value="@Model.Index" name="NumberColumns[@Model.Index].Index" type="hidden" />
     <input value="False" name="NumberColumns[@Model.Index].Deleted" id="del-@column" type="hidden" />
 
-    <label asp-for="Name1" class="control-label"></label>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text" title="bar chart with other columns"><i class="fa fa-chart-bar"></i></span>
+    <div class="form-group mb-1">
+        <label asp-for="Value" class="control-label"></label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" title="bar chart with other columns"><i class="fa fa-chart-bar"></i></span>
+            </div>
+            <input name="NumberColumns[@Model.Index].Value" value="@Model.Value" type="text" title="XML tag value" class="form-control" />
+            <div class="input-group-append">
+                <span class="input-group-text pointer" title="Drop attribute" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
+            </div>
         </div>
-        <input name="NumberColumns[@Model.Index].Name1" value="@Model.Name1" type="text" class="form-control" />
-        <div class="input-group-append">
-            <span class="input-group-text pointer" title="Drop attribute" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group input-info pr-0">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" title="To this field insert name of XML tag, where can be found value from upper field - XML tag value."><i class="fa fa-info"></i></span>
+                </div>
+                <input name="NumberColumns[@Model.Index].FieldName" value="@Model.FieldName" type="text" class="form-control border-radius-right" />
+            </div>
+            <small class="form-text text-muted">Default value is @Model.FieldName.</small>
+        </div>
+
+        <div class="form-group input-info pl-0">
+            <div class="input-group">
+                <input name="NumberColumns[@Model.Index].NumberFieldName" value="@Model.NumberFieldName" type="text" class="form-control border-radius-left" />
+                <div class="input-group-append">
+                    <span class="input-group-text" title="To this field insert name of XML tag, where can be found numeric value which is need for evaluating count - number."><i class="fa fa-info"></i></span>
+                </div>
+            </div>
+            <small class="form-text text-muted">Default value is @Model.NumberFieldName.</small>
         </div>
     </div>
 </div>

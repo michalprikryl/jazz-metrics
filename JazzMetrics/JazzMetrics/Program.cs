@@ -22,6 +22,9 @@ namespace JazzMetrics
             int? num = null;
             num++;
 
+            string values = "Reviewed;Under construction;";
+            string[] columns = values.Split(';');
+
             string url = string.Empty;
             //url = "https://158.196.141.113/rs/query/6/dataservice?report=6&limit=-1&basicAuthenticationEnabled=true"; //number - vice
             //url = "https://158.196.141.113/rs/query/1/dataservice?report=1&limit=-1&basicAuthenticationEnabled=true"; //number - jedno
@@ -39,6 +42,9 @@ namespace JazzMetrics
             //url = "https://158.196.141.113/rs/query/17/dataservice?report=17&limit=-1&basicAuthenticationEnabled=true";
             //url = "https://158.196.141.113/rs/query/8/dataservice?report=8&limit=-1&basicAuthenticationEnabled=true";
             //url = "https://158.196.141.113/rs/query/15/dataservice?report=15&limit=-1&basicAuthenticationEnabled=true";
+            //url = "https://158.196.141.113/rs/query/2/dataservice?report=2&limit=-1&basicAuthenticationEnabled=true";
+            //url = "https://158.196.141.113/rs/query/16/dataservice?report=16&limit=-1&basicAuthenticationEnabled=true";
+            url = "https://158.196.141.113/rs/query/7/dataservice?report=7&limit=-1&basicAuthenticationEnabled=true";
 
             JazzService jazz = new JazzService();
             var task = jazz.CreateSnapshot(url, "mprikryl", "heslo");

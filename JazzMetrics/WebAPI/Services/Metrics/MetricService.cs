@@ -1,6 +1,7 @@
 ﻿using Database;
 using Database.DAO;
 using Library;
+using Library.Jazz;
 using Library.Models;
 using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
@@ -102,6 +103,7 @@ namespace WebAPI.Services.Metrics
                                         Name = request.Name,
                                         Description = request.Description,
                                         Identificator = request.Identificator,
+                                        RequirementGroup = request.RequirementGroup,
                                         AspiceProcessId = request.AspiceProcessId,
                                         AffectedFieldId = request.AffectedFieldId,
                                         MetricTypeId = request.MetricTypeId,
@@ -113,24 +115,13 @@ namespace WebAPI.Services.Metrics
                                     {
                                         MetricColumn metricColumn = new MetricColumn
                                         {
-                                            Name = request.Columns[i].Name,
+                                            Value = request.Columns[i].Value ?? string.Empty,
+                                            FieldName = request.Columns[i].FieldName,
+                                            NumberFieldName = request.Columns[i].NumberFieldName,
+                                            DivisorValue = request.Columns[i].DivisorValue,
+                                            DivisorFieldName = request.Columns[i].DivisorFieldName,
                                             Metric = metric,
                                         };
-
-                                        if (request.Columns[i].PairMetricColumnId.HasValue)
-                                        {
-                                            MetricColumn pairMetricColumn = new MetricColumn
-                                            {
-                                                Name = request.Columns[++i].Name,
-                                                Divisor = true,
-                                                Metric = metric,
-                                            };
-
-                                            metricColumn.Divisor = false;
-                                            metricColumn.PairMetricColumn = pairMetricColumn;
-
-                                            await Database.MetricColumn.AddAsync(pairMetricColumn);
-                                        }
 
                                         await Database.MetricColumn.AddAsync(metricColumn);
                                     }
@@ -171,14 +162,15 @@ namespace WebAPI.Services.Metrics
                             Metric metric = await Load(request.Id, response);
                             if (metric != null && CheckMetricForCrud(metric, response))
                             {
-                                if (await CheckMetricIdentificator(request.Identificator, response, metric.Id))
+                                if (await CheckMetricIdentificator(request.Identificator, response, metric.Id) && CheckMetricColumns(request.Columns, response))
                                 {
                                     metric.Identificator = request.Identificator;
                                     metric.Name = request.Name;
                                     metric.Description = request.Description;
+                                    metric.RequirementGroup = request.RequirementGroup;
                                     metric.AspiceProcessId = request.AspiceProcessId;
                                     metric.AffectedFieldId = request.AffectedFieldId;
-                                    metric.MetricTypeId = request.MetricTypeId;
+                                    //metric.MetricTypeId = request.MetricTypeId; -- nelze menit z duvodu, ze by potom nesedely hodnoty columns - musi se mazat columns
                                     metric.Public = CurrentUser.CompanyId.HasValue ? request.Public : true;
 
                                     //smazane
@@ -192,31 +184,23 @@ namespace WebAPI.Services.Metrics
                                         {
                                             MetricColumn metricColumn = new MetricColumn
                                             {
-                                                Name = request.Columns[i].Name,
+                                                Value = request.Columns[i].Value ?? string.Empty,
+                                                FieldName = request.Columns[i].FieldName,
+                                                NumberFieldName = request.Columns[i].NumberFieldName,
+                                                DivisorFieldName = request.Columns[i].DivisorFieldName,
                                                 Metric = metric,
                                             };
-
-                                            if (request.Columns[i].PairMetricColumnId.HasValue)
-                                            {
-                                                MetricColumn pairMetricColumn = new MetricColumn
-                                                {
-                                                    Name = request.Columns[++i].Name,
-                                                    Divisor = true,
-                                                    Metric = metric,
-                                                };
-
-                                                metricColumn.Divisor = false;
-                                                metricColumn.PairMetricColumn = pairMetricColumn;
-
-                                                await Database.MetricColumn.AddAsync(pairMetricColumn);
-                                            }
 
                                             await Database.MetricColumn.AddAsync(metricColumn);
                                         }
                                         else
                                         {
-                                            var column = metric.MetricColumn.First(c => c.Id == request.Columns[i].Id);
-                                            column.Name = request.Columns[i].Name;
+                                            MetricColumn column = metric.MetricColumn.First(c => c.Id == request.Columns[i].Id);
+                                            column.Value = request.Columns[i].Value;
+                                            column.FieldName = request.Columns[i].FieldName;
+                                            column.NumberFieldName = request.Columns[i].NumberFieldName;
+                                            column.DivisorValue = request.Columns[i].DivisorValue;
+                                            column.DivisorFieldName = request.Columns[i].DivisorFieldName;
                                         }
                                     }
 
@@ -396,6 +380,7 @@ namespace WebAPI.Services.Metrics
                 Name = dbModel.Name,
                 Description = dbModel.Description,
                 Identificator = dbModel.Identificator,
+                RequirementGroup = dbModel.RequirementGroup,
                 AspiceProcessId = dbModel.AspiceProcessId,
                 AffectedFieldId = dbModel.AffectedFieldId,
                 MetricTypeId = dbModel.MetricTypeId,
@@ -408,10 +393,12 @@ namespace WebAPI.Services.Metrics
             new MetricColumnModel
             {
                 Id = metricColumn.Id,
-                Name = metricColumn.Name,
-                Divisor = metricColumn.Divisor,
-                MetricId = metricColumn.MetricId,
-                PairMetricColumnId = metricColumn.PairMetricColumnId
+                Value = metricColumn.Value,
+                FieldName = metricColumn.FieldName,
+                NumberFieldName = metricColumn.NumberFieldName,
+                DivisorValue = metricColumn.DivisorValue,
+                DivisorFieldName = metricColumn.DivisorFieldName,
+                MetricId = metricColumn.MetricId
             };
     }
 }

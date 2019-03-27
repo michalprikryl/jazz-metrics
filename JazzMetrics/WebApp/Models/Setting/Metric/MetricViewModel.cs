@@ -28,6 +28,10 @@ namespace WebApp.Models.Setting.Metric
         [Required(ErrorMessage = "Description is required!")]
         public string Description { get; set; }
 
+        [Display(Name = "Requirement group")]
+        [Required(ErrorMessage = "Requirement group is required!")]
+        public string RequirementGroup { get; set; }
+
         [Display(Name = "Metric type")]
         [Required(ErrorMessage = "Choose metric type, please!")]
         public string MetricTypeId { get; set; }
@@ -65,17 +69,28 @@ namespace WebApp.Models.Setting.Metric
         {
             MetricModel model = GetMetricModel();
 
-            model.Columns.AddRange(NumberColumns.Select(n =>
-                new MetricColumnModel
-                {
-                    Id = n.Id,
-                    Name = n.Name1
-                }));
-
-            foreach (var item in CoverageColumns)
+            if (NumberColumns.Count > 0)
             {
-                model.Columns.Add(new MetricColumnModel { Id = item.Id, Name = item.Name1, PairMetricColumnId = 0 });
-                model.Columns.Add(new MetricColumnModel { Id = item.Id2, Name = item.Name2, PairMetricColumnId = 0 });
+                model.Columns.AddRange(NumberColumns.Select(n =>
+                    new MetricColumnModel
+                    {
+                        Id = n.Id,
+                        Value = n.Value,
+                        FieldName = n.FieldName,
+                        NumberFieldName = n.NumberFieldName
+                    }));
+            }
+            else
+            {
+                model.Columns.AddRange(CoverageColumns.Select(n =>
+                    new MetricColumnModel
+                    {
+                        Id = n.Id,
+                        Value = n.Value,
+                        FieldName = n.FieldName,
+                        DivisorValue = n.DivisorValue,
+                        DivisorFieldName = n.DivisorFieldName
+                    }));
             }
 
             return model;
@@ -84,28 +99,30 @@ namespace WebApp.Models.Setting.Metric
         public void LoadMetricColumns(List<MetricColumnModel> columns)
         {
             int i = 0;
-            foreach (var item in columns.Where(c => !c.Divisor.HasValue))
+            foreach (var item in columns.Where(c => string.IsNullOrEmpty(c.DivisorValue)))
             {
                 NumberColumns.Add(new MetricColumn
                 {
                     Id = item.Id,
                     Index = i++,
-                    Name1 = item.Name,
+                    Value = item.Value,
+                    FieldName = item.FieldName,
+                    NumberFieldName = item.NumberFieldName,
                     Deleted = false
                 });
             }
 
             i = 0;
-            foreach (var item in columns.Where(c => c.PairMetricColumnId.HasValue))
+            foreach (var item in columns.Where(c => !string.IsNullOrEmpty(c.DivisorValue)))
             {
-                var secondColumn = columns.First(c => c.Id == item.PairMetricColumnId.Value);
                 CoverageColumns.Add(new MetricCoverageColumn
                 {
                     Id = item.Id,
-                    Id2 = secondColumn.Id,
                     Index = i++,
-                    Name1 = item.Name,
-                    Name2 = secondColumn.Name,
+                    Value = item.Value,
+                    FieldName = item.FieldName,
+                    DivisorValue = item.DivisorValue,
+                    DivisorFieldName = item.DivisorFieldName,
                     Deleted = false
                 });
             }
@@ -118,6 +135,7 @@ namespace WebApp.Models.Setting.Metric
                 Identificator = Identificator,
                 Name = Name,
                 Description = Description,
+                RequirementGroup = RequirementGroup,
                 MetricTypeId = int.Parse(MetricTypeId),
                 AspiceProcessId = int.Parse(AspiceProcessId),
                 AffectedFieldId = int.Parse(AffectedFieldId),
@@ -154,18 +172,22 @@ namespace WebApp.Models.Setting.Metric
 
         public int Index { get; set; }
 
-        [Display(Name = "Attribute name")]
-        public string Name1 { get; set; }
+        [Display(Name = "Column attributes")]
+        public string Value { get; set; }
+
+        public string FieldName { get; set; }
+
+        public string NumberFieldName { get; set; }
 
         public bool Deleted { get; set; }
     }
 
     public class MetricCoverageColumn : MetricColumn
     {
-        public int Id2 { get; set; }
+        [Display(Name = "Coverage attributes")]
+        public string DivisorValue { get; set; }
 
-        [Display(Name = "Attribute 1 and 2 names")]
-        public string Name2 { get; set; }
+        public string DivisorFieldName { get; set; }
     }
 
     public class MetricDetailViewModel : ViewModel
@@ -174,6 +196,7 @@ namespace WebApp.Models.Setting.Metric
         public string Identificator { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string RequirementGroup { get; set; }
         public string MetricType { get; set; }
         public string AspiceProcess { get; set; }
         public string AffectedField { get; set; }
@@ -183,12 +206,11 @@ namespace WebApp.Models.Setting.Metric
 
         public void LoadMetricColumns(List<MetricColumnModel> columns)
         {
-            Columns = columns.Where(c => !c.Divisor.HasValue).Select(c => $"'{c.Name}' (type - number)").ToList();
+            Columns = columns.Where(c => string.IsNullOrEmpty(c.DivisorValue)).Select(c => $"'{c.Value}' (type - number)").ToList();
 
-            foreach (var item in columns.Where(c => c.PairMetricColumnId.HasValue))
+            foreach (var item in columns.Where(c => !string.IsNullOrEmpty(c.DivisorValue)))
             {
-                var secondColumn = columns.First(c => c.Id == item.PairMetricColumnId.Value);
-                Columns.Add($"'{item.Name}' divided by '{secondColumn.Name}' (type - coverage)");
+                Columns.Add($"'{item.Value}' divided by '{item.DivisorValue}' (type - coverage)");
             }
         }
     }

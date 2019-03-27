@@ -4,29 +4,48 @@
 
 <div class="form-row coverage-column" id="@column">
     <input value="@Model.Id" name="CoverageColumns[@Model.Index].Id" type="hidden" />
-    <input value="@Model.Id2" name="CoverageColumns[@Model.Index].Id2" type="hidden" />
     <input value="@Model.Index" name="CoverageColumns[@Model.Index].Index" type="hidden" />
     <input value="False" name="CoverageColumns[@Model.Index].Deleted" id="del-@column" type="hidden" />
 
-    <div class="form-group input-1 pr-0">
-        <label asp-for="Name2" class="control-label"></label>
+    <div class="form-group input-1 pr-0 mb-1">
+        <label asp-for="DivisorValue" class="control-label"></label>
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text" title="line chart - trend metric"><i class="fa fa-chart-line"></i></span>
             </div>
-            <input name="CoverageColumns[@Model.Index].Name1" value="@Model.Name1" type="text" class="form-control" />
+            <input name="CoverageColumns[@Model.Index].Value" value="@Model.Value" type="text" title="XML tag value - dividend" class="form-control" />
             <div class="input-group-append">
                 <span class="input-group-text border-radius" title="Second column divides first column"><i class="fa fa-divide"></i></span>
             </div>
         </div>
     </div>
 
-    <div class="form-group input-2 pl-0">
+    <div class="form-group input-2 pl-0 mb-1">
         <div class="input-group margin-input">
-            <input name="CoverageColumns[@Model.Index].Name2" value="@Model.Name2" type="text" class="form-control border-radius-left" />
+            <input name="CoverageColumns[@Model.Index].DivisorValue" value="@Model.DivisorValue" type="text" title="XML tag value - divisor" class="form-control border-radius-left" />
             <div class="input-group-append">
                 <span class="input-group-text pointer" title="Drop attributes" onclick="javascript: dropColumn('@column')"><i class="fa fa-trash"></i></span>
             </div>
         </div>
+    </div>
+
+    <div class="form-group input-info pr-0">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" title="To this field insert name of XML tag, where can be found value from upper field - dividend."><i class="fa fa-info"></i></span>
+            </div>
+            <input name="CoverageColumns[@Model.Index].FieldName" value="@Model.FieldName" type="text" class="form-control border-radius-right" />
+        </div>
+        <small class="form-text text-muted">Default value is @Model.FieldName.</small>
+    </div>
+
+    <div class="form-group input-info pl-0">
+        <div class="input-group">
+            <input name="CoverageColumns[@Model.Index].DivisorFieldName" value="@Model.DivisorFieldName" type="text" class="form-control border-radius-left" />
+            <div class="input-group-append">
+                <span class="input-group-text" title="To this field insert name of XML tag, where can be found value from upper field - divisor."><i class="fa fa-info"></i></span>
+            </div>
+        </div>
+        <small class="form-text text-muted">Default value is @Model.DivisorFieldName.</small>
     </div>
 </div>

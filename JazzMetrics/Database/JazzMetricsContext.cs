@@ -21,6 +21,7 @@ namespace Database
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectMetric> ProjectMetric { get; set; }
         public virtual DbSet<ProjectMetricColumnValue> ProjectMetricColumnValue { get; set; }
+        public virtual DbSet<ProjectMetricLog> ProjectMetricLog { get; set; }
         public virtual DbSet<ProjectMetricSnapshot> ProjectMetricSnapshot { get; set; }
         public virtual DbSet<ProjectUser> ProjectUser { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
@@ -160,6 +161,10 @@ namespace Database
                     .IsRequired()
                     .HasMaxLength(512);
 
+                entity.Property(e => e.RequirementGroup)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
                 entity.HasOne(d => d.AffectedField)
                     .WithMany(p => p.Metric)
                     .HasForeignKey(d => d.AffectedFieldId)
@@ -188,24 +193,29 @@ namespace Database
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.DivisorFieldName).HasMaxLength(1024);
+
+                entity.Property(e => e.DivisorValue).HasMaxLength(1024);
+
+                entity.Property(e => e.FieldName)
+                    .IsRequired()
+                    .HasMaxLength(1024);
+
                 entity.Property(e => e.MetricId).HasColumnName("MetricID");
 
-                entity.Property(e => e.Name)
+                entity.Property(e => e.NumberFieldName)
                     .IsRequired()
-                    .HasMaxLength(512);
+                    .HasMaxLength(1024);
 
-                entity.Property(e => e.PairMetricColumnId).HasColumnName("PairMetricColumnID");
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasMaxLength(1024);
 
                 entity.HasOne(d => d.Metric)
                     .WithMany(p => p.MetricColumn)
                     .HasForeignKey(d => d.MetricId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_METRICCOLUMN_METRIC");
-
-                entity.HasOne(d => d.PairMetricColumn)
-                    .WithMany(p => p.InversePairMetricColumn)
-                    .HasForeignKey(d => d.PairMetricColumnId)
-                    .HasConstraintName("FK_METRICCOLUMN_METRICCOLUMN");
             });
 
             modelBuilder.Entity<MetricType>(entity =>
@@ -294,6 +304,21 @@ namespace Database
                     .HasForeignKey(d => d.ProjectMetricSnapshotId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PROJECTMETRICVALUE_PROJECTMETRICSNAPSHOT");
+            });
+
+            modelBuilder.Entity<ProjectMetricLog>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Message).IsRequired();
+
+                entity.Property(e => e.ProjectMetricId).HasColumnName("ProjectMetricID");
+
+                entity.HasOne(d => d.ProjectMetric)
+                    .WithMany(p => p.ProjectMetricLog)
+                    .HasForeignKey(d => d.ProjectMetricId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PROJECTMETRICLOG_PROJECTMETRIC");
             });
 
             modelBuilder.Entity<ProjectMetricSnapshot>(entity =>

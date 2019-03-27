@@ -1,4 +1,5 @@
-﻿using Library.Models.AffectedFields;
+﻿using Library.Jazz;
+using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
 using Library.Models.AspiceVersions;
 using Library.Models.Company;
@@ -527,6 +528,7 @@ namespace WebApp.Controllers
                 model.CompanyId = result.Value.CompanyId;
                 model.Description = result.Value.Description;
                 model.Identificator = result.Value.Identificator;
+                model.RequirementGroup = result.Value.RequirementGroup;
                 model.MetricType = result.Value.MetricType.ToString();
                 model.AspiceProcess = result.Value.AspiceProcess.ToString();
                 model.AffectedField = result.Value.AffectedField.ToString();
@@ -593,6 +595,7 @@ namespace WebApp.Controllers
                     model.Name = result.Value.Name;
                     model.Public = result.Value.Public;
                     model.Description = result.Value.Description;
+                    model.RequirementGroup = result.Value.RequirementGroup;
                     model.Identificator = result.Value.Identificator;
                     model.MetricTypeId = result.Value.MetricType.Id.ToString();
                     model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
@@ -653,11 +656,26 @@ namespace WebApp.Controllers
         {
             if (model.Type.ToLower().Contains("coverage"))
             {
-                return PartialView("Metric/Partials/CoverageMetricColumn", new MetricCoverageColumn { Index = model.Index });
+                return PartialView("Metric/Partials/CoverageMetricColumn",
+                    new MetricCoverageColumn
+                    {
+                        Index = model.Index,
+                        Value = JazzService.ANY_VALUE,
+                        DivisorValue = JazzService.ALL_VALUES,
+                        FieldName = JazzService.COVERAGE_FIELD_VALUE,
+                        DivisorFieldName = string.Empty
+                    });
             }
             else
             {
-                return PartialView("Metric/Partials/MetricColumn", new MetricColumn { Index = model.Index });
+                return PartialView("Metric/Partials/MetricColumn", 
+                    new MetricColumn
+                    {
+                        Index = model.Index,
+                        Value = JazzService.ANY_VALUE,
+                        FieldName = JazzService.NUMBER_FIELD_VALUE,
+                        NumberFieldName = JazzService.NUMBER_FIELD_COUNT
+                    });
             }
         }
 

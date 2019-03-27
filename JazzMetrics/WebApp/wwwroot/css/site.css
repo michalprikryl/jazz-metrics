@@ -204,6 +204,13 @@ a:hover {
     -moz-border-radius-bottomleft: 0;
 }
 
+.border-radius-right {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius-topright: 0;
+    -moz-border-radius-bottomright: 0;
+}
+
 .margin-input {
     margin-top: 2rem;
 }
@@ -217,7 +224,13 @@ a:hover {
 .input-2 {
     max-width: 47%;
     flex: 0 0 47%;
-    padding-right: 5px;
+    padding: 0px 5px 0px 5px;
+}
+
+.input-info {
+    max-width: 50%;
+    flex: 0 0 50%;
+    padding: 5px;
 }
 /*END of coverage metric inputs*/
 

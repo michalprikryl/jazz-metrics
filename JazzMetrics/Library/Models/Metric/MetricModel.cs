@@ -12,6 +12,7 @@ namespace Library.Models.Metric
         public string Identificator { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string RequirementGroup { get; set; }
         public int MetricTypeId { get; set; }
         public int AspiceProcessId { get; set; }
         public int AffectedFieldId { get; set; }
@@ -24,7 +25,7 @@ namespace Library.Models.Metric
 
         public List<MetricColumnModel> Columns { get; set; }
 
-        public bool Validate() => !string.IsNullOrEmpty(Identificator) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Description);
+        public bool Validate() => !string.IsNullOrEmpty(Identificator) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Description) && !string.IsNullOrEmpty(RequirementGroup);
 
         public override string ToString() => $"{Name} ({Identificator})";
     }

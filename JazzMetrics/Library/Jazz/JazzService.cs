@@ -11,6 +11,15 @@ namespace Library.Jazz
 {
     public class JazzService : IJazzService
     {
+        public const string ANY_VALUE = "*any*";
+        public const string ALL_VALUES = "*all*";
+
+        public const string NUMBER_FIELD_VALUE = "LITERAL_NAME";
+        public const string NUMBER_FIELD_COUNT = "LITERAL_NAME1";
+
+        public const string COVERAGE_FIELD_VALUE = "LITERAL_NAME";
+
+
         private XmlNamespaceManager _namespaces;
 
         public async Task CreateSnapshot(string url, string username, string password)
@@ -33,7 +42,7 @@ namespace Library.Jazz
                         List<string> names = new List<string>();
                         do
                         {
-                            if(names.Count > 0)
+                            if (names.Count > 0)
                             {
                                 suffix++;
                                 names.Clear();
@@ -93,14 +102,47 @@ namespace Library.Jazz
 
         private void ParseXmlForCoverageMetric(XmlNodeList results)
         {
+            string type = "abc";
+
             int count = results.Count, accepted = 0;
-            foreach (XmlNode result in results)
+            if(type != ALL_VALUES) 
             {
-                XmlNode reference = SelectSingleNodeSpecial(result, "REFERENCE_ID1"), name = SelectSingleNodeSpecial(result, "NAME2");
-                if (reference != null && name != null)
+                //results = document.SelectNodes("/ns:results/ns:result", _namespaces); TODO all
+            }
+
+
+            if (results.Item(0).SelectSingleNode("//ns:REFERENCE_ID1", _namespaces) != null && results.Item(0).SelectSingleNode("//ns:NAME2", _namespaces) != null)
+            {
+                foreach (XmlNode result in results)
                 {
-                    accepted = !string.IsNullOrEmpty(reference.InnerText) || !string.IsNullOrEmpty(name.InnerText) ? accepted + 1 : accepted;
+                    XmlNode reference = SelectSingleNodeSpecial(result, "REFERENCE_ID1"), name = SelectSingleNodeSpecial(result, "NAME2");
+                    if (reference != null && name != null)
+                    {
+                        XmlNode additionalColumn = SelectSingleNodeSpecial(result, "NAME3");
+                        if ((!string.IsNullOrEmpty(reference.InnerText) || !string.IsNullOrEmpty(name.InnerText)) && (additionalColumn == null || !string.IsNullOrEmpty(additionalColumn.InnerText)))
+                        {
+                            accepted++;
+                        }
+                    }
                 }
+            }
+            else if(results.Item(0).SelectSingleNode("//ns:LITERAL_NAME", _namespaces) != null) //M03, M06, M60
+            {
+                string values = "Reviewed;Under construction;";
+                string[] columns = values.Split(';');
+                foreach (XmlNode result in results)
+                {
+                    XmlNode name = SelectSingleNodeSpecial(result, COVERAGE_FIELD_VALUE);
+                    if (name != null && columns.Contains(name.InnerText))
+                    {
+                        accepted++;
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("unknown type");
+                //log - neznamy typ metriky
             }
 
             Console.WriteLine("{0} / {1} = {2}", accepted, count, accepted / (double)count);
@@ -108,8 +150,8 @@ namespace Library.Jazz
 
         private void ParseXmlForNumberMetric(XmlNodeList results)
         {
-            List<string> columns = new List<string> { "Reviewed", "Under construction", "" };
-            //List<string> columns = new List<string> { "Implemented", "Ready to review", "Tested" };
+            Dictionary<string, int> columns = new Dictionary<string, int> { { "Reviewed", 0 }, { "Under construction", 0 }, { "", 0 } };
+            //Dictionary<string, int> columns = new Dictionary<string, int> { { "Implemented", 0 }, { "Ready to review", 0 }, { "Tested", 0 } };
 
             if (results.Count == 1)
             {
@@ -121,7 +163,7 @@ namespace Library.Jazz
                 XmlNode value = SelectSingleNodeSpecial(results[0], "REFERENCE_ID");
                 if (ParseNodeValue(value, out int numberValue))
                 {
-                    Console.WriteLine("{0} {1}", "XXX", numberValue); //TODO ulozeni
+                    columns[columns.First().Key] = numberValue;
                 }
                 else
                 {
@@ -132,20 +174,25 @@ namespace Library.Jazz
             {
                 foreach (XmlNode result in results)
                 {
-                    XmlNode name = SelectSingleNodeSpecial(result, "LITERAL_NAME"); //TODO doplnit ostatnim sloupcum, ktere tam nebudou 0 a zapsat do logu
-                    if (name != null && columns.Contains(name.InnerText))
+                    XmlNode name = SelectSingleNodeSpecial(result, NUMBER_FIELD_VALUE); //TODO doplnit ostatnim sloupcum, ktere tam nebudou 0 a zapsat do logu
+                    if (name != null && columns.ContainsKey(name.InnerText)) //TODO vice hodnot na jednom sloupci
                     {
-                        XmlNode value = SelectSingleNodeSpecial(result, "LITERAL_NAME1");
+                        XmlNode value = SelectSingleNodeSpecial(result, NUMBER_FIELD_COUNT);
                         if (ParseNodeValue(value, out int numberValue))
                         {
-                            Console.WriteLine("{0} {1}", name.InnerText, numberValue); //TODO ulozeni
+                            columns[value.InnerText] += numberValue;
                         }
                         else
                         {
-                            //log
+                            columns[value.InnerText]++;
                         }
                     }
                 }
+            }
+
+            foreach (var item in columns)
+            {
+                Console.WriteLine("{0} {1}", item.Key, item.Value); //TODO ulozeni
             }
         }
 
