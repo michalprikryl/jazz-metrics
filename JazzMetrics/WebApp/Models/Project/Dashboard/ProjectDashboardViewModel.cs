@@ -160,4 +160,15 @@ namespace WebApp.Models.Project.Dashboard
         /// </summary>
         Line
     }
+
+    public class ExportViewModel
+    {
+       public List<MetricExportViewModel> Metrics { get; set; }
+    }
+
+    public class MetricExportViewModel
+    {
+        public string MetricName { get; set; }
+        public List<string> Charts { get; set; }
+    }
 }

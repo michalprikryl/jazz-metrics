@@ -72,6 +72,45 @@
         "umd/popper.min.js",
         "umd/popper.min.js.map"
       ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "docx@4.0.0",
+      "destination": "wwwroot/lib/docx-js",
+      "files": [
+        "build/index.js"
+      ]
+    },
+    {
+      "library": "FileSaver.js@1.3.8",
+      "destination": "wwwroot/lib/filesaver-js",
+      "files": [
+        "FileSaver.min.js"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "pptxgenjs@2.5.0",
+      "destination": "wwwroot/lib/pptxgen-js",
+      "files": [
+        "dist/pptxgen.min.js",
+        "libs/jszip.min.js"
+      ]
+    },
+    {
+      "library": "exceljs@1.7.0",
+      "destination": "wwwroot/lib/excel-js",
+      "files": [
+        "exceljs.min.js"
+      ]
+    },
+    {
+      "library": "tingle@0.14.0",
+      "destination": "wwwroot/lib/tingle-js",
+      "files": [
+        "tingle.min.js",
+        "tingle.min.css"
+      ]
     }
   ]
 }

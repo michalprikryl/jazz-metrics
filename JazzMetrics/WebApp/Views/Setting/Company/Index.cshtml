@@ -30,7 +30,7 @@
                     <input name="Username" class="form-control" placeholder="Username" />
                 </div>
 
-                <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add user</button>
+                <button type="submit" class="btn btn-dark" onclick="showProcessing()">Add user</button>
             </div>
 
         </form>
@@ -64,14 +64,14 @@
                                 {
                                     @if (item.Admin)
                                     {
-                                        <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="javascript: updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                        <span class="fas fa-user-minus pointer" title="Grant regular user role" onclick="updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
                                     }
                                     else
                                     {
-                                        <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="javascript: updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
+                                        <span class="fas fa-user-plus pointer" title="Make user company's admin" onclick="updateUser('/Setting/CompanyUser/Edit/@item.UserId')"></span>
                                     }
 
-                                    <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="javascript: deleteUser('/Setting/CompanyUser/Delete/@item.UserId')"></span>
+                                    <span class="fas fa-trash-alt pointer" title="Delete user from company" onclick="deleteUser('/Setting/CompanyUser/Delete/@item.UserId')"></span>
                                 }
                             </td>
                         </tr>
@@ -106,7 +106,7 @@ else
                 <input name="Name" class="form-control" placeholder="Company name" />
             </div>
 
-            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Create company</button>
+            <button type="submit" class="btn btn-dark" onclick="showProcessing()">Create company</button>
         </div>
 
     </form>

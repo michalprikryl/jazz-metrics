@@ -157,6 +157,12 @@ namespace WebApp.Controllers
 
             return View("Dashboard/Index", model);
         }
+
+        [HttpPost("Export")]
+        public IActionResult Export([FromBody]ExportViewModel model)
+        {
+            return PartialView("Dashboard/Partials/ExportForm", model);
+        }
         #endregion
 
         #region Project's users

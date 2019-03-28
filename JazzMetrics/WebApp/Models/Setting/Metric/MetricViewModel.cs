@@ -88,7 +88,8 @@ namespace WebApp.Models.Setting.Metric
                         Value = n.Value,
                         FieldName = n.FieldName,
                         DivisorValue = n.DivisorValue,
-                        DivisorFieldName = n.DivisorFieldName
+                        DivisorFieldName = n.DivisorFieldName,
+                        CoverageName = n.CoverageName
                     }));
             }
 
@@ -122,6 +123,7 @@ namespace WebApp.Models.Setting.Metric
                     FieldName = item.FieldName,
                     DivisorValue = item.DivisorValue,
                     DivisorFieldName = item.DivisorFieldName,
+                    CoverageName = item.CoverageName,
                     Deleted = false
                 });
             }
@@ -187,6 +189,8 @@ namespace WebApp.Models.Setting.Metric
         public string DivisorValue { get; set; }
 
         public string DivisorFieldName { get; set; }
+
+        public string CoverageName { get; set; }
     }
 
     public class MetricDetailViewModel : ViewModel

@@ -154,9 +154,10 @@ CREATE TABLE [MetricColumn]
 	[ID] int NOT NULL IDENTITY(1,1),
 	[Value] nvarchar(1024) NOT NULL,
 	[FieldName] nvarchar(1024) NOT NULL,
-	[NumberFieldName] nvarchar(1024) NOT NULL,
+	[NumberFieldName] nvarchar(1024) NULL,
 	[DivisorValue] nvarchar(1024) NULL,
 	[DivisorFieldName] nvarchar(1024) NULL,
+	[CoverageName] nvarchar(1024) NULL,
 	[MetricID] int NOT NULL,
 	PRIMARY KEY ([ID])
 )
@@ -188,7 +189,6 @@ CREATE TABLE [ProjectMetricLog]
 	PRIMARY KEY ([ID])
 )
 GO
-
 ALTER TABLE [User] ADD CONSTRAINT [FK_USER_LANGUAGE] FOREIGN KEY ([LanguageID]) REFERENCES [Language] ([ID])
 GO
 ALTER TABLE [User] ADD CONSTRAINT [FK_USER_ROLE] FOREIGN KEY ([UserRoleID]) REFERENCES [UserRole] ([ID])

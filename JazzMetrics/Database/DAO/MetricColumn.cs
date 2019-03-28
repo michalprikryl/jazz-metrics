@@ -17,6 +17,7 @@ namespace Database.DAO
         public string DivisorValue { get; set; }
         public string DivisorFieldName { get; set; }
         public int MetricId { get; set; }
+        public string CoverageName { get; set; }
 
         public virtual Metric Metric { get; set; }
         public virtual ICollection<ProjectMetricColumnValue> ProjectMetricColumnValue { get; set; }

@@ -24,7 +24,7 @@
             <div class="form-group">
                 <label asp-for="RequirementGroup" class="control-label"></label>
                 <input asp-for="RequirementGroup" class="form-control" />
-                <small class="form-text text-muted">This value will be used in case when in data XML will be more than one type of requirement. Fill one of following - HWRS, SYRS, SWRS etc.</small>
+                <small class="form-text text-muted">This value will be used in case when in data XML will be more than one type of requirement. Fill one of following - HWRS, SWRS, SYRS, SYAR, CRS, etc.</small>
                 <span asp-validation-for="RequirementGroup" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -59,7 +59,7 @@
                 }
             </div>
             <div class="form-row d-flex justify-content-center">
-                <span class="fas fa-plus plus-icon pointer" title="Add new metric property" onclick="javascript: addColumn()"></span>
+                <span class="fas fa-plus plus-icon pointer" title="Add new metric property" onclick="addColumn()"></span>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12">
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Save</button>
+            <button type="submit" class="btn btn-dark" onclick="showProcessing()">Save</button>
         </div>
     </form>
     <script src="~/js/metric-form.js" asp-append-version="true"></script>

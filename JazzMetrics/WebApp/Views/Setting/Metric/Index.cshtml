@@ -48,7 +48,7 @@
                             <a href="/Setting/Metric/Edit/@item.Id">
                                 <partial name="Partials/_Icon" model="@editModel" />
                             </a>
-                            <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="javascript: deleteItem('/Setting/Metric/Delete/@item.Id')"></span>
+                            <span class="fas fa-trash-alt pointer" title="Delete metric" onclick="deleteItem('/Setting/Metric/Delete/@item.Id')"></span>
                         }
 
                         @if (item.Public)

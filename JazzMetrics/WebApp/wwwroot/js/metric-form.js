@@ -1,7 +1,6 @@
 ﻿async function addColumn() {
     const select = document.getElementById("MetricTypeId");
     if (select) {
-        console.log(select);
         const isNumberColumn = select.options[select.selectedIndex].text.toLowerCase().startsWith('number');
         const request = {
             index: document.getElementsByClassName(isNumberColumn ? 'number-column' : 'coverage-column').length,

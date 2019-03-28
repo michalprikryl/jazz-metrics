@@ -9,9 +9,10 @@
         public string DivisorValue { get; set; }
         public string DivisorFieldName { get; set; }
         public int MetricId { get; set; }
+        public string CoverageName { get; set; }
 
         public bool Validate() =>
-            (string.IsNullOrEmpty(DivisorFieldName) && !string.IsNullOrEmpty(FieldName) && !string.IsNullOrEmpty(NumberFieldName)) //number column
-            || (!string.IsNullOrEmpty(DivisorFieldName) && !string.IsNullOrEmpty(FieldName)); //coverage column
+            (string.IsNullOrEmpty(CoverageName) && !string.IsNullOrEmpty(FieldName) && !string.IsNullOrEmpty(NumberFieldName)) //number column
+            || (!string.IsNullOrEmpty(CoverageName)  && !string.IsNullOrEmpty(FieldName)); //coverage column
     }
 }

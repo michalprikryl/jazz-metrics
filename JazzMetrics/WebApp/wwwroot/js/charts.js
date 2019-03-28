@@ -1,8 +1,4 @@
-﻿const charts = [];
-
-//Chart.defaults.global.plugins.colorschemes.scheme = 'brewer.RdPu4';
-
-function showMetric(id) {
+﻿function showMetric(id) {
     $(`#${id}`).collapse('show');
 }
 
@@ -18,7 +14,6 @@ function random_rgba() {
 let colors, loadedId = '';
 function makeBarChart(canvasId, data, labels, title, id) {
     if (loadedId !== id) {
-        console.log(loadedId + ' ' + id);
         loadedId = id;
         colors = labels.map(() => random_rgba());
     }
@@ -36,7 +31,7 @@ function makeBarChart(canvasId, data, labels, title, id) {
             }]
         },
         options: {
-            ...getCommonOptions(title/*, canvasId*/),
+            ...getCommonOptions(title),
             scales: {
                 yAxes: [{
                     ticks: {
@@ -82,7 +77,7 @@ function makeLineChart(canvasId, data, labels, title) {
             }]
         },
         options: {
-            ...getCommonOptions(title/*, canvasId*/),
+            ...getCommonOptions(title),
             scales: {
                 xAxes: [{
                     type: 'time',
@@ -118,7 +113,7 @@ function makeLineChart(canvasId, data, labels, title) {
     });
 }
 
-function getCommonOptions(title/*, canvasId*/) {
+function getCommonOptions(title) {
     return {
         layout: {
             padding: {
@@ -129,17 +124,7 @@ function getCommonOptions(title/*, canvasId*/) {
             }
         },
         animation: {
-            duration: 3000/*,
-            onComplete: animation => {
-                if (charts.some(item => item.id === canvasId && item.base64.length < 1000) || charts.every(item => item.id !== canvasId)) {
-                    const idx = charts.findIndex(item => item.id === canvasId);
-                    idx !== -1 && charts.splice(idx, 1);
-                    charts.push({
-                        id: canvasId,
-                        base64: animation.chart.toBase64Image()
-                    });
-                }
-            }*/
+            duration: 3000
         },
         title: {
             display: true,
@@ -148,18 +133,218 @@ function getCommonOptions(title/*, canvasId*/) {
     };
 }
 
-function saveChartToPng(id, name = 'export') {
-    const chart = document.getElementById(id);//charts.find((item) => item.id === id);
+function saveChartToPng(id, name = 'metrics_export') {
+    const chart = document.getElementById(id);
     if (chart) {
-        const link = document.createElement("a");
-        link.setAttribute("href", chart.toDataURL("image")/*base64*/);
-        link.setAttribute("download", `${name.replace(new RegExp(' ', 'g'), '_')}__${id}.png`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        chart.toBlob((blob) => saveAs(blob, `${name.replace(new RegExp(' ', 'g'), '_')}__${id}.png`));
     } else {
         swal('Error', 'Unknown chart to export! Try again, please.', 'warning');
     }
+}
+
+function saveChartToPptx(metrics) {
+    try {
+        const headingSetting = {
+            x: 0,
+            y: '5%',
+            w: '100%',
+            align: 'center',
+            bold: true,
+            fontFace: 'Calibri',
+            fontSize: 18,
+            color: '363636'
+        };
+        const imageSetting = {
+            x: '10%',
+            y: '10%',
+            w: '80%',
+            h: '80%'
+        };
+
+        const pptx = new PptxGenJS();
+        pptx.setAuthor('jazz-metrics');
+        pptx.setCompany('VSB-TUO');
+        pptx.setRevision('1');
+        pptx.setSubject('Metrics report');
+        pptx.setTitle('Metrics report');
+
+        for (let j = 0; j < metrics.length; j++) {
+            for (let i = 0; i < metrics[j].charts.length; i++) {
+                const chart = document.getElementById(metrics[j].charts[i]);
+                if (chart) {
+                    const slide = pptx.addNewSlide();
+                    slide.addText(metrics[j].metricName, headingSetting);
+                    imageSetting.data = chart.toDataURL("image");
+                    slide.addImage(imageSetting);
+                }
+            }
+        }
+
+        pptx.save('metrics_export');
+    } catch {
+        swal('Error', 'Error occured within export! Try again, please.', 'warning');
+    }
+}
+
+async function saveChartToXls(metrics) {
+    try {
+        const now = new Date();
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'jazz-metrics';
+        workbook.lastModifiedBy = 'jazz-metrics';
+        workbook.created = now;
+        workbook.modified = now;
+        workbook.lastPrinted = now;
+
+        for (let j = 0; j < metrics.length; j++) {
+            const worksheet = workbook.addWorksheet(metrics[j].metricName);
+            const heading = worksheet.getCell('A1');
+            heading.value = metrics[j].metricName;
+            heading.font = {
+                name: 'Calibri',
+                bold: true,
+                size: 20
+            };
+
+            for (let i = 0, row = 0; i < metrics[j].charts.length; i++) {
+                const chart = document.getElementById(metrics[j].charts[i]);
+                if (chart) {
+                    const imageId = workbook.addImage({
+                        base64: chart.toDataURL("image"),
+                        extension: 'png'
+                    });
+                    worksheet.addImage(imageId, {
+                        tl: { col: 0, row: 2 + row },
+                        br: { col: 13, row: 22 + row },
+                        editAs: 'absolute'
+                    });
+                    row += 20;
+                }
+            }
+        }
+
+        saveAs(new Blob([await workbook.xlsx.writeBuffer()]), "metrics_export.xlsx");
+    } catch {
+        swal('Error', 'Error occured within export! Try again, please.', 'warning');
+    }
+}
+
+function saveChartToDocx(metrics) {
+    try {
+        const doc = new Document({
+            creator: "jazz-metrics",
+            title: "Charts export",
+            description: "Exported charts from one or many metrics."
+        });
+
+        const emptyParagraph = new Paragraph();
+
+        const headerParagraph = new Paragraph().heading1().center().thematicBreak();
+        headerParagraph.addRun(new TextRun("Metrics export").font("Calibri"));
+        doc.addParagraph(headerParagraph);
+
+        const options = {
+            floating: {
+                horizontalPosition: {
+                    relative: HorizontalPositionRelativeFrom.PAGE
+                },
+                verticalPosition: {
+                    relative: VerticalPositionRelativeFrom.PAGE
+                }
+            }
+        };
+
+        for (let j = 0, graphCount = 0; j < metrics.length; j++) {
+            const metricHeaderParagraph = new Paragraph().heading2().center();
+            metricHeaderParagraph.addRun(new TextRun(metrics[j].metricName).font("Calibri").break());
+            doc.addParagraph(metricHeaderParagraph);
+
+            for (let i = 0; i < metrics[j].charts.length; i++) {
+                const chart = document.getElementById(metrics[j].charts[i]);
+                chart && doc.createImage(chart.toDataURL("image"), 580, 380, options);
+
+                ++graphCount % 2 === 0 && graphCount !== 0 && doc.addParagraph(new Paragraph().pageBreak());
+            }
+
+            const metricEndParagraph = new Paragraph().thematicBreak();
+            doc.addParagraph(metricEndParagraph);
+        }
+
+        doc.addParagraph(emptyParagraph);
+
+        const packer = new Packer();
+        packer.toBlob(doc).then((blob) => {
+            saveAs(blob, "metrics_export.docx");
+        });
+    } catch {
+        swal('Error', 'Error occured within export! Try again, please.', 'warning');
+    }
+}
+
+async function exportAllMetrics() {
+    showProcessing();
+
+    const parents = document.getElementsByClassName('parent');
+
+    const metrics = [];
+    for (let i = 0; i < parents.length; i++) {
+        const metric = {
+            charts: [],
+            metricName: parents[i].getElementsByClassName('center-name')[0].innerHTML
+        };
+
+        const canvas = parents[i].querySelectorAll('canvas[id^="chart-"]');
+        for (let j = 0; j < canvas.length; j++) {
+            metric.charts.push(canvas[j].id);
+        }
+
+        metrics.push(metric);
+    }
+
+    const promise = fetch('/Project/Export', {
+        method: "POST",
+        body: JSON.stringify({ metrics }),
+        headers: {
+            'Content-Type': 'application/json',
+            "RequestVerificationToken": document.getElementsByName("__RequestVerificationToken")[0].value
+        }
+    });
+
+    const modal = new tingle.modal({
+        footer: true,
+        stickyFooter: false,
+        closeMethods: ['overlay', 'button', 'escape'],
+        closeLabel: "Close"
+    });
+
+    modal.addFooterBtn('Export', 'tingle-btn tingle-btn--primary', function () {
+        modal.close();
+        showProcessing();
+
+        const chosenMetrics = [];
+        const content = modal.getContent();
+        const checkboxes = content.getElementsByClassName('metric');
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked && chosenMetrics.push(JSON.parse(checkboxes[i].value));
+        }
+
+        saveChartToPptx(chosenMetrics);
+
+        hideProcessing();
+    });
+
+    modal.addFooterBtn('Cancel', 'tingle-btn tingle-btn--danger', () => modal.close());
+
+    const response = (await Promise.all([promise]))[0];
+    if (response.status >= 200 && response.status <= 304) {
+        modal.setContent(await response.text());
+    } else {
+        modal.setContent('<h1>Error occured, try again later please.</h1>');
+    }
+
+    hideProcessing();
+
+    modal.open();
 }
 
 /*

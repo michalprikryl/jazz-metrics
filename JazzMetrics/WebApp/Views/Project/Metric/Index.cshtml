@@ -72,7 +72,7 @@
                             <a href="/Project/@Model.Id/Metric/Edit/@item.ProjectMetricId">
                                 <partial name="Partials/_Icon" model="@editModel" />
                             </a>
-                            <span class="fas fa-trash-alt pointer" title="Delete metric from project" onclick="javascript: deleteItem('/Project/@Model.Id/Metric/Delete/@item.ProjectMetricId')"></span>
+                            <span class="fas fa-trash-alt pointer" title="Delete metric from project" onclick="deleteItem('/Project/@Model.Id/Metric/Delete/@item.ProjectMetricId')"></span>
                         }
                         @if (item.Public)
                         {

@@ -35,7 +35,7 @@
                             <partial name="Partials/_Icon" model="@editModel" />
                         </a>
                         @{ string endpoint = $"/Setting/MetricType/Delete/{item.Id}"; }
-                        <span class="fas fa-trash-alt pointer" title="Delete metric type" onclick="javascript: deleteItem('@endpoint')"></span>
+                        <span class="fas fa-trash-alt pointer" title="Delete metric type" onclick="deleteItem('@endpoint')"></span>
                     </td>
                 </tr>
             }

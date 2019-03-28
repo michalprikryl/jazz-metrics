@@ -141,7 +141,7 @@ namespace Library.Jazz
                     foreach (XmlNode result in results)
                     {
                         XmlNode name = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, COVERAGE_FIELD_VALUE);
-                        if (name != null && values.Contains(name.InnerText))
+                        if (name != null && (values.Contains(name.InnerText) || values[0] == ANY_VALUE))
                         {
                             accepted++;
                         }
@@ -212,7 +212,7 @@ namespace Library.Jazz
                     foreach (XmlNode result in results)
                     {
                         XmlNode name = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, NUMBER_FIELD_VALUE);
-                        if (name != null && values.Contains(name.InnerText))
+                        if (name != null && (values.Contains(name.InnerText) || values[0] == ANY_VALUE))
                         {
                             XmlNode value = SelectSingleNodeSpecial(result, column.NumberFieldName) ?? SelectSingleNodeSpecial(result, NUMBER_FIELD_COUNT);
                             if (ParseNodeValue(value, out int numberValue))

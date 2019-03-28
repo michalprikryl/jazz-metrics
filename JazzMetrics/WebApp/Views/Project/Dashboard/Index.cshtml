@@ -23,8 +23,15 @@
                 Add metric to project
             </a>
         }
+
+        <button onclick="exportAllMetrics()" class="btn btn-primary">
+            <span class="fa fa-file-export"></span>
+            Export metrics
+        </button>
     </div>
 </div>
+
+@Html.AntiForgeryToken()
 
 @{ int chartCount = 0; }
 @for (int i = 0; i < Model.Metrics.Count; i++)
@@ -32,7 +39,7 @@
     string parent = $"parent-{i}", metric = $"metric-{i}";
 
     <hr />
-    <div id="@parent">
+    <div id="@parent" class="parent">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                 <label class="btn btn-secondary" onclick="showMetric('@metric')">

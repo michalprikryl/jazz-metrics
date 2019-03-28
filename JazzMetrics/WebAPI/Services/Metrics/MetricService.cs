@@ -113,17 +113,7 @@ namespace WebAPI.Services.Metrics
 
                                     for (int i = 0; i < request.Columns.Count; i++)
                                     {
-                                        MetricColumn metricColumn = new MetricColumn
-                                        {
-                                            Value = request.Columns[i].Value ?? string.Empty,
-                                            FieldName = request.Columns[i].FieldName,
-                                            NumberFieldName = request.Columns[i].NumberFieldName,
-                                            DivisorValue = request.Columns[i].DivisorValue,
-                                            DivisorFieldName = request.Columns[i].DivisorFieldName,
-                                            Metric = metric,
-                                        };
-
-                                        await Database.MetricColumn.AddAsync(metricColumn);
+                                        await CreateMetricColumn(metric, request.Columns[i]);
                                     }
 
                                     await Database.Metric.AddAsync(metric);
@@ -182,25 +172,21 @@ namespace WebAPI.Services.Metrics
                                     {
                                         if (request.Columns[i].Id == 0)
                                         {
-                                            MetricColumn metricColumn = new MetricColumn
-                                            {
-                                                Value = request.Columns[i].Value ?? string.Empty,
-                                                FieldName = request.Columns[i].FieldName,
-                                                NumberFieldName = request.Columns[i].NumberFieldName,
-                                                DivisorFieldName = request.Columns[i].DivisorFieldName,
-                                                Metric = metric,
-                                            };
-
-                                            await Database.MetricColumn.AddAsync(metricColumn);
+                                            await CreateMetricColumn(metric, request.Columns[i]);
                                         }
                                         else
                                         {
                                             MetricColumn column = metric.MetricColumn.First(c => c.Id == request.Columns[i].Id);
-                                            column.Value = request.Columns[i].Value;
+                                            column.Value = request.Columns[i].Value ?? string.Empty;
                                             column.FieldName = request.Columns[i].FieldName;
                                             column.NumberFieldName = request.Columns[i].NumberFieldName;
-                                            column.DivisorValue = request.Columns[i].DivisorValue;
-                                            column.DivisorFieldName = request.Columns[i].DivisorFieldName;
+
+                                            if (!string.IsNullOrEmpty(request.Columns[i].CoverageName))
+                                            {
+                                                column.DivisorValue = request.Columns[i].DivisorValue ?? JazzService.ALL_VALUES;
+                                                column.DivisorFieldName = request.Columns[i].DivisorFieldName ?? string.Empty;
+                                                column.CoverageName = request.Columns[i].CoverageName;
+                                            }
                                         }
                                     }
 
@@ -264,6 +250,26 @@ namespace WebAPI.Services.Metrics
             }
 
             return metric;
+        }
+
+        private async Task CreateMetricColumn(Metric metric, MetricColumnModel model)
+        {
+            MetricColumn metricColumn = new MetricColumn
+            {
+                Metric = metric,
+                Value = model.Value ?? string.Empty,
+                FieldName = model.FieldName,
+                NumberFieldName = model.NumberFieldName
+            };
+
+            if (!string.IsNullOrEmpty(model.CoverageName))
+            {
+                metricColumn.DivisorValue = model.DivisorValue ?? JazzService.ALL_VALUES;
+                metricColumn.DivisorFieldName = model.DivisorFieldName ?? string.Empty;
+                metricColumn.CoverageName = model.CoverageName;
+            }
+
+            await Database.MetricColumn.AddAsync(metricColumn);
         }
 
         private bool CheckMetricForCrud(Metric metric, BaseResponseModel response)
@@ -398,6 +404,7 @@ namespace WebAPI.Services.Metrics
                 NumberFieldName = metricColumn.NumberFieldName,
                 DivisorValue = metricColumn.DivisorValue,
                 DivisorFieldName = metricColumn.DivisorFieldName,
+                CoverageName = metricColumn.CoverageName,
                 MetricId = metricColumn.MetricId
             };
     }

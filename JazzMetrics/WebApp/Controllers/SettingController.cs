@@ -663,7 +663,8 @@ namespace WebApp.Controllers
                         Value = JazzService.ANY_VALUE,
                         DivisorValue = JazzService.ALL_VALUES,
                         FieldName = JazzService.COVERAGE_FIELD_VALUE,
-                        DivisorFieldName = string.Empty
+                        DivisorFieldName = string.Empty,
+                        CoverageName = "Coverage"
                     });
             }
             else

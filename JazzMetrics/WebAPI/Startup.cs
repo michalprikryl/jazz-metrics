@@ -73,8 +73,8 @@ namespace WebAPI
             services.AddScoped<IJazzService, JazzService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITestService, TestService>();
-            services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IMetricService, MetricService>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ICompanyService, CompanyService>();

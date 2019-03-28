@@ -3,7 +3,7 @@
     string onClick = string.Empty;
     if (!string.IsNullOrEmpty(Model.JsFunction))
     {
-        onClick = $" onclick=\"javascript: {Model.JsFunction}\"";
+        onClick = $" onclick=\"{Model.JsFunction}\"";
     }
 }
 

@@ -193,6 +193,8 @@ namespace Database
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.CoverageName).HasMaxLength(1024);
+
                 entity.Property(e => e.DivisorFieldName).HasMaxLength(1024);
 
                 entity.Property(e => e.DivisorValue).HasMaxLength(1024);
@@ -203,9 +205,7 @@ namespace Database
 
                 entity.Property(e => e.MetricId).HasColumnName("MetricID");
 
-                entity.Property(e => e.NumberFieldName)
-                    .IsRequired()
-                    .HasMaxLength(1024);
+                entity.Property(e => e.NumberFieldName).HasMaxLength(1024);
 
                 entity.Property(e => e.Value)
                     .IsRequired()

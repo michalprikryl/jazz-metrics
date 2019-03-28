@@ -39,7 +39,7 @@
                 <input asp-for="User.Username" name="Username" class="form-control" placeholder="Username" />
             </div>
 
-            <button type="submit" class="btn btn-dark" onclick="javascript: showProcessing()">Add user</button>
+            <button type="submit" class="btn btn-dark" onclick="showProcessing()">Add user</button>
         </div>
 
     </form>
@@ -75,7 +75,7 @@
                         @if (adminAccount)
                         {
                             string obj = $"{{\"userId\": {item.UserId}, \"projectId\": {Model.Id}}}";
-                            <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="javascript: deleteUser('/Project/User/Delete', 'project', '@obj')"></span>
+                            <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="deleteUser('/Project/User/Delete', 'project', '@obj')"></span>
                         }
                     </td>
                 </tr>
