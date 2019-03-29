@@ -186,7 +186,7 @@ function saveChartToPptx(metrics) {
     }
 }
 
-async function saveChartToXls(metrics) {
+async function saveChartToXlsx(metrics) {
     try {
         const now = new Date();
         const workbook = new ExcelJS.Workbook();
@@ -328,7 +328,27 @@ async function exportAllMetrics() {
             checkboxes[i].checked && chosenMetrics.push(JSON.parse(checkboxes[i].value));
         }
 
-        saveChartToPptx(chosenMetrics);
+        if (chosenMetrics.length > 0) {
+            let exportType;
+            const exports = content.getElementsByClassName('export');
+            for (let i = 0; i < exports.length; i++) {
+                if (exports[i].checked) {
+                    exportType = exports[i].value;
+                }
+            }
+
+            if (exportType === 'powepoint') {
+                saveChartToPptx(chosenMetrics);
+            } else if (exportType === 'excel') {
+                saveChartToXlsx(chosenMetrics);
+            } else if (exportType === 'word') {
+                saveChartToDocx(chosenMetrics);
+            } else {
+                swal('Warning', 'Choose one export type, please!', 'warning');
+            }
+        } else {
+            swal('Warning', 'Choose at least one metric, please!', 'warning');
+        }
 
         hideProcessing();
     });
@@ -345,6 +365,16 @@ async function exportAllMetrics() {
     hideProcessing();
 
     modal.open();
+}
+
+function changeMetrics() {
+    const form = document.getElementById('modal-form');
+
+    const button = form.querySelector('#all-button');
+    const checked = button.innerHTML.startsWith('Uncheck');
+    button.innerHTML = checked ? 'Check all metrics' : 'Uncheck all metrics';
+
+    [...form.getElementsByClassName('metric')].forEach((metric) => metric.checked = !checked);
 }
 
 /*
