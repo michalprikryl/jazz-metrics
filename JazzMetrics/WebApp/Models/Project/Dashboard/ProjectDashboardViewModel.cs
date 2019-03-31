@@ -1,6 +1,8 @@
 ﻿using Library;
+using Library.Models.Projects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WebApp.Models.Project.Dashboard
 {
@@ -13,6 +15,76 @@ namespace WebApp.Models.Project.Dashboard
         /// metriky projektu
         /// </summary>
         public List<MetricDataModel> Metrics { get; set; }
+
+        public void FillMetrics(ProjectModel model)
+        {
+            Metrics = new List<MetricDataModel>();
+            foreach (var projectMetric in model.ProjectMetrics)
+            {
+                MetricDataModel metric = new MetricDataModel
+                {
+                    Id = projectMetric.Id,
+                    MetricName = projectMetric.Metric.Name,
+                    MetricIdentificator = projectMetric.Metric.Identificator,
+                    MetricDescription = projectMetric.Metric.Description, 
+                    MetricColumns = new List<MetricColumnModel>()
+                };
+
+                if (projectMetric.Metric.MetricType.CoverageMetric)
+                {
+                    foreach (var column in projectMetric.Metric.Columns)
+                    {
+                        var snapshots = projectMetric.Snapshots.Where(s => s.Values.Any(v => v.MetricColumnId == column.Id))
+                            .Select(s => new
+                            {
+                                date = s.InsertionDate.GetDateTimeString(),
+                                values = s.Values.Where(v => v.MetricColumnId == column.Id).Select(v => v.Value).ToList()
+                            });
+
+                        metric.MetricColumns.Add(
+                            new MetricColumnModel
+                            {
+                                Type = ChartType.Line,
+                                Titles = new List<string> { column.CoverageName },
+                                Labels = snapshots.Select(s => s.date).ToList(),
+                                Values = snapshots.Select(s => s.values).ToList()
+                            });
+                    }
+                }
+                else if (projectMetric.Metric.MetricType.NumberMetric)
+                {
+                    MetricColumnModel columnModel = new MetricColumnModel
+                    {
+                        Type = ChartType.Bar,
+                        Titles = new List<string>(),
+                        Values = new List<List<decimal>>(),
+                        Labels = projectMetric.Metric.Columns.Select(c => string.IsNullOrEmpty(c.Value) ? "no value" : c.Value).ToList()
+                    };
+
+                    foreach (var snapshot in projectMetric.Snapshots)
+                    {
+                        columnModel.Titles.Add(snapshot.InsertionDate.GetDateTimeString());
+                        columnModel.Values.Add(snapshot.Values.Select(v => v.Value).ToList());
+                    }
+
+                    metric.MetricColumns.Add(columnModel);
+                }
+                else
+                {
+                    MetricColumnModel columnModel = new MetricColumnModel
+                    {
+                        Type = ChartType.Unknown,
+                        Labels = new List<string>(),
+                        Titles = new List<string>(),
+                        Values = new List<List<decimal>>(),
+                    };
+
+                    metric.MetricColumns.Add(columnModel);
+                }
+
+                Metrics.Add(metric);
+            }
+        }
 
         public void FillMetricsWithTestValues()
         {
@@ -61,7 +133,8 @@ namespace WebApp.Models.Project.Dashboard
 
             MetricDataModel metric = new MetricDataModel
             {
-                MetricInfo = "M01 - very useful metric",
+                MetricIdentificator = "M01",
+                MetricName = "very useful metric",
                 MetricDescription = "Description about very useful metric",
                 MetricColumns = new List<MetricColumnModel>
                 {
@@ -92,7 +165,8 @@ namespace WebApp.Models.Project.Dashboard
 
             MetricDataModel metric2 = new MetricDataModel
             {
-                MetricInfo = "M02 - other useful metric",
+                MetricIdentificator = "M02",
+                MetricName = "other useful metric",
                 MetricDescription = "Description about other useful metric",
                 MetricColumns = new List<MetricColumnModel>
                 {
@@ -106,7 +180,10 @@ namespace WebApp.Models.Project.Dashboard
 
     public class MetricDataModel
     {
-        public string MetricInfo { get; set; }
+        public int Id { get; set; }
+        public string MetricIdentificator { get; set; }
+        public string MetricName { get; set; }
+        public string MetricInfo { get => $"{MetricIdentificator} - {MetricName}"; }
         public string MetricDescription { get; set; }
         /// <summary>
         /// data metriky pro zobrazeni vsech grafu
@@ -158,12 +235,16 @@ namespace WebApp.Models.Project.Dashboard
         /// <summary>
         /// pro coverage
         /// </summary>
-        Line
+        Line,
+        /// <summary>
+        /// neznamy
+        /// </summary>
+        Unknown
     }
 
     public class ExportViewModel
     {
-       public List<MetricExportViewModel> Metrics { get; set; }
+        public List<MetricExportViewModel> Metrics { get; set; }
     }
 
     public class MetricExportViewModel

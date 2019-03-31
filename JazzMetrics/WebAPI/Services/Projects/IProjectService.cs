@@ -8,6 +8,7 @@ namespace WebAPI.Services.Projects
 {
     public interface IProjectService : ICrudOperations<ProjectModel, Project>, IUser
     {
+        Task<BaseResponseModelGet<ProjectModel>> Get(int id);
         Task<BaseResponseModel> CreateSnapshots();
         Task<BaseResponseModel> CreateSnapshots(int id, Project project = null);
         Task<BaseResponseModel> CreateSnapshot(int id, int projectMetricId, ProjectMetric projectMetric = null);

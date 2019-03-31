@@ -31,10 +31,13 @@
                 }
                 <button onclick="exportAllMetrics()" class="dropdown-item">
                     <span class="fa fa-file-export"></span>
-                    Export metrics
+                    Export all metrics
                 </button>
                 <button onclick="exportAllMetrics()" class="dropdown-item">
                     Expand all metrics
+                </button>
+                <button onclick="updateMetrics('@Model.Id')" class="dropdown-item">
+                    Update all metrics
                 </button>
             </div>
         </div>
@@ -60,22 +63,38 @@
                 </label>
             </div>
             <text class="font-weight-bold lead center-name">@Model.Metrics[i].MetricInfo</text>
-            <span class="fa fa-info mr-2" title="@Model.Metrics[i].MetricDescription"></span>
+            <div>
+                <span class="fa fa-info mr-2" title="@Model.Metrics[i].MetricDescription"></span>
+                <button onclick="updateMetrics('@Model.Id', '@Model.Metrics[i].Id')" class="btn btn-secondary mr-2 collapse @metric">
+                    Update metric data
+                </button>
+            </div>
         </div>
 
-        <div id="@metric" class="collapse">
+        <div class="collapse @metric">
             @for (int j = 0; j < Model.Metrics[i].MetricColumns.Count; j++)
             {
                 var labels = Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Labels));
                 @if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Line)
                 {
-                    string chart = $"chart-{chartCount++}";
-                    <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
-                    <script>
+                    @if (Model.Metrics[i].MetricColumns[j].Values.Count == 0)
+                    {
+                        <div class="carousel-item active">
+                            <div class="text-center">
+                                There is no metric snapshots.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        string chart = $"chart-{chartCount++}";
+                        <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
+                        <script>
                         setTimeout(() =>
                             makeLineChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[0])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[0]')
                             , 500);
-                    </script>
+                        </script>
+                    }
                 }
                 else if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Bar)
                 {
@@ -91,6 +110,15 @@
                                             makeBarChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]', '@j')
                                             , 500);
                                     </script>
+                                </div>
+                            }
+
+                            @if (Model.Metrics[i].MetricColumns[j].Values.Count == 0)
+                            {
+                                <div class="carousel-item active">
+                                    <div class="text-center">
+                                        There is no metric snapshots.
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -117,4 +145,4 @@
     </div>
 }
 
-<script src="~/js/charts.js"></script>
+<script src="~/js/dashboard-form.js"></script>

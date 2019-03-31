@@ -9,7 +9,7 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                @{ string chartModel = $"[{{ \"metricName\": \"{Model.MetricInfo}\", \"charts\": [\"{Model.ChartId}\", \"{Model.ChartId}\", \"{Model.ChartId}\"] }}]"; }
+                @{ string chartModel = $"[{{ \"metricName\": \"{Model.MetricInfo}\", \"charts\": [\"{Model.ChartId}\"] }}]"; }
                 <button onclick="saveChartToPng('@Model.ChartId', '@Model.MetricInfo')" class="dropdown-item">PNG file</button>
                 <button onclick="saveChartToXlsx(@chartModel)" class="dropdown-item">Excel workbook</button>
                 <button onclick="saveChartToDocx(@chartModel)" class="dropdown-item">Word document</button>

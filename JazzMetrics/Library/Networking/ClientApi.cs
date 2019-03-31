@@ -55,6 +55,11 @@ namespace Library.Networking
 
         public static string GetHttpBasicHeader(string username, string password) => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
 
+        protected async Task PostToAPI(Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
+        {
+            await PostToAPI(string.Empty, method, controller, endpoint, jwt, mediaType);
+        }
+
         /// <summary>
         /// posle HTTP POST pozadavek na dany controller
         /// </summary>
@@ -192,6 +197,11 @@ namespace Library.Networking
         protected async Task GetToAPI(int id, List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI($"/{id}{GetParametersString(parameters)}", method, controller, endpoint, jwt);
+        }
+
+        protected async Task GetToAPI(int id, string entity, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
+        {
+            await GetToAPI($"/{id}/{entity}", method, controller, endpoint, jwt);
         }
 
         protected async Task GetToAPI(string queryString, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)

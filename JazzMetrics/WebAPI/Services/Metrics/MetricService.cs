@@ -376,7 +376,7 @@ namespace WebAPI.Services.Metrics
 
         private AffectedFieldModel GetAffectedField(AffectedField affectedField) => _affectedFieldService.ConvertToModel(affectedField);
 
-        private List<MetricColumnModel> GetMetricColumns(ICollection<MetricColumn> metricColumns) => metricColumns.Select(c => ConvertMetricColumn(c)).ToList();
+        public List<MetricColumnModel> GetMetricColumns(ICollection<MetricColumn> metricColumns) => metricColumns.Select(c => ConvertMetricColumn(c)).ToList();
 
         public MetricModel ConvertToModel(Metric dbModel)
         {

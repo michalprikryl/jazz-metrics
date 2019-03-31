@@ -139,7 +139,7 @@ namespace WebApp.Controllers
         {
             ProjectDashboardViewModel model = new ProjectDashboardViewModel();
 
-            var result = await _crudService.Get<ProjectModel>(id, Token, ProjectService.ProjectEntity, false);
+            var result = await _projectService.GetFullProject(id, Token);
             if (result.Success)
             {
                 ProjectModel value = result.Value;
@@ -148,7 +148,8 @@ namespace WebApp.Controllers
                 model.Name = value.Name;
                 model.Description = value.Description;
 
-                model.FillMetricsWithTestValues();
+                model.FillMetrics(value);
+                //model.FillMetricsWithTestValues();
             }
             else
             {
@@ -156,6 +157,18 @@ namespace WebApp.Controllers
             }
 
             return View("Dashboard/Index", model);
+        }
+
+        [HttpGet("{id}/Update")]
+        public async Task<IActionResult> UpdateAll(int id)
+        {
+            return Json(await _projectService.UpdateAllProjectMetrics(id, Token));
+        }
+
+        [HttpGet("{id}/Update/{projectMetricId}")]
+        public async Task<IActionResult> Update(int id, int projectMetricId)
+        {
+            return Json(await _projectService.UpdateProjectMetric(id, projectMetricId, Token));
         }
 
         [HttpPost("Export")]

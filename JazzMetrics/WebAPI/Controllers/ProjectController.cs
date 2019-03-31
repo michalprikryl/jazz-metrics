@@ -24,6 +24,12 @@ namespace WebAPI.Controllers
             return await _projectService.Get(id, lazy);
         }
 
+        [HttpGet("{id}/Dashboard")]
+        public async Task<ActionResult<BaseResponseModelGet<ProjectModel>>> Get(int id)
+        {
+            return await _projectService.Get(id);
+        }
+
         [HttpGet]
         public async Task<ActionResult<BaseResponseModelGetAll<ProjectModel>>> Get(bool lazy = true)
         {

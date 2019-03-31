@@ -65,12 +65,11 @@ namespace Library.Jazz
 
                     if (results.Count > 0)
                     {
-                        string metricTypeName = projectMetric.Metric.MetricType.Name.ToLower();
-                        if (metricTypeName.Contains("number"))
+                        if (projectMetric.Metric.MetricType.NumberMetric)
                         {
                             ParseXmlForNumberMetric(projectMetric, results);
                         }
-                        else if (metricTypeName.Contains("coverage"))
+                        else if (projectMetric.Metric.MetricType.CoverageMetric)
                         {
                             ParseXmlForCoverageMetric(projectMetric, results);
                         }

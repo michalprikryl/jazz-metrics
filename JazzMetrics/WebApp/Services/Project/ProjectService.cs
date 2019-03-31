@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.Metric;
+using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Library.Networking;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -31,6 +32,42 @@ namespace WebApp.Services.Project
             {
                 result = JsonConvert.DeserializeObject<BaseResponseModelGet<ProjectUserModel>>(await httpResult.Content.ReadAsStringAsync());
             }, ProjectUserEntity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseResponseModelGet<ProjectModel>> GetFullProject(int projectId, string jwt)
+        {
+            var result = new BaseResponseModelGet<ProjectModel>();
+
+            await GetToAPI(projectId, "Dashboard", async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseResponseModelGet<ProjectModel>>(await httpResult.Content.ReadAsStringAsync());
+            }, ProjectEntity, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<BaseResponseModel> UpdateProjectMetric(int projectId, int projectMetricId, string jwt)
+        {
+            var result = new BaseResponseModel();
+
+            await PostToAPI(async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseResponseModel>(await httpResult.Content.ReadAsStringAsync());
+            }, ProjectEntity, $"{projectId}/ProjectMetric/{projectMetricId}", jwt);
+
+            return result;
+        }
+
+        public async Task<BaseResponseModel> UpdateAllProjectMetrics(int projectId, string jwt)
+        {
+            var result = new BaseResponseModel();
+
+            await PostToAPI(async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseResponseModel>(await httpResult.Content.ReadAsStringAsync());
+            }, ProjectEntity, $"{projectId}/ProjectMetric", jwt);
 
             return result;
         }

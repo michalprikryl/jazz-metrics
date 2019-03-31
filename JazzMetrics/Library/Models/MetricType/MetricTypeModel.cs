@@ -8,6 +8,9 @@
 
         public bool Validate() => !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Description);
 
+        public bool NumberMetric => Name.ToLower().Contains("number");
+        public bool CoverageMetric => Name.ToLower().Contains("coverage");
+
         public override string ToString() => $"{Name}";
     }
 }

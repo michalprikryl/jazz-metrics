@@ -5,6 +5,7 @@ using Library.Jazz;
 using Library.Models;
 using Library.Models.Error;
 using Library.Models.ProjectMetrics;
+using Library.Models.ProjectMetricSnapshots;
 using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Library.Networking;
@@ -18,7 +19,9 @@ using WebAPI.Controllers;
 using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.Metrics;
+using WebAPI.Services.MetricTypes;
 using WebAPI.Services.ProjectMetrics;
+using WebAPI.Services.ProjectMetricSnapshots;
 using WebAPI.Services.ProjectUsers;
 using WebAPI.Services.Users;
 
@@ -30,20 +33,25 @@ namespace WebAPI.Services.Projects
         private readonly IUserService _userService;
         private readonly IHelperService _helperService;
         private readonly IMetricService _metricService;
+        private readonly IMetricTypeService _metricTypeService;
         private readonly IProjectUserService _projectUserService;
         private readonly IProjectMetricService _projectMetricService;
+        private readonly IProjectMetricSnapshotService _projectMetricSnapshotService;
 
         public CurrentUser CurrentUser { get; set; }
 
         public ProjectService(JazzMetricsContext db, IUserService userService, IProjectMetricService projectMetricService, IProjectUserService projectUserService,
-            IHelperService helperService, IHttpContextAccessor contextAccessor, IMetricService metricService, IJazzService jazzService) : base(db)
+            IHelperService helperService, IHttpContextAccessor contextAccessor, IMetricService metricService, IJazzService jazzService, IProjectMetricSnapshotService projectMetricSnapshotService,
+            IMetricTypeService metricTypeService) : base(db)
         {
             _jazzService = jazzService;
             _userService = userService;
             _helperService = helperService;
             _metricService = metricService;
+            _metricTypeService = metricTypeService;
             _projectUserService = projectUserService;
             _projectMetricService = projectMetricService;
+            _projectMetricSnapshotService = projectMetricSnapshotService;
             CurrentUser = helperService.GetCurrentUser(contextAccessor.HttpContext.User.GetId());
         }
 
@@ -162,6 +170,26 @@ namespace WebAPI.Services.Projects
                 {
                     response.Value.ProjectUsers = GetProjectUsers(project.ProjectUser);
                     response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
+                }
+            }
+
+            return response;
+        }
+
+        public async Task<BaseResponseModelGet<ProjectModel>> Get(int id)
+        {
+            var response = new BaseResponseModelGet<ProjectModel>();
+
+            Project project = await Load(id, response);
+            if (project != null)
+            {
+                response.Value = ConvertToModel(project);
+
+                response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
+
+                for (int i = 0; i < response.Value.ProjectMetrics.Count; i++)
+                {
+                    response.Value.ProjectMetrics[i].Snapshots = GetProjectMetricSnapshots(project.ProjectMetric.ElementAt(i).ProjectMetricSnapshot);
                 }
             }
 
@@ -296,7 +324,11 @@ namespace WebAPI.Services.Projects
             {
                 ProjectMetricModel projectMetric = _projectMetricService.ConvertToModel(m);
                 projectMetric.Metric = _metricService.ConvertToModel(m.Metric);
+                projectMetric.Metric.Columns = _metricService.GetMetricColumns(m.Metric.MetricColumn);
+                projectMetric.Metric.MetricType = _metricTypeService.ConvertToModel(m.Metric.MetricType);
                 return projectMetric;
             }).ToList();
+
+        private List<ProjectMetricSnapshotModel> GetProjectMetricSnapshots(ICollection<ProjectMetricSnapshot> snapshots) => snapshots.Select(s => _projectMetricSnapshotService.ConvertToModel(s)).ToList();
     }
 }
