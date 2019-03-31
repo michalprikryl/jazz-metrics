@@ -47,7 +47,7 @@ namespace WebApp.Models.Project.Dashboard
                                 Type = ChartType.Line,
                                 Titles = new List<string> { column.CoverageName },
                                 Labels = snapshots.Select(s => s.date).ToList(),
-                                Values = snapshots.Select(s => s.values).ToList()
+                                Values = new List<List<decimal>> { snapshots.SelectMany(s => s.values).ToList() }
                             });
                     }
                 }

@@ -155,7 +155,7 @@ Arguments:
 • Collection or Module – All SYAR Modules
 
 Purpose:
-The metrics shows coverage of Statuses “Reviewed” and higher in SYAR Requirements and Interface Requirements. ', 2, 3, 3, 1, 1)
+The metrics shows coverage of Statuses “Reviewed” and higher in SYAR Requirements and Interface Requirements.', 2, 3, 3, 1, 1)
 INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M66', 'SYAR Statuses', 'Description:
 Number of SYAR Requirements and Interface Requirements in Statuses

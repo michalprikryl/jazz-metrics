@@ -253,7 +253,7 @@ namespace WebAPI.Services.Projects
 
             try
             {
-                projectMetric = projectMetric ?? await _projectMetricService.Load(id, response);
+                projectMetric = projectMetric ?? await _projectMetricService.Load(projectMetricId, response);
                 if (projectMetric != null)
                 {
                     await _jazzService.CreateSnapshot(projectMetric);
