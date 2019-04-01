@@ -1,9 +1,42 @@
 ﻿function showMetric(id) {
-    $(`.${id}`).collapse('show');
+    const elements = document.getElementsByClassName(id);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.remove('hidden-special');
+    }
 }
 
 function hideMetric(id) {
-    $(`.${id}`).collapse('hide');
+    const elements = document.getElementsByClassName(id);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].classList.add('hidden-special');
+    }
+}
+
+function expandAllMetrics() {
+    const button = document.getElementById('update-all');
+    if (button) {
+        const elements = document.querySelectorAll("[class*='metric-']");
+        const buttons = document.getElementsByClassName('option1'), buttons2 = document.getElementsByClassName('option2');
+        if (button.innerText.startsWith('Show')) {
+            button.innerText = 'Hide all metrics';
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('hidden-special');
+            }
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.add('active');
+                buttons2[i].classList.remove('active');
+            }
+        } else {
+            button.innerText = 'Show all metrics';
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.add('hidden-special');
+            }
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+                buttons2[i].classList.add('active');
+            }
+        }
+    }
 }
 
 async function updateMetrics(projectId, projectMetricId) {
@@ -55,7 +88,7 @@ function makeBarChart(canvasId, data, labels, title, id) {
         colors = labels.map(() => random_rgba());
     }
 
-    new Chart(document.getElementById(canvasId).getContext('2d'), {
+    const chart = new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'bar',
         data: {
             labels,
@@ -93,7 +126,7 @@ function makeBarChart(canvasId, data, labels, title, id) {
 function makeLineChart(canvasId, data, labels, title) {
     const color = random_rgba();
     let zipped = labels.map((x, i) => [x, data[i]]);
-    new Chart(document.getElementById(canvasId).getContext('2d'), {
+    const chart = new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'line',
         data: {
             datasets: [{
@@ -152,6 +185,9 @@ function makeLineChart(canvasId, data, labels, title) {
 
 function getCommonOptions(title) {
     return {
+        legend: {
+            display: false
+        },
         layout: {
             padding: {
                 left: 30,
@@ -374,7 +410,7 @@ async function exportAllMetrics() {
                 }
             }
 
-            if (exportType === 'powepoint') {
+            if (exportType === 'powerpoint') {
                 saveChartToPptx(chosenMetrics);
             } else if (exportType === 'excel') {
                 saveChartToXlsx(chosenMetrics);

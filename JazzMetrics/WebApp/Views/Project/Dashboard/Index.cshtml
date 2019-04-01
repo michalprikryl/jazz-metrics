@@ -33,8 +33,8 @@
                     <span class="fa fa-file-export"></span>
                     Export all metrics
                 </button>
-                <button onclick="exportAllMetrics()" class="dropdown-item">
-                    Expand all metrics
+                <button onclick="expandAllMetrics()" id="update-all" class="dropdown-item">
+                    Show all metrics
                 </button>
                 <button onclick="updateMetrics('@Model.Id')" class="dropdown-item">
                     Update all metrics
@@ -55,23 +55,23 @@
     <div id="@parent" class="parent">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary" onclick="showMetric('@metric')">
-                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Show
+                <label class="btn btn-secondary option1" onclick="showMetric('@metric')">
+                    <input type="radio" name="options" autocomplete="off"> Show
                 </label>
-                <label class="btn btn-secondary active" onclick="hideMetric('@metric')">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> Hide
+                <label class="btn btn-secondary active option2" onclick="hideMetric('@metric')">
+                    <input type="radio" name="options" autocomplete="off"> Hide
                 </label>
             </div>
             <text class="font-weight-bold lead center-name">@Model.Metrics[i].MetricInfo</text>
             <div>
                 <span class="fa fa-info mr-2" title="@Model.Metrics[i].MetricDescription"></span>
-                <button onclick="updateMetrics('@Model.Id', '@Model.Metrics[i].Id')" class="btn btn-secondary mr-2 collapse @metric">
+                <button onclick="updateMetrics('@Model.Id', '@Model.Metrics[i].Id')" class="btn btn-secondary mr-2">
                     Update metric data
                 </button>
             </div>
         </div>
 
-        <div class="collapse @metric">
+        <div class="hidden-special @metric">
             @for (int j = 0; j < Model.Metrics[i].MetricColumns.Count; j++)
             {
                 var labels = Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Labels));
@@ -79,10 +79,8 @@
                 {
                     @if (Model.Metrics[i].MetricColumns[j].Values.Count == 0)
                     {
-                        <div class="carousel-item active">
-                            <div class="text-center">
-                                There is no metric snapshots.
-                            </div>
+                        <div class="text-center">
+                            There is no metric snapshots.
                         </div>
                     }
                     else

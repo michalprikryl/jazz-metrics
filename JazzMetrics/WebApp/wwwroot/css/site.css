@@ -237,6 +237,11 @@ a:hover {
     transform: translate(-50%,0);
 }
 
+.hidden-special {
+    height: 0;
+    overflow: hidden;
+}
+
 .carousel-control-prev, .carousel-control-next {
     width: 5%;
     height: 10%;
