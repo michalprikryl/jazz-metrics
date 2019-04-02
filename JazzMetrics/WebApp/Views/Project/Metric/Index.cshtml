@@ -3,8 +3,9 @@
 @{
     int userId = User.UserId();
     bool adminAccount = User.IsAdmin();
-    ViewData["Title"] = $"Project #'{Model.Id}' metrics";
+    ViewData["Title"] = $"Project #{Model.Id} metrics";
     var editModel = new ResultViewModel { Color = "black", CssClass = "fa-edit", Message = "Edit project metric" };
+    var logModel = new ResultViewModel { Color = "black", CssClass = "fa-list-ul", Message = "Display project metric log" };
     var publicModel = new ResultViewModel { Color = "black", CssClass = "fa-users", Message = "Used metric is public!" };
     var warn = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "You have set warning" };
     var noWarn = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "Metric warning was not set!" };
@@ -16,14 +17,14 @@
     <span>Metrics of project '@Model.Name'.</span>
 
     <div>
-        <a href="/Project" class="btn btn-primary">
+        <a href="/Project" class="btn btn-secondary">
             <span class="fa fa-arrow-left"></span>
             Back to projects
         </a>
 
         @if (adminAccount)
         {
-            <a href="/Project/@Model.Id/Metric/Add" class="btn btn-primary">
+            <a href="/Project/@Model.Id/Metric/Add" class="btn btn-secondary">
                 <span class="fa fa-plus"></span>
                 Add metric to project
             </a>
@@ -74,6 +75,9 @@
                             </a>
                             <span class="fas fa-trash-alt pointer" title="Delete metric from project" onclick="deleteItem('/Project/@Model.Id/Metric/Delete/@item.ProjectMetricId')"></span>
                         }
+                        <a href="/Project/@Model.Id/Metric/@item.ProjectMetricId/Log">
+                            <partial name="Partials/_Icon" model="@logModel" />
+                        </a>
                         @if (item.Public)
                         {
                             <partial name="Partials/_Icon" model="@publicModel" />

@@ -3,6 +3,7 @@
 @{
     bool adminAccount = User.IsAdmin();
     ViewData["Title"] = $"Project #{Model.Id} dashboard";
+    var warning = new ResultViewModel { Color = "tomato", CssClass = "fa-exclamation-circle ml-1", Message = "Caution, some of metrics are below defined limit!" };
 }
 
 <partial name="Partials/_ErrorTable" />
@@ -11,7 +12,7 @@
     <span>Dashboard of project '@Model.Name'.</span>
 
     <div class="d-flex flex-row">
-        <a href="/Project" class="btn btn-primary mr-2">
+        <a href="/Project" class="btn btn-secondary mr-2">
             <span class="fa fa-arrow-left"></span>
             Back to projects
         </a>
@@ -33,10 +34,12 @@
                     <span class="fa fa-file-export"></span>
                     Export all metrics
                 </button>
-                <button onclick="expandAllMetrics()" id="update-all" class="dropdown-item">
-                    Show all metrics
+                <button onclick="expandAllMetrics()" class="dropdown-item">
+                    <span id="show-hide-icon" class="far fa-eye"></span>
+                    <span id="show-hide-text">Show all metrics</span>
                 </button>
                 <button onclick="updateMetrics('@Model.Id')" class="dropdown-item">
+                    <span class="fas fa-wrench"></span>
                     Update all metrics
                 </button>
             </div>
@@ -62,7 +65,13 @@
                     <input type="radio" name="options" autocomplete="off"> Hide
                 </label>
             </div>
-            <text class="font-weight-bold lead center-name">@Model.Metrics[i].MetricInfo</text>
+            <div class="center-name d-flex align-items-center">
+                <a href="/Project/@Model.Id/Metric/@Model.Metrics[i].Id/Log" title="Click to display project metric log" class="font-weight-bold lead  text-dark">@Model.Metrics[i].MetricInfo</a>
+                @if (Model.Metrics[i].Warning)
+                {
+                    <partial name="Partials/_Icon" model="@warning" />
+                }
+            </div>
             <div>
                 <span class="fa fa-info mr-2" title="@Model.Metrics[i].MetricDescription"></span>
                 <button onclick="updateMetrics('@Model.Id', '@Model.Metrics[i].Id')" class="btn btn-secondary mr-2">
@@ -90,23 +99,23 @@
                         <script>
                         setTimeout(() =>
                             makeLineChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[0])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[0]')
-                            , 500);
+                            , 1000);
                         </script>
                     }
                 }
                 else if (Model.Metrics[i].MetricColumns[j].Type == ChartType.Bar)
                 {
-                    <div id="carouselControls" class="carousel slide" data-ride="carousel" data-interval="false">
+                    <div id="@(metric)-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
                         <div class="carousel-inner">
                             @for (int k = 0; k < Model.Metrics[i].MetricColumns[j].Values.Count; k++)
                             {
                                 string chart = $"chart-{chartCount++}";
-                                <div class="carousel-item @Html.Raw(k == Model.Metrics[i].MetricColumns[j].Values.Count - 1 ? "active" : "")">
+                                <div class="carousel-item @Html.Raw(k == Model.Metrics[i].MetricColumns[j].Values.Count - 1 ? "active" : "hidden-special")">
                                     <partial name="Dashboard/Partials/MetricChart" model="new ChartModel { ChartId = chart, MetricInfo = Model.Metrics[i].MetricInfo }" />
                                     <script>
                                         setTimeout(() =>
                                             makeBarChart('@chart', @Html.Raw(Json.Serialize(Model.Metrics[i].MetricColumns[j].Values[k])), @labels, '@Model.Metrics[i].MetricColumns[j].Titles[k]', '@j')
-                                            , 500);
+                                            , 1000);
                                     </script>
                                 </div>
                             }
@@ -120,11 +129,11 @@
                                 </div>
                             }
                         </div>
-                        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev" title="back to history">
+                        <a class="carousel-control-prev" href="#@(metric)-carousel" role="button" data-slide="prev" title="back to history">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
                         </a>
-                        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next" title="next">
+                        <a class="carousel-control-next" href="#@(metric)-carousel" role="button" data-slide="next" title="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
                         </a>
@@ -142,5 +151,3 @@
         </div>
     </div>
 }
-
-<script src="~/js/dashboard-form.js"></script>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Database.DAO
+﻿namespace Database.DAO
 {
     public partial class Setting
     {

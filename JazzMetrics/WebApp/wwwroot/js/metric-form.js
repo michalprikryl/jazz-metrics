@@ -18,7 +18,10 @@
 
 let selectedTypeId;
 !function () {
-    selectedTypeId = document.getElementById("MetricTypeId").value;
+    const element = document.getElementById("MetricTypeId");
+    if (element) {
+        selectedTypeId = element.value;
+    }
 }();
 
 async function onSelectChange() {
@@ -48,7 +51,7 @@ async function onSelectChange() {
 function dropColumn(column) {
     const deleted = document.getElementById(`del-${column}`);
     const inputs = document.querySelectorAll(`#${column} input[type=text]`);
-    if (inputs[0].value !== "" || (inputs.length === 2 && inputs[1].value !== "")) {
+    if (inputs[0].value !== "" || inputs.length === 2 && inputs[1].value !== "") {
         const span = document.querySelector(`#${column} .pointer`);
         if (deleted.value === "True") {
             inputs.forEach(i => {

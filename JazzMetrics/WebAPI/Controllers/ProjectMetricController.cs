@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Models.ProjectMetricLogs;
 using Library.Models.ProjectMetrics;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -43,6 +44,12 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
             return await _projectMetricService.Drop(id);
+        }
+
+        [HttpGet("{id}/ProjectMetricLog")]
+        public async Task<ActionResult<BaseResponseModelGetAll<ProjectMetricLogModel>>> Get(int id)
+        {
+            return await _projectMetricService.GetProjectMetricLogs(id);
         }
     }
 }

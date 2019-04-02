@@ -20,6 +20,7 @@ using WebAPI.Services.Language;
 using WebAPI.Services.Log;
 using WebAPI.Services.Metrics;
 using WebAPI.Services.MetricTypes;
+using WebAPI.Services.ProjectMetricLogs;
 using WebAPI.Services.ProjectMetrics;
 using WebAPI.Services.ProjectMetricSnapshots;
 using WebAPI.Services.Projects;
@@ -86,21 +87,15 @@ namespace WebAPI
             services.AddScoped<IAspiceProcessService, AspiceProcessService>();
             services.AddScoped<IProjectMetricService, ProjectMetricService>();
             services.AddScoped<IAffectedFieldService, AffectedFieldService>();
+            services.AddScoped<IProjectMetricLogService, ProjectMetricLogService>();
             services.AddScoped<IProjectMetricSnapshotService, ProjectMetricSnapshotService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-            }
+            app.UseHsts();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseAuthentication();
             app.UseHttpsRedirection();

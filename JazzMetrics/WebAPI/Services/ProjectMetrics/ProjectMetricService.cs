@@ -2,6 +2,7 @@
 using Database.DAO;
 using Library;
 using Library.Models;
+using Library.Models.ProjectMetricLogs;
 using Library.Models.ProjectMetrics;
 using Library.Models.ProjectMetricSnapshots;
 using Library.Networking;
@@ -14,18 +15,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
+using WebAPI.Services.ProjectMetricLogs;
 using WebAPI.Services.ProjectMetricSnapshots;
 
 namespace WebAPI.Services.ProjectMetrics
 {
     public class ProjectMetricService : BaseDatabase, IProjectMetricService, IUser
     {
+        private readonly IProjectMetricLogService _logService;
         private readonly IProjectMetricSnapshotService _snapshotService;
 
         public CurrentUser CurrentUser { get; set; }
 
-        public ProjectMetricService(JazzMetricsContext db, IHelperService helperService, IHttpContextAccessor contextAccessor, IProjectMetricSnapshotService snapshotService) : base(db)
+        public ProjectMetricService(JazzMetricsContext db, IHelperService helperService, IHttpContextAccessor contextAccessor, IProjectMetricSnapshotService snapshotService,
+            IProjectMetricLogService logService) : base(db)
         {
+            _logService = logService;
             _snapshotService = snapshotService;
             CurrentUser = helperService.GetCurrentUser(contextAccessor.HttpContext.User.GetId());
         }
@@ -52,7 +57,7 @@ namespace WebAPI.Services.ProjectMetrics
 
             if (request.Validate())
             {
-                if (await CheckMetric(request.MetricId, response) && await CheckProject(request.ProjectId, response))
+                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response))
                 {
                     ProjectMetric projectMetric = new ProjectMetric
                     {
@@ -96,6 +101,8 @@ namespace WebAPI.Services.ProjectMetrics
                     Database.ProjectMetricColumnValue.RemoveRange(item.ProjectMetricColumnValue);
                 }
 
+                Database.ProjectMetricLog.RemoveRange(projectMetric.ProjectMetricLog);
+
                 Database.ProjectMetricSnapshot.RemoveRange(projectMetric.ProjectMetricSnapshot);
 
                 Database.ProjectMetric.Remove(projectMetric);
@@ -114,7 +121,7 @@ namespace WebAPI.Services.ProjectMetrics
 
             if (request.Validate())
             {
-                if (await CheckMetric(request.MetricId, response) && await CheckProject(request.ProjectId, response))
+                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response))
                 {
                     ProjectMetric projectMetric = await Load(request.Id, response);
                     if (projectMetric != null)
@@ -186,6 +193,19 @@ namespace WebAPI.Services.ProjectMetrics
             return response;
         }
 
+        public async Task<BaseResponseModelGetAll<ProjectMetricLogModel>> GetProjectMetricLogs(int id)
+        {
+            var response = new BaseResponseModelGetAll<ProjectMetricLogModel>() { Values = new List<ProjectMetricLogModel>() };
+
+            ProjectMetric projectMetric = await Load(id, response);
+            if (projectMetric != null)
+            {
+                response.Values = GetLogs(projectMetric.ProjectMetricLog);
+            }
+
+            return response;
+        }
+
         public async Task<ProjectMetric> Load(int id, BaseResponseModel response)
         {
             ProjectMetric projectMetric = await Database.ProjectMetric.FirstOrDefaultAsync(a => a.Id == id);
@@ -214,10 +234,18 @@ namespace WebAPI.Services.ProjectMetrics
 
         private List<ProjectMetricSnapshotModel> GetSnapshots(ICollection<ProjectMetricSnapshot> snapshots) => snapshots.Select(s => _snapshotService.ConvertToModel(s)).ToList();
 
-        private async Task<bool> CheckMetric(int metricId, BaseResponseModel response)
+        private List<ProjectMetricLogModel> GetLogs(ICollection<ProjectMetricLog> logs) => logs.Select(l => _logService.ConvertToModel(l)).ToList();
+
+        private async Task<bool> CheckMetric(ProjectMetricModel projectMetric, BaseResponseModel response)
         {
-            if (await Database.Metric.AnyAsync(a => a.Id == metricId && (a.Public || (a.CompanyId.HasValue && a.CompanyId == CurrentUser.CompanyId))))
+            Metric metric = await Database.Metric.FirstOrDefaultAsync(a => a.Id == projectMetric.MetricId && (a.Public || (a.CompanyId.HasValue && a.CompanyId == CurrentUser.CompanyId)));
+            if (metric != null)
             {
+                if (projectMetric.Warning && metric.MetricType.NumberMetric)
+                {
+                    projectMetric.Warning = false;
+                }
+
                 return true;
             }
             else

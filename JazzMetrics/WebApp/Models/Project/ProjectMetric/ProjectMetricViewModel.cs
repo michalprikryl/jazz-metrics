@@ -52,4 +52,19 @@ namespace WebApp.Models.Project.ProjectMetric
         public bool Public { get; set; }
         public bool CanEdit { get; set; }
     }
+
+    public class ProjectMetricLogViewModel : ViewModel
+    {
+        public int ProjectId { get; set; }
+        public int ProjectMetricId { get; set; }
+        public List<LogViewModel> Logs { get; set; }
+    }
+
+    public class LogViewModel
+    {
+        public int Id { get; set; }
+        public string Message { get; set; }
+        public bool Warning { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
 }

@@ -24,9 +24,10 @@ namespace WebApp.Models.Project.Dashboard
                 MetricDataModel metric = new MetricDataModel
                 {
                     Id = projectMetric.Id,
+                    Warning = false,
                     MetricName = projectMetric.Metric.Name,
                     MetricIdentificator = projectMetric.Metric.Identificator,
-                    MetricDescription = projectMetric.Metric.Description, 
+                    MetricDescription = projectMetric.Metric.Description,
                     MetricColumns = new List<MetricColumnModel>()
                 };
 
@@ -49,6 +50,11 @@ namespace WebApp.Models.Project.Dashboard
                                 Labels = snapshots.Select(s => s.date).ToList(),
                                 Values = new List<List<decimal>> { snapshots.SelectMany(s => s.values).ToList() }
                             });
+                    }
+
+                    if (projectMetric.Warning)
+                    {
+                        metric.Warning = metric.MetricColumns.Any(c => c.Values.First().Last() <= projectMetric.MinimalWarningValue);
                     }
                 }
                 else if (projectMetric.Metric.MetricType.NumberMetric)
@@ -181,6 +187,7 @@ namespace WebApp.Models.Project.Dashboard
     public class MetricDataModel
     {
         public int Id { get; set; }
+        public bool Warning { get; set; }
         public string MetricIdentificator { get; set; }
         public string MetricName { get; set; }
         public string MetricInfo { get => $"{MetricIdentificator} - {MetricName}"; }

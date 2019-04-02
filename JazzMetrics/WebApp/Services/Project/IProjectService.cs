@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Models.ProjectMetricLogs;
 using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,5 +15,6 @@ namespace WebApp.Services.Project
         Task<BaseResponseModelGet<ProjectModel>> GetFullProject(int projectId, string jwt);
         Task<List<SelectListItem>> GetMetricsForSelect(string jwt);
         Task<BaseResponseModelGet<ProjectUserModel>> GetProjectUser(int userId, int projectId, string jwt);
+        Task<BaseResponseModelGetAll<ProjectMetricLogModel>> GetProjectMetricLog(int projectMetricId, string jwt);
     }
 }

@@ -1,0 +1,56 @@
+﻿@model ProjectMetricLogViewModel
+
+@{
+    ViewData["Title"] = $"Project metric #{Model.ProjectMetricId} logs";
+    var warning = new ResultViewModel { Color = "tomato", CssClass = "fa-exclamation-circle", Message = "This is a warning! You should solve it or contact support." };
+}
+
+
+<partial name="Partials/_ErrorTable" />
+
+<div class="mb-3 d-flex flex-row justify-content-between align-items-center">
+    <span>Complete log for project's #@Model.ProjectId metric #@Model.ProjectMetricId.</span>
+
+    <div>
+        <button onclick="history.back()" class="btn btn-secondary">
+            <span class="fa fa-arrow-left"></span>
+            Go back
+        </button>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Message</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Logs != null && Model.Logs.Count > 0)
+        {
+            @foreach (var item in Model.Logs)
+            {
+                <tr>
+                    <th scope="row">@item.Id</th>
+                    <td>@item.CreateDate</td>
+                    <td>@item.Message</td>
+                    <td>
+                        @if (!item.Warning)
+                        {
+                            <partial name="Partials/_Icon" model="warning" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <th scope="row" colspan="6" class="text-center">There are no project metric logs!</th>
+            </tr>
+        }
+    </tbody>
+</table>

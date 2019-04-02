@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.Metric;
+using Library.Models.ProjectMetricLogs;
 using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Library.Networking;
@@ -68,6 +69,18 @@ namespace WebApp.Services.Project
             {
                 result = JsonConvert.DeserializeObject<BaseResponseModel>(await httpResult.Content.ReadAsStringAsync());
             }, ProjectEntity, $"{projectId}/ProjectMetric", jwt);
+
+            return result;
+        }
+
+        public async Task<BaseResponseModelGetAll<ProjectMetricLogModel>> GetProjectMetricLog(int projectMetricId, string jwt)
+        {
+            var result = new BaseResponseModelGetAll<ProjectMetricLogModel>();
+
+            await GetToAPI(async (httpResult) =>
+            {
+                result = JsonConvert.DeserializeObject<BaseResponseModelGetAll<ProjectMetricLogModel>>(await httpResult.Content.ReadAsStringAsync());
+            }, ProjectMetricEntity, $"{projectMetricId}/ProjectMetricLog", jwt);
 
             return result;
         }

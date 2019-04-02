@@ -1,4 +1,15 @@
-﻿function showMetric(id) {
+﻿onClassAdd = element => element.classList.remove('hidden-special');
+
+onClassRemoval = element => element.classList.add('hidden-special');
+
+!function () {
+    const carousels = document.getElementsByClassName('carousel-item');
+    for (let i = 0; i < carousels.length; i++) {
+        new ClassWatcher(carousels[i], 'active', onClassAdd, onClassRemoval);
+    }
+}();
+
+function showMetric(id) {
     const elements = document.getElementsByClassName(id);
     for (let i = 0; i < elements.length; i++) {
         elements[i].classList.remove('hidden-special');
@@ -13,12 +24,15 @@ function hideMetric(id) {
 }
 
 function expandAllMetrics() {
-    const button = document.getElementById('update-all');
-    if (button) {
+    const text = document.getElementById('show-hide-text');
+    if (text) {
+        const icon = document.getElementById('show-hide-icon');
         const elements = document.querySelectorAll("[class*='metric-']");
         const buttons = document.getElementsByClassName('option1'), buttons2 = document.getElementsByClassName('option2');
-        if (button.innerText.startsWith('Show')) {
-            button.innerText = 'Hide all metrics';
+        if (text.innerText.startsWith('Show')) {
+            text.innerText = 'Hide all metrics';
+            icon.classList.add('fa-eye-slash');
+            icon.classList.remove('fa-eye');
             for (let i = 0; i < elements.length; i++) {
                 elements[i].classList.remove('hidden-special');
             }
@@ -27,7 +41,9 @@ function expandAllMetrics() {
                 buttons2[i].classList.remove('active');
             }
         } else {
-            button.innerText = 'Show all metrics';
+            text.innerText = 'Show all metrics';
+            icon.classList.add('fa-eye');
+            icon.classList.remove('fa-eye-slash');
             for (let i = 0; i < elements.length; i++) {
                 elements[i].classList.add('hidden-special');
             }
@@ -88,7 +104,7 @@ function makeBarChart(canvasId, data, labels, title, id) {
         colors = labels.map(() => random_rgba());
     }
 
-    const chart = new Chart(document.getElementById(canvasId).getContext('2d'), {
+    new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'bar',
         data: {
             labels,
@@ -126,7 +142,7 @@ function makeBarChart(canvasId, data, labels, title, id) {
 function makeLineChart(canvasId, data, labels, title) {
     const color = random_rgba();
     let zipped = labels.map((x, i) => [x, data[i]]);
-    const chart = new Chart(document.getElementById(canvasId).getContext('2d'), {
+    new Chart(document.getElementById(canvasId).getContext('2d'), {
         type: 'line',
         data: {
             datasets: [{
@@ -170,7 +186,7 @@ function makeLineChart(canvasId, data, labels, title) {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'Coverage'
+                        labelString: 'Coverage (%)'
                     }
                 }]
             },

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Database.DAO
+﻿namespace Database.DAO
 {
     public partial class MetricType
     {

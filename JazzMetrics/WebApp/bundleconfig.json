@@ -10,5 +10,23 @@
     "inputFiles": [
       "wwwroot/js/site.js"
     ]
+  },
+  /*{ //NEJDE
+    "outputFileName": "wwwroot/js/dashboard-form.min.js",
+    "inputFiles": [
+      "wwwroot/js/dashboard-form.js"
+    ]
+  },*/
+  {
+    "outputFileName": "wwwroot/js/metric-form.min.js",
+    "inputFiles": [
+      "wwwroot/js/metric-form.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/mutation-observer.min.js",
+    "inputFiles": [
+      "wwwroot/js/mutation-observer.js"
+    ]
   }
 ]

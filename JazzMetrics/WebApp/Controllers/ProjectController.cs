@@ -293,6 +293,35 @@ namespace WebApp.Controllers
             return View("Metric/Index", model);
         }
 
+        [HttpGet("{id}/Metric/{projectMetricId}/Log")]
+        public async Task<IActionResult> ProjectMetricAdd(int id, int projectMetricId)
+        {
+            ProjectMetricLogViewModel model = new ProjectMetricLogViewModel
+            {
+                ProjectId = id,
+                ProjectMetricId = projectMetricId
+            };
+
+            var result = await _projectService.GetProjectMetricLog(projectMetricId, Token);
+            if (result.Success)
+            {
+                model.Logs = result.Values.Select(l =>
+                    new LogViewModel
+                    {
+                        Id = l.Id,
+                        Message = l.Message,
+                        CreateDate = l.CreateDate,
+                        Warning = l.Warning
+                    }).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Metric/Log", model);
+        }
+
         [HttpGet("{id}/Metric/Add")]
         [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<IActionResult> ProjectMetricAdd(int id)

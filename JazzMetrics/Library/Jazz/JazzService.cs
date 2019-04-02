@@ -21,6 +21,7 @@ namespace Library.Jazz
 
         public const string COVERAGE_FIELD_VALUE = "LITERAL_NAME";
 
+        private XmlDocument _document;
         private XmlNamespaceManager _namespaces;
 
         public async Task CreateSnapshot(ProjectMetric projectMetric)
@@ -28,13 +29,13 @@ namespace Library.Jazz
             string xml = await GetDataFromJazzReportingService(projectMetric.DataUrl, projectMetric.DataUsername, PasswordHelper.Base64Decode(projectMetric.DataPassword));
             if (!string.IsNullOrEmpty(xml))
             {
-                XmlDocument document = new XmlDocument();
-                document.LoadXml(xml);
+                _document = new XmlDocument();
+                _document.LoadXml(xml);
 
-                XmlNode schemaLocationAttribute = document.DocumentElement.SelectSingleNode("//@*[local-name()='schemaLocation']");
+                XmlNode schemaLocationAttribute = _document.DocumentElement.SelectSingleNode("//@*[local-name()='schemaLocation']");
                 if (schemaLocationAttribute != null)
                 {
-                    _namespaces = new XmlNamespaceManager(document.NameTable);
+                    _namespaces = new XmlNamespaceManager(_document.NameTable);
                     _namespaces.AddNamespace("ns", schemaLocationAttribute.Value.Split(null)[0]);
 
                     int suffix = 0;
@@ -47,7 +48,7 @@ namespace Library.Jazz
                             names.Clear();
                         }
 
-                        foreach (XmlNode name in document.SelectNodes($"/ns:results/ns:result/ns:NAME{(suffix > 0 ? suffix.ToString() : string.Empty)}[text()]", _namespaces))
+                        foreach (XmlNode name in _document.SelectNodes($"/ns:results/ns:result/ns:NAME{(suffix > 0 ? suffix.ToString() : string.Empty)}[text()]", _namespaces))
                         {
                             names.Add(name.InnerText);
                         }
@@ -56,11 +57,11 @@ namespace Library.Jazz
                     XmlNodeList results = null;
                     if (names.Distinct().Count() == 1)
                     {
-                        results = document.SelectNodes("/ns:results/ns:result", _namespaces);
+                        results = _document.SelectNodes("/ns:results/ns:result", _namespaces);
                     }
                     else
                     {
-                        results = document.SelectNodes($"/ns:results/ns:result[ns:NAME='{projectMetric.Metric.RequirementGroup}']", _namespaces);
+                        results = _document.SelectNodes($"/ns:results/ns:result[ns:NAME='{projectMetric.Metric.RequirementGroup}']", _namespaces);
                     }
 
                     if (results.Count > 0)
@@ -113,30 +114,26 @@ namespace Library.Jazz
                 };
 
                 int count = results.Count, accepted = 0;
-                if (column.DivisorValue != ALL_VALUES)
+                if (column.DivisorValue != ALL_VALUES && !string.IsNullOrEmpty(column.DivisorFieldName))
                 {
-                    //results = document.SelectNodes("/ns:results/ns:result", _namespaces); TODO all
+                    count = _document.SelectNodes($"/ns:results/ns:result[ns:{column.DivisorFieldName}='{column.DivisorValue}']", _namespaces).Count;
                 }
-
 
                 if (results.Item(0).SelectSingleNode("//ns:REFERENCE_ID1", _namespaces) != null && results.Item(0).SelectSingleNode("//ns:NAME2", _namespaces) != null)
                 {
                     foreach (XmlNode result in results)
                     {
-                        XmlNode reference = SelectSingleNodeSpecial(result, "REFERENCE_ID1"), name = SelectSingleNodeSpecial(result, "NAME2");
-                        if (reference != null && name != null)
+                        XmlNode reference = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, "REFERENCE_ID1")
+                            ?? SelectSingleNodeSpecial(result, "NAME2") ?? SelectSingleNodeSpecial(result, "NAME3");
+                        if (reference != null && !string.IsNullOrEmpty(reference.InnerText))
                         {
-                            XmlNode additionalColumn = SelectSingleNodeSpecial(result, "NAME3");
-                            if ((!string.IsNullOrEmpty(reference.InnerText) || !string.IsNullOrEmpty(name.InnerText)) && (additionalColumn == null || !string.IsNullOrEmpty(additionalColumn.InnerText)))
-                            {
-                                accepted++;
-                            }
+                            accepted++;
                         }
                     }
                 }
-                else if (results.Item(0).SelectSingleNode("//ns:LITERAL_NAME", _namespaces) != null) //M03, M06, M60
+                else if (results.Item(0).SelectSingleNode($"//ns:{column.FieldName}", _namespaces) != null || results.Item(0).SelectSingleNode("//ns:LITERAL_NAME", _namespaces) != null) //M03, M06, M60
                 {
-                    string[] values = column.Value.Split(';');
+                    string[] values = column.Value.Split(';').Select(v => v.Trim()).ToArray();
                     foreach (XmlNode result in results)
                     {
                         XmlNode name = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, COVERAGE_FIELD_VALUE);
@@ -151,7 +148,17 @@ namespace Library.Jazz
                     projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Metric #{projectMetric.MetricId} coverage column '{column.Value}' is unknown type!"));
                 }
 
-                columnValue.Value = accepted / (decimal)count;
+                //string[] values = column.Value.Split(';'); TODO
+                //foreach (XmlNode result in results)
+                //{
+                //    XmlNode name = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, COVERAGE_FIELD_VALUE);
+                //    if (name != null && (!string.IsNullOrEmpty(name.InnerText) || values.Contains(name.InnerText) || values[0] == ANY_VALUE))
+                //    {
+                //        accepted++;
+                //    }
+                //}
+
+                columnValue.Value = (accepted / (decimal)count) * 100;
 
                 snapshot.ProjectMetricColumnValue.Add(columnValue);
             }
@@ -195,6 +202,8 @@ namespace Library.Jazz
                 {
                     projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Column #{column.Id} of metric #{column.MetricId}, does not have proper tag with numeric value in data XML!"));
                 }
+
+                snapshot.ProjectMetricColumnValue.Add(columnValue);
             }
             else
             {
@@ -207,7 +216,7 @@ namespace Library.Jazz
                         ProjectMetricSnapshot = snapshot
                     };
 
-                    string[] values = column.Value.Split(';');
+                    string[] values = column.Value.Split(';').Select(v => v.Trim()).ToArray();
                     foreach (XmlNode result in results)
                     {
                         XmlNode name = SelectSingleNodeSpecial(result, column.FieldName) ?? SelectSingleNodeSpecial(result, NUMBER_FIELD_VALUE);
