@@ -77,6 +77,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model, Token, ProjectService.ProjectEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "ProjectEdit", "Project", result.Id);
+                }
             }
             else
             {
@@ -91,6 +96,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> ProjectEdit(int id)
         {
             ProjectWorkModel model = new ProjectWorkModel();
+
+            CheckTempData(model);
 
             var result = await _crudService.Get<ProjectModel>(id, Token, ProjectService.ProjectEntity);
             if (result.Success)
@@ -135,7 +142,7 @@ namespace WebApp.Controllers
 
         #region Projects dashboard
         [HttpGet("{id}/Dashboard")]
-        public async Task<IActionResult> Dashboard(int id)
+        public async Task<IActionResult> Dashboard(int id, bool test = false)
         {
             ProjectDashboardViewModel model = new ProjectDashboardViewModel();
 
@@ -148,8 +155,14 @@ namespace WebApp.Controllers
                 model.Name = value.Name;
                 model.Description = value.Description;
 
-                model.FillMetrics(value);
-                //model.FillMetricsWithTestValues();
+                if (test)
+                {
+                    model.FillMetricsWithTestValues();
+                }
+                else
+                {
+                    model.FillMetrics(value);
+                }
             }
             else
             {
@@ -237,9 +250,7 @@ namespace WebApp.Controllers
                 AddModelStateErrors(viewModel);
             }
 
-            AddViewModelToTempData(viewModel);
-
-            return RedirectToAction("ProjectUsers", new { id = model.ProjectId });
+            return RedirectToActionWithId(viewModel, "ProjectUsers", "Project", model.ProjectId);
         }
 
         [HttpPost("User/Delete")]
@@ -348,6 +359,13 @@ namespace WebApp.Controllers
                     var result = await _crudService.Create(model, Token, ProjectService.ProjectMetricEntity);
 
                     AddMessageToModel(model, result.Message, !result.Success);
+
+                    if (result.Success)
+                    {
+                        AddViewModelToTempData(model);
+
+                        return RedirectToAction("ProjectMetricEdit", "Project", new { projectId = id, id = result.Id });
+                    }
                 }
                 else
                 {
@@ -369,6 +387,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> ProjectMetricEdit(int projectId, int id)
         {
             ProjectMetricWorkModel model = new ProjectMetricWorkModel();
+
+            CheckTempData(model);
 
             Task task = GetMetrics(model);
 

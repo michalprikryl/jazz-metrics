@@ -59,9 +59,8 @@ INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (2, 1, GETD
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (3, 1, GETDATE())
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (4, 1, GETDATE())
 
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M63', 'HWRS Statuses', 'Description:
-Number of HWRS Requirements Statuses
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M63', 'HWRS', 'HWRS Statuses', 'Number of HWRS Requirements Statuses
 
 Arguments:
 • Project
@@ -69,26 +68,64 @@ Arguments:
 
 Purpose:
 The metrics provides information how many HWRS Requirements have no status or are  in Statuses  - Under construction., Ready to review, Reviewed. Implemented, Tested', 1, 9, 1, 1, 1)
---INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
---    ('M85', 'HWRS to SYAR, SYRS Traceability', '', 1, 1, 1, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M59', 'No. of HW Requirements reviewed', 'Description:
-Number of HWRS Requirements with status Reviewed
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Under construction', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Ready to review', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Reviewed', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Implemented', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M85', 'HWRS', 'HWRS to SYAR, SYRS Traceability', '--', 2, 9, 1, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 2)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M59', 'HWRS', 'No. of HW Requirements reviewed', 'Number of HWRS Requirements with status Reviewed
 
 Arguments:
 • Project
 • Collection or Module – All HWRS Modules
 
 Purpose:
-The metrics provides information how many HW requirements are in the status reviewed or further – how many HW requirements were reviewed.
-', 1, 9, 3, 1, 1)
---INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
---   ('M35', '', '', 1, 1, 1, 1, 1)
---INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
---   ('M56', '', '', 1, 1, 1, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M27', 'No. of System Requirements - Statuses', 'Description:
-Number of SYRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
+The metrics provides information how many HW requirements are in the status reviewed or further – how many HW requirements were reviewed.', 1, 9, 3, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'LITERAL_NAME', 'REFERENCE_ID', null, null, null, 3)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M28', 'SWRS', 'No. of Software Requirements - Statuses', 'Number of SWRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
+
+Arguments:
+• Project
+• Collection or Module – All SWRS Modules
+
+Purpose:
+Number of software  requirements – statuses shows how many software requirements are in the state of: no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested', 1, 6, 1, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 4)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 4)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M35', 'SWRS', 'No. of SW requirements reviewed', 'Number of SWRS Requirements with status Reviewed
+
+Arguments:
+• Project
+• Collection or Module – All HWRS Modules
+
+Purpose:
+The metrics provides information how many SW requirements are in the status reviewed or further – how many SW requirements were reviewed.', 1, 6, 3, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'LITERAL_NAME', 'REFERENCE_ID', null, null, null, 5)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M27', 'SYRS', 'No. of System Requirements - Statuses', 'Number of SYRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
 
 Arguments:
 • Project
@@ -96,30 +133,32 @@ Arguments:
 
 Purpose:
 Number of system requirements – statuses shows how many system requirements are in the state of: no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested', 1, 2, 1, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M28', 'No. of Software Requirements - Statuses', 'Description:
-Number of SWRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 6)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 6)
 
-Arguments:
-• Project
-• Collection or Module – All SWRS Modules
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M56', 'SYRS', 'No. of System requirements linked to System test cases', '--', 1, 1, 1, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'REFERENCE_ID1', 'LITERAL_NAME1', null, null, null, 7)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('', 'REFERENCE_ID1', 'LITERAL_NAME1', null, null, null, 7)
 
-Purpose:
-Number of software  requirements – statuses shows how many software requirements are in the state of: no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
-', 1, 6, 1, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M03', 'Review Coverage: System Reqs.', 'Description:
-Ratio of number of all SYRS Requirements to number of SYRS Requirements with Status Reviewed, Implemented or Tested
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M03', 'SYRS', 'Review Coverage: System Reqs.', 'Ratio of number of all SYRS Requirements to number of SYRS Requirements with Status Reviewed, Implemented or Tested
 
 Arguments:
 • Project
 • Collection or Module – All SYRS Modules
 
 Purpose:
-Review coverage system requirements shows how many of the system requirements were reviewed. ', 2, 2, 3, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M06', 'Review Coverage: SW Reqs.', 'Description:
-Ratio of number of all SWRS Requirements to number of SWRS Requirements with Status Reviewed, Implemented or Tested
+Review coverage system requirements shows how many of the system requirements were reviewed.', 2, 2, 3, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'SYRS', 'NAME', 'Coverage', 8)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M06', 'SWRS', 'Review Coverage: SW Reqs.', 'Ratio of number of all SWRS Requirements to number of SWRS Requirements with Status Reviewed, Implemented or Tested
 
 Arguments:
 • Project
@@ -127,9 +166,11 @@ Arguments:
 
 Purpose:
 Review coverage software requirements shows percentage how many of the software requirements were reviewed.', 2, 6, 3, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M60', 'Review Coverage: HW Reqs.', 'Description:
-Ratio of number of all HWRS Requirements to number of HWRS Requirements with Status Review, Implemented or Tested
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'SWRS', 'NAME', 'Coverage', 9)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M60', 'HWRS', 'Review Coverage: HW Reqs.', 'Ratio of number of all HWRS Requirements to number of HWRS Requirements with Status Reviewed, Implemented or Tested
 
 Arguments:
 • Project
@@ -137,18 +178,22 @@ Arguments:
 
 Purpose:
 Review coverage software requirements shows percentage how many of the software requirements were reviewed.', 2, 9, 3, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M75', 'SW Integration Test Case Coverage', 'Description:
-SWRS “Interface Requirements” vs SWSR Interface Requirements with Tested by filled
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'HWRS', 'NAME', 'Coverage', 10)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M75', 'SWRS', 'SW Integration Test Case Coverage', 'SWRS “Interface Requirements” vs SWRS Interface Requirements with Tested by filled
 
 Arguments:
 • Project
 • Collection or Module – All SWRS Modules
 
 Purpose:', 3, 7, 2, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M65', 'Review coverage for SYAR', 'Description:
-Ration of SYAR Requirement and Interface Requirement to number of Requirement and Interface Requirement with Status “Reviewed” and higher.
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 11)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M65', 'SYAR', 'Review coverage for SYAR', 'Ratio of SYAR Requirement and Interface Requirement to number of Requirement and Interface Requirement with Status “Reviewed” and higher.
 
 Arguments:
 • Project
@@ -156,20 +201,25 @@ Arguments:
 
 Purpose:
 The metrics shows coverage of Statuses “Reviewed” and higher in SYAR Requirements and Interface Requirements.', 2, 3, 3, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M66', 'SYAR Statuses', 'Description:
-Number of SYAR Requirements and Interface Requirements in Statuses
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, '*all*', '', 'Coverage', 12)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M66', 'SYAR', 'SYAR Statuses', 'Number of SYAR Requirements and Interface Requirements in Statuses
 
 Arguments:
 • Project
 • Collection or Module – All SYAR Modules
 
 Purpose:
-The metrics provides information how many SYAR Requirements and Interface Requirements have no status or are  in Statuses  - Under construction., Ready to review, Reviewed. Implemented, Tested
-', 1, 3, 1, 1, 1)
-INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
-    ('M78', 'SYAR to SYRS Traceability', 'Description:
-Percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS
+The metrics provides information how many SYAR Requirements and Interface Requirements have no status or are in Statuses - Under construction, Ready to review, Reviewed, Implemented, Tested.', 1, 3, 1, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 13)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 13)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M78', 'SYAR', 'SYAR to SYRS Traceability', 'Percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS
 
 Arguments:
 • Project
@@ -178,7 +228,11 @@ Arguments:
 • Variant (M78V)
 
 Purpose:
-The metrics shows percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS
-', 2, 3, 2, 1, 1)
---INSERT INTO [Metric] ([Identificator], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
---    ('M26', '', '', 1, 1, 1, 1, 1)
+The metrics shows percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS.', 2, 3, 2, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 14)
+
+INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
+    ('M26', 'SYRS', 'System Requirements Test Case Coverage', '--', 2, 2, 3, 1, 1)
+INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+    ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 15)

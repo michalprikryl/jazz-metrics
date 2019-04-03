@@ -75,7 +75,7 @@
                         @if (adminAccount)
                         {
                             string obj = $"{{\"userId\": {item.UserId}, \"projectId\": {Model.Id}}}";
-                            <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="deleteUser('/Project/User/Delete', 'project', '@obj')"></span>
+                            <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="deleteUser('/Project/User/Delete', 'project', @obj)"></span>
                         }
                     </td>
                 </tr>

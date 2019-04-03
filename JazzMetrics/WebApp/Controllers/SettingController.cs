@@ -87,6 +87,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model, Token, SettingService.AffectedFieldEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "AffectedFieldEdit", "Setting", result.Id);
+                }
             }
             else
             {
@@ -101,6 +106,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> AffectedFieldEdit(int id)
         {
             AffectedFieldWorkModel model = new AffectedFieldWorkModel();
+
+            CheckTempData(model);
 
             var result = await _crudService.Get<AffectedFieldModel>(id, Token, SettingService.AffectedFieldEntity);
             if (result.Success)
@@ -187,6 +194,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model, Token, SettingService.MetricTypeEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "MetricTypeEdit", "Setting", result.Id);
+                }
             }
             else
             {
@@ -201,6 +213,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> MetricTypeEdit(int id)
         {
             MetricTypeWorkModel model = new MetricTypeWorkModel();
+
+            CheckTempData(model);
 
             var result = await _crudService.Get<MetricTypeModel>(id, Token, SettingService.MetricTypeEntity);
             if (result.Success)
@@ -292,6 +306,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model, Token, SettingService.AspiceVersionEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "AspiceVersionEdit", "Setting", result.Id);
+                }
             }
             else
             {
@@ -306,6 +325,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> AspiceVersionEdit(int id)
         {
             AspiceVersionWorkModel model = new AspiceVersionWorkModel();
+
+            CheckTempData(model);
 
             var result = await _crudService.Get<AspiceVersionModel>(id, Token, SettingService.AspiceVersionEntity);
             if (result.Success)
@@ -400,6 +421,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model, Token, SettingService.AspiceProcessEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "AspiceProcessEdit", "Setting", result.Id);
+                }
             }
             else
             {
@@ -416,6 +442,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> AspiceProcessEdit(int id)
         {
             AspiceProcessWorkModel model = new AspiceProcessWorkModel();
+
+            CheckTempData(model);
 
             Task select = GetAspiceVersions(model);
 
@@ -567,6 +595,11 @@ namespace WebApp.Controllers
                 var result = await _crudService.Create(model.TranslateToMetricModel(), Token, SettingService.MetricEntity);
 
                 AddMessageToModel(model, result.Message, !result.Success);
+
+                if (result.Success)
+                {
+                    return RedirectToActionWithId(model, "MetricEdit", "Setting", result.Id);
+                }
             }
             else
             {
@@ -583,6 +616,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> MetricEdit(int id)
         {
             MetricWorkModel model = new MetricWorkModel();
+
+            CheckTempData(model);
 
             Task select = GetMetricSelects(model);
 
@@ -662,20 +697,20 @@ namespace WebApp.Controllers
                         Index = model.Index,
                         Value = JazzService.ANY_VALUE,
                         DivisorValue = JazzService.ALL_VALUES,
-                        FieldName = JazzService.COVERAGE_FIELD_VALUE,
+                        FieldName = JazzService.FIELD_VALUE,
                         DivisorFieldName = string.Empty,
                         CoverageName = "Coverage"
                     });
             }
             else
             {
-                return PartialView("Metric/Partials/MetricColumn", 
+                return PartialView("Metric/Partials/MetricColumn",
                     new MetricColumn
                     {
                         Index = model.Index,
                         Value = JazzService.ANY_VALUE,
-                        FieldName = JazzService.NUMBER_FIELD_VALUE,
-                        NumberFieldName = JazzService.NUMBER_FIELD_COUNT
+                        FieldName = JazzService.FIELD_VALUE,
+                        NumberFieldName = JazzService.FIELD_COUNT
                     });
             }
         }

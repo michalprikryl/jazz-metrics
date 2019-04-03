@@ -66,6 +66,7 @@ async function postToServer(endpoint, resultName, body) {
 
 async function swalWithReload(name, message, type) {
     await swal(name, message || "--", type);
+    showProcessing();
     location.reload();
 }
 

@@ -40,6 +40,10 @@ namespace WebApp.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// test zachyceni chyby
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public IActionResult About()
         {

@@ -54,7 +54,7 @@ namespace WebApp.Models.Project.Dashboard
 
                     if (projectMetric.Warning)
                     {
-                        metric.Warning = metric.MetricColumns.Any(c => c.Values.First().Last() <= projectMetric.MinimalWarningValue);
+                        metric.Warning = metric.MetricColumns.Any(c => c.Values.First().Any() && c.Values.First().Last() <= projectMetric.MinimalWarningValue);
                     }
                 }
                 else if (projectMetric.Metric.MetricType.NumberMetric)

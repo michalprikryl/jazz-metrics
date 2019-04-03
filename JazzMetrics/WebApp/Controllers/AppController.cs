@@ -74,6 +74,13 @@ namespace WebApp.Controllers
 
         protected void AddViewModelToTempData(ViewModel model) => TempData["ViewModel"] = JsonConvert.SerializeObject(model);
 
+        protected RedirectToActionResult RedirectToActionWithId(ViewModel model, string action, string controller, int id)
+        {
+            AddViewModelToTempData(model);
+
+            return RedirectToAction(action, controller, new { id });
+        }
+
         protected void CheckTempData(ViewModel model)
         {
             if (TempData["ViewModel"] != null)
