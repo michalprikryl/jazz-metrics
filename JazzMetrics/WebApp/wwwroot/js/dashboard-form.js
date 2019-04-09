@@ -379,7 +379,7 @@ async function exportAllMetrics() {
     for (let i = 0; i < parents.length; i++) {
         const metric = {
             charts: [],
-            metricName: parents[i].getElementsByClassName('center-name')[0].innerHTML
+            metricName: parents[i].getElementsByClassName('text-dark')[0].innerHTML
         };
 
         const canvas = parents[i].querySelectorAll('canvas[id^="chart-"]');

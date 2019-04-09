@@ -126,6 +126,8 @@ namespace Library.Jazz
                         {
                             projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Metric #{projectMetric.MetricId} has unknown metric type {projectMetric.Metric.MetricType.Name}!"));
                         }
+
+                        projectMetric.LastUpdateDate = DateTime.Now;
                     }
                     else
                     {

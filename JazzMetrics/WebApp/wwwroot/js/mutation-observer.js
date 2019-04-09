@@ -25,7 +25,28 @@ class ClassWatcher {
      * inicializace
      * */
     init() {
-        this.observer = new MutationObserver(this.mutationCallback);
+        /**
+         * callback vyvolany pri zmene - nejde pouzit jako field pole, pouze v chrome, ve firefoxu je to experimental feature
+         * @param {Array} mutationsList list zmen nad elementem
+         */
+        const mutationCallback = mutationsList => {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    let currentClassState = mutation.target.classList.contains(this.classToWatch);
+                    if (this.lastClassState !== currentClassState) {
+                        this.lastClassState = currentClassState;
+                        if (currentClassState) {
+                            this.classAddedCallback(mutation.target);
+                        }
+                        else {
+                            this.classRemovedCallback(mutation.target);
+                        }
+                    }
+                }
+            }
+        };
+
+        this.observer = new MutationObserver(mutationCallback);
         this.observe();
     }
 
@@ -41,26 +62,5 @@ class ClassWatcher {
      * */
     disconnect() {
         this.observer.disconnect();
-    }
-
-    /**
-     * callback vyvolany pri zmene
-     * @param {Array} mutationsList list zmen nad elementem
-     * */
-    mutationCallback = mutationsList => {
-        for (let mutation of mutationsList) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                let currentClassState = mutation.target.classList.contains(this.classToWatch);
-                if (this.lastClassState !== currentClassState) {
-                    this.lastClassState = currentClassState;
-                    if (currentClassState) {
-                        this.classAddedCallback(mutation.target);
-                    }
-                    else {
-                        this.classRemovedCallback(mutation.target);
-                    }
-                }
-            }
-        }
     }
 }

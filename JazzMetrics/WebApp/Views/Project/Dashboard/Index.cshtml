@@ -4,6 +4,7 @@
     bool adminAccount = User.IsAdmin();
     ViewData["Title"] = $"Project #{Model.Id} dashboard";
     var warning = new ResultViewModel { Color = "tomato", CssClass = "fa-exclamation-circle ml-1", Message = "Caution, some of metrics are below defined limit!" };
+    var decreaseWarning = new ResultViewModel { Color = "tomato", CssClass = "fa-level-down-alt ml-1", Message = "Caution, some of metrics has decreasing trend!" };
 }
 
 <partial name="Partials/_ErrorTable" />
@@ -78,6 +79,10 @@
                 @if (Model.Metrics[i].Warning)
                 {
                     <partial name="Partials/_Icon" model="@warning" />
+                }
+                @if (Model.Metrics[i].DecreasingTrendWarning)
+                {
+                    <partial name="Partials/_Icon" model="@decreaseWarning" />
                 }
             </div>
             <div>

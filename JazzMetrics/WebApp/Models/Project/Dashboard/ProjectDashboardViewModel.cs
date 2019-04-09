@@ -55,6 +55,27 @@ namespace WebApp.Models.Project.Dashboard
                     if (projectMetric.Warning)
                     {
                         metric.Warning = metric.MetricColumns.Any(c => c.Values.First().Any() && c.Values.First().Last() <= projectMetric.MinimalWarningValue);
+                        metric.DecreasingTrendWarning = metric.MetricColumns.Any(c =>
+                        {
+                            var values = c.Values.First();
+                            if (values.Count > 2)
+                            {
+                                var lastThreeValues = values.Skip(Math.Max(values.Count - 3, 0)).ToArray();
+                                for (int i = 1; i < lastThreeValues.Length; i++)
+                                {
+                                    if (lastThreeValues[i] >= lastThreeValues[i - 1])
+                                    {
+                                        return false;
+                                    }
+                                }
+
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        });
                     }
                 }
                 else if (projectMetric.Metric.MetricType.NumberMetric)
@@ -140,6 +161,7 @@ namespace WebApp.Models.Project.Dashboard
             MetricDataModel metric = new MetricDataModel
             {
                 MetricIdentificator = "M01",
+                DecreasingTrendWarning = true,
                 MetricName = "very useful metric",
                 MetricDescription = "Description about very useful metric",
                 MetricColumns = new List<MetricColumnModel>
@@ -171,6 +193,7 @@ namespace WebApp.Models.Project.Dashboard
 
             MetricDataModel metric2 = new MetricDataModel
             {
+                Warning = true,
                 MetricIdentificator = "M02",
                 MetricName = "other useful metric",
                 MetricDescription = "Description about other useful metric",
@@ -188,6 +211,7 @@ namespace WebApp.Models.Project.Dashboard
     {
         public int Id { get; set; }
         public bool Warning { get; set; }
+        public bool DecreasingTrendWarning { get; set; }
         public string MetricIdentificator { get; set; }
         public string MetricName { get; set; }
         public string MetricInfo { get => $"{MetricIdentificator} - {MetricName}"; }

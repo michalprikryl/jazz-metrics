@@ -19,6 +19,8 @@ INSERT INTO [Company] ([Name]) VALUES ('VŠB')
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin) VALUES 
     ('Franta', 'Novak', 'user', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 3, 2, 0)
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
+    ('Franta', 'Novak', 'user2', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 3, 2, 0, 1)
+INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
     ('Franta', 'Novak', 'admin', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 2, 2, 0, 1)
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
     ('Franta', 'Novak', 'superadmin', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)

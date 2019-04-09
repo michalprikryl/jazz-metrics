@@ -2,6 +2,7 @@
 using Library.Security;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace JazzMetrics
 {
@@ -22,8 +23,8 @@ namespace JazzMetrics
             int? num = null;
             num++;
 
-            string values = "Reviewed;Under construction;";
-            string[] columns = values.Split(';');
+            //string values = "Reviewed;Under construction;";
+            //string[] columns = values.Split(';');
 
             string url = string.Empty;
             //url = "https://158.196.141.113/rs/query/6/dataservice?report=6&limit=-1&basicAuthenticationEnabled=true"; //number - vice
@@ -50,6 +51,19 @@ namespace JazzMetrics
             //var task = jazz.CreateSnapshot(url, "mprikryl", "heslo");
             //task.Wait();
             //Console.WriteLine(task.Result);
+
+            //int[] values = new int[] { /*1, 2, 3, 4, 5, 6, 7, 8,*/ 9 };
+            int[] values = new int[] { 1,2,3,5,4,3 };
+            var lastThreeValues = values.Skip(Math.Max(values.Length - 3, 0)).ToArray();
+            for (int i = 1; i < lastThreeValues.Length; i++)
+            {
+                if (lastThreeValues[i] >= lastThreeValues[i - 1])
+                {
+                    Console.WriteLine("ne");
+                }
+            }
+
+            Console.WriteLine("ano");
 
             Console.WriteLine("\nEND");
             Console.ReadKey();

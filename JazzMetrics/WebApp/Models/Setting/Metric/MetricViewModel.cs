@@ -209,12 +209,14 @@ namespace WebApp.Models.Setting.Metric
 
         public void LoadMetricColumns(List<MetricColumnModel> columns)
         {
-            Columns = columns.Where(c => string.IsNullOrEmpty(c.DivisorValue)).Select(c => $"'{c.Value}' (XML tag - {c.FieldName}), XML tag with number - {c.NumberFieldName}").ToList();
+            Columns = columns.Where(c => string.IsNullOrEmpty(c.DivisorValue)).Select(c => $"{GetValue(c.Value)} (XML tag - {c.FieldName}), XML tag with number - {c.NumberFieldName}").ToList();
 
             foreach (var item in columns.Where(c => !string.IsNullOrEmpty(c.DivisorValue)))
             {
-                Columns.Add($"{item.CoverageName} -> '{item.Value}' (XML tag - {item.FieldName})  divided by '{item.DivisorValue}' (XML tag - {item.DivisorFieldName})");
+                Columns.Add($"{item.CoverageName} -> '{GetValue(item.Value)}' (XML tag - {item.FieldName})  divided by '{item.DivisorValue}' (XML tag - {item.DivisorFieldName})");
             }
         }
+
+        private string GetValue(string value) => value == string.Empty ? "empty string" : $"'{value}'";
     }
 }
