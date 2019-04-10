@@ -217,6 +217,6 @@ namespace WebApp.Models.Setting.Metric
             }
         }
 
-        private string GetValue(string value) => value == string.Empty ? "empty string" : $"'{value}'";
+        private string GetValue(string value) => value == string.Empty ? "no value" : $"'{value}'";
     }
 }
