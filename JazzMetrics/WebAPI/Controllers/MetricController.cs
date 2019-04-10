@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.Metric;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.Helper;
@@ -9,6 +10,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
     public class MetricController : MainController
     {
         private readonly IMetricService _metricService;

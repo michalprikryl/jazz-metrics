@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.AffectedFields;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.AffectedFields;
@@ -9,6 +10,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleSuperAdmin)]
     public class AffectedFieldController : MainController
     {
         private readonly IAffectedFieldService _affectedFieldService;

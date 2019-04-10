@@ -330,7 +330,7 @@ namespace WebAPI.Services.Users
             return result;
         }
 
-        public async Task<string> BuildToken(int id)
+        public async Task<string> BuildToken(int id, string userRole)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -347,6 +347,7 @@ namespace WebAPI.Services.Users
             var claims = new[]
             {
                 new Claim(Extensions.UserIdClaim, id.ToString()),
+                new Claim(ClaimTypes.Role, userRole)
             };
 
             var token = new JwtSecurityToken(issuer, issuer, claims, expires: DateTime.Now.AddMinutes(minutes), signingCredentials: creds);
@@ -406,7 +407,7 @@ namespace WebAPI.Services.Users
 
         private async Task CreateUserSession(User user, UserIdentityModel result)
         {
-            result.Token = await BuildToken(user.Id);
+            result.Token = await BuildToken(user.Id, user.UserRole.Name);
             result.User = new UserCookieModel
             {
                 Username = user.Username,

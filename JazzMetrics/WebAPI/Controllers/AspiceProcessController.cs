@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.AspiceProcesses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.AspiceProcesses;
@@ -9,6 +10,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleSuperAdmin)]
     public class AspiceProcessController : MainController
     {
         private readonly IAspiceProcessService _aspiceProcessService;

@@ -9,7 +9,7 @@ namespace Library
     /// </summary>
     public static class Extensions
     {
-        public static string UserIdClaim = "userid";
+        public const string UserIdClaim = "userid";
 
         /// <summary>
         /// cesta do App_Data, obsahuje na konci \\
@@ -56,6 +56,21 @@ namespace Library
             return int.TryParse(user.FindFirst(UserIdClaim)?.Value ?? "0", out int id) ? id : 0;
         }
 
+        /// <summary>
+        /// vrati nazev role uzivatele z uzivatelskych udaju
+        /// </summary>
+        /// <param name="user">uzivatelsky kontext</param>
+        /// <returns></returns>
+        public static string GetUserRole(this ClaimsPrincipal user)
+        {
+            return user.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+        }
+
+        /// <summary>
+        /// vrati string v obracene podobe abc => cba
+        /// </summary>
+        /// <param name="text">string k obraceni</param>
+        /// <returns></returns>
         public static string Reverse(this string text)
         {
             if (string.IsNullOrEmpty(text))

@@ -10,7 +10,7 @@ namespace WebAPI.Services.Users
     public interface IUserService : ICrudOperations<UserModel, User>
     {
         Task<BaseResponseModelGet<UserIdentityModel>> CheckUser(LoginRequestModel model);
-        Task<string> BuildToken(int id);
+        Task<string> BuildToken(int id, string userRole);
         Task<BaseResponseModelPost> GetByUsername(string username);
     }
 }

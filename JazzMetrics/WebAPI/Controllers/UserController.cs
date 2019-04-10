@@ -31,6 +31,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost, AllowAnonymous]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Post([FromBody]UserModel value)
         {
             return await _userService.Create(value);

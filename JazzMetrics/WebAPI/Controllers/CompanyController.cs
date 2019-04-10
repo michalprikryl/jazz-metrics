@@ -23,6 +23,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<ActionResult<BaseResponseModelGetAll<CompanyModel>>> Get(bool lazy = true)
         {
             return await _companyService.GetAll(lazy);

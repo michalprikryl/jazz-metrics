@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.MetricType;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.Helper;
@@ -7,8 +8,9 @@ using WebAPI.Services.MetricTypes;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = RoleSuperAdmin)]
     public class MetricTypeController : MainController
     {
         private readonly IMetricTypeService _metricTypeService;

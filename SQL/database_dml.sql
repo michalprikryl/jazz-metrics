@@ -60,6 +60,7 @@ INSERT INTO [Project] ([Name], [Description], [CreateDate]) VALUES ('Master thes
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (2, 1, GETDATE())
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (3, 1, GETDATE())
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (4, 1, GETDATE())
+INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (5, 1, GETDATE())
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M63', 'HWRS', 'HWRS Statuses', 'Number of HWRS Requirements Statuses

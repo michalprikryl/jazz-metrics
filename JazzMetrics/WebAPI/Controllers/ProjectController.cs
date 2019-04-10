@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Models.Projects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.Helper;
@@ -37,18 +38,21 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]ProjectModel model)
         {
             return await _projectService.Create(model);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]ProjectModel model)
         {
             return await _projectService.Edit(model);
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
             return await _projectService.Drop(id);

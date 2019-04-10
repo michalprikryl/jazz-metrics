@@ -38,7 +38,7 @@
                     <td>@item.CreateDate</td>
                     <td>@item.Message</td>
                     <td>
-                        @if (!item.Warning)
+                        @if (item.Warning)
                         {
                             <partial name="Partials/_Icon" model="warning" />
                         }
