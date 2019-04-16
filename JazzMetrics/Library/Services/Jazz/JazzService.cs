@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Library.Jazz
+namespace Library.Services.Jazz
 {
     /// <summary>
     /// trida pro stazeni zpracovani dat z Jazzu
@@ -75,6 +75,8 @@ namespace Library.Jazz
         /// <returns></returns>
         public async Task CreateSnapshot(ProjectMetric projectMetric)
         {
+            _suffix = 0;
+
             string xml = await GetDataFromJazzReportingService(projectMetric.DataUrl, projectMetric.DataUsername, PasswordHelper.Base64Decode(projectMetric.DataPassword));
             if (!string.IsNullOrEmpty(xml))
             {
@@ -255,7 +257,7 @@ namespace Library.Jazz
 
             projectMetric.ProjectMetricSnapshot.Add(snapshot);
 
-            projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Snapshot of project metric #{projectMetric.Id} was successfully created!"));
+            projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Snapshot of project metric #{projectMetric.Id} was successfully created!", false));
         }
 
         /// <summary>

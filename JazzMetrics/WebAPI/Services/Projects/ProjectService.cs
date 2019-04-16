@@ -1,7 +1,6 @@
 ﻿using Database;
 using Database.DAO;
 using Library;
-using Library.Jazz;
 using Library.Models;
 using Library.Models.Error;
 using Library.Models.ProjectMetrics;
@@ -9,6 +8,7 @@ using Library.Models.ProjectMetricSnapshots;
 using Library.Models.Projects;
 using Library.Models.ProjectUsers;
 using Library.Networking;
+using Library.Services.Jazz;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -220,13 +220,10 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModel response = new BaseResponseModel { Message = "Update of all projects metrics ended successfully. For more detailed result check project metric log." };
 
-            List<Task> tasks = new List<Task>();
-            foreach (var item in Database.Project)
+            foreach (var item in await Database.Project.ToListAsync())
             {
-                tasks.Add(CreateSnapshots(item.Id, item));
+                await CreateSnapshots(item.Id, item);
             }
-
-            await Task.WhenAll(tasks);
 
             return response;
         }

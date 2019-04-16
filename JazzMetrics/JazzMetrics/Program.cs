@@ -1,5 +1,5 @@
-﻿using Library.Jazz;
-using Library.Security;
+﻿using Library.Security;
+using Library.Services.Jazz;
 using System;
 using System.Globalization;
 using System.Linq;

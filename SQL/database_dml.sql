@@ -54,6 +54,7 @@ INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSet
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('EmailSetting', 'Password', '')
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('ErrorEmail', 'Email', 'michal.prikryl@post.cz')
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('TokenExpiration', 'TokenExpirationMinutes', '1440')
+INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('Job', 'MetricUpdateMinutes', '1440')
 
 INSERT INTO [Project] ([Name], [Description], [CreateDate]) VALUES ('Master thesis', 'Some type of master thesis.', GETDATE())
 

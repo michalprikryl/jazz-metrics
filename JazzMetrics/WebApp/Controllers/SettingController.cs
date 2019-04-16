@@ -1,10 +1,10 @@
-﻿using Library.Jazz;
-using Library.Models.AffectedFields;
+﻿using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
 using Library.Models.AspiceVersions;
 using Library.Models.Company;
 using Library.Models.Metric;
 using Library.Models.MetricType;
+using Library.Services.Jazz;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

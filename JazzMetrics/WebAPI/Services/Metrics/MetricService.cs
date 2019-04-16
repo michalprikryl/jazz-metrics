@@ -1,7 +1,6 @@
 ﻿using Database;
 using Database.DAO;
 using Library;
-using Library.Jazz;
 using Library.Models;
 using Library.Models.AffectedFields;
 using Library.Models.AspiceProcesses;
@@ -9,6 +8,7 @@ using Library.Models.Metric;
 using Library.Models.MetricColumn;
 using Library.Models.MetricType;
 using Library.Networking;
+using Library.Services.Jazz;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

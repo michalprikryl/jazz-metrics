@@ -1,7 +1,7 @@
 ﻿using Database.DAO;
 using System.Threading.Tasks;
 
-namespace Library.Jazz
+namespace Library.Services.Jazz
 {
     /// <summary>
     /// interface pro tridu pro stazeni zpracovani dat z Jazzu
