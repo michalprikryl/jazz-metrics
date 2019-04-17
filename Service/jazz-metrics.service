@@ -1,0 +1,14 @@
+[Unit]  
+Description=Jazz metrics service for updating metrics.
+  
+[Service]  
+WorkingDirectory=/etc/jazz-metrics/publish
+ExecStart=/bin/dotnet/dotnet /etc/jazz-metrics/publish/Service.dll
+User=dotnetuser  
+Group=dotnetuser  
+Restart=on-failure  
+SyslogIdentifier=jazz-metrics-service  
+PrivateTemp=true  
+  
+[Install]  
+WantedBy=multi-user.target 
