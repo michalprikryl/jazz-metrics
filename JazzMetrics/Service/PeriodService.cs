@@ -1,5 +1,6 @@
 ﻿using Library.Services.Snapshot;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,15 +28,27 @@ namespace Service
         /// <returns></returns>
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            DateTime now = DateTime.Now;
+            DateTime fiveOclock = new DateTime(now.Year, now.Month, now.Day + 1, 7, 0, 0);
+
+            TimeSpan timeSpan = fiveOclock - now;
+            Console.WriteLine("Next run is scheduled in {0} hours and {1} minutes. (tomorrow at 7:00:00)", timeSpan.Hours, timeSpan.Minutes);
+
+            await Task.Delay(timeSpan);
+
             while (!stoppingToken.IsCancellationRequested)
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
                 await _snapshotService.CreateSnapshots();
 
                 double minutes = await _snapshotService.CheckPeriodSetting();
 
                 Console.WriteLine("Next run is scheduled in {0} minutes.", minutes);
 
-                await Task.Delay(ToMilliSeconds(minutes), stoppingToken);
+                stopwatch.Stop();
+
+                await Task.Delay(ToMilliSeconds(minutes, stopwatch.ElapsedMilliseconds), stoppingToken);
             }
         }
 
@@ -44,9 +57,9 @@ namespace Service
         /// </summary>
         /// <param name="minutes">cislo v minutach</param>
         /// <returns></returns>
-        private int ToMilliSeconds(double minutes)
+        private int ToMilliSeconds(double minutes, long elapsed)
         {
-            return Convert.ToInt32(minutes * 60 * 1000);
+            return Convert.ToInt32(minutes * 60 * 1000) - unchecked((int)elapsed);
         }
     }
 }
