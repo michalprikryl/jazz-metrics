@@ -179,7 +179,7 @@ namespace Library.Services.Jazz
                 };
 
                 int count = 0, accepted = 0;
-                if (results.Item(0).SelectSingleNode($"//ns:{FIELD_COUNT}", _namespaces) == null) //pokud se nenachazi node se sumou prvku
+                if (results.Count > 1 && results.Item(0).SelectSingleNode($"//ns:{FIELD_COUNT}", _namespaces) == null) //pokud se nenachazi node se sumou prvku
                 {
                     if (column.DivisorValue != ALL_VALUES && !string.IsNullOrEmpty(column.DivisorFieldName)) //mam specifikovane jen nektere pro delitele
                     {

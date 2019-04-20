@@ -56,7 +56,7 @@ INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('ErrorEma
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('TokenExpiration', 'TokenExpirationMinutes', '1440')
 INSERT INTO [Setting] ([SettingScope], [SettingName], [Value]) VALUES ('Job', 'MetricUpdateMinutes', '1440')
 
-INSERT INTO [Project] ([Name], [Description], [CreateDate]) VALUES ('Master thesis', 'Some type of master thesis.', GETDATE())
+INSERT INTO [Project] ([Name], [Description], [CreateDate]) VALUES ('Project 1', 'Some type of master thesis.', GETDATE())
 
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (2, 1, GETDATE())
 INSERT INTO [ProjectUser] ([UserID], [ProjectID], [JoinDate]) VALUES (3, 1, GETDATE())

@@ -1,0 +1,3 @@
+﻿FROM microsoft/dotnet:aspnetcore-runtime
+WORKDIR .
+ENTRYPOINT ["dotnet", "WebAPI.dll"]

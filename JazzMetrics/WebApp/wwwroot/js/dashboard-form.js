@@ -212,9 +212,6 @@ function getCommonOptions(title) {
                 bottom: 30
             }
         },
-        animation: {
-            duration: 3000
-        },
         title: {
             display: true,
             text: title || ''
