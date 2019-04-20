@@ -1,5 +1,5 @@
 ﻿using Library.Models;
-using Library.Models.Error;
+using Library.Models.AppError;
 using Library.Networking;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -12,7 +12,7 @@ namespace WebApp.Services.Error
     /// </summary>
     public class ErrorService : ClientApi, IErrorService
     {
-        public const string ErrorEntity = "error";
+        public const string ErrorEntity = "apperror";
 
         public ErrorService(IConfiguration config) : base(config, ErrorEntity) { }
 
@@ -21,7 +21,7 @@ namespace WebApp.Services.Error
         /// </summary>
         /// <param name="model">objekt reprezentujici chybu</param>
         /// <returns>objekt s informaci o zpracovani</returns>
-        public async Task<BaseResponseModel> CreateError(ErrorModel model)
+        public async Task<BaseResponseModel> CreateError(AppErrorModel model)
         {
             BaseResponseModel result = new BaseResponseModel();
 

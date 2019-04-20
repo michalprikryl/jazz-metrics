@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.Log;
-using WebAPI.Services.Setting;
+using WebAPI.Services.Settings;
 
 namespace WebAPI.Services.Email
 {

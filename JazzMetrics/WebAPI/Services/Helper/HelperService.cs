@@ -2,14 +2,15 @@
 using Database.DAO;
 using Library;
 using Library.Models;
-using Library.Models.Error;
+using Library.Models.AppError;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Services.AppErrors;
 using WebAPI.Services.Email;
 using WebAPI.Services.Helpers;
-using WebAPI.Services.Setting;
+using WebAPI.Services.Settings;
 
 namespace WebAPI.Services.Helper
 {
@@ -23,11 +24,13 @@ namespace WebAPI.Services.Helper
 
         private readonly IEmailService _emailService;
         private readonly ISettingService _settingService;
+        private readonly IAppErrorService _appErrorService;
 
-        public HelperService(JazzMetricsContext db, IEmailService email, ISettingService setting) : base(db)
+        public HelperService(JazzMetricsContext db, IEmailService email, ISettingService setting, IAppErrorService appErrorService) : base(db)
         {
             _emailService = email;
             _settingService = setting;
+            _appErrorService = appErrorService;
         }
 
         /// <summary>
@@ -36,27 +39,13 @@ namespace WebAPI.Services.Helper
         /// <param name="value">prijaty objekt, obsahujici info o chybe</param>
         /// <param name="saveException">opakovany zapis chyby po vyjimce</param>
         /// <returns>objekt s informaci o vysledku</returns>
-        public async Task<BaseResponseModel> SaveErrorToDB(ErrorModel value, int exceptionRound = 1)
+        public async Task<BaseResponseModel> SaveErrorToDB(AppErrorModel value, int exceptionRound = 1)
         {
             BaseResponseModel model = new BaseResponseModel();
 
             try
             {
-                Database.AppError.Add(
-                    new AppError
-                    {
-                        Deleted = false,
-                        Exception = value.ExceptionMessage ?? "unknown",
-                        Function = value.Function ?? "unknown",
-                        InnerException = value.InnerExceptionMessage ?? "unknown",
-                        Message = value.Message ?? "unknown",
-                        Module = value.Module ?? "unknown",
-                        Solved = false,
-                        Time = value.Time ?? DateTime.Now,
-                        AppInfo = value.User ?? "unknown"
-                    });
-
-                await Database.SaveChangesAsync();
+                await _appErrorService.Create(value);
             }
             catch (Exception e)
             {

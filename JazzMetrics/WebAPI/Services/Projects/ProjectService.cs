@@ -2,7 +2,7 @@
 using Database.DAO;
 using Library;
 using Library.Models;
-using Library.Models.Error;
+using Library.Models.AppError;
 using Library.Models.ProjectMetrics;
 using Library.Models.ProjectMetricSnapshots;
 using Library.Models.Projects;
@@ -262,7 +262,7 @@ namespace WebAPI.Services.Projects
             {
                 response.Success = false;
                 response.Message = "Creating of a snapshot was not successfull! Please try again later.";
-                await _helperService.SaveErrorToDB(new ErrorModel(e, message: "task - all projects", module: "ProjectService", function: "CreateSnapshots"));
+                await _helperService.SaveErrorToDB(new AppErrorModel(e, message: "task - all projects", module: "ProjectService", function: "CreateSnapshots"));
                 projectMetric.ProjectMetricLog.Add(new ProjectMetricLog($"Within processing of snapshot for project metric #{projectMetric.Id} occured and error!"));
             }
 

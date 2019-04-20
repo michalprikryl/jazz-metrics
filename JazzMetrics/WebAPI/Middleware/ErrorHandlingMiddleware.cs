@@ -1,6 +1,6 @@
 ﻿using Library;
 using Library.Models;
-using Library.Models.Error;
+using Library.Models.AppError;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -34,7 +34,7 @@ namespace WebAPI.Middleware
 
         private static Task HandleExceptionAsync(IHelperService helperService, HttpContext context, Exception exception, string version)
         {
-            Task error = helperService.SaveErrorToDB(new ErrorModel(exception, $"JazzMetricsAPI - {version} -> {context.User.GetId()}", "global error handler"));
+            Task error = helperService.SaveErrorToDB(new AppErrorModel(exception, $"JazzMetricsAPI - {version} -> {context.User.GetId()}", "global error handler"));
 
             string result = JsonConvert.SerializeObject(new BaseResponseModel
             {

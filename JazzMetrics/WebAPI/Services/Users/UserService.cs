@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using WebAPI.Controllers;
 using WebAPI.Services.Helper;
 using WebAPI.Services.Helpers;
-using WebAPI.Services.Setting;
+using WebAPI.Services.Settings;
 
 namespace WebAPI.Services.Users
 {
@@ -233,7 +233,7 @@ namespace WebAPI.Services.Users
                 {
                     await Database.SaveChangesAsync();
 
-                    response.Message = $"User was successfully edited!";
+                    response.Message = "User was successfully edited!";
                 }
             }
 

@@ -1,6 +1,6 @@
 ﻿using Library.Models;
+using Library.Models.AppError;
 using Library.Models.Company;
-using Library.Models.Error;
 using Library.Models.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -148,7 +148,7 @@ namespace WebApp.Controllers
                 {
                     model.MessageList.Add(new Tuple<string, bool>("Error occured during authorization, please try again.", true));
 
-                    await ErrorService.CreateError(new ErrorModel(e, MyUser?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
+                    await ErrorService.CreateError(new AppErrorModel(e, MyUser?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
                 }
             }
 

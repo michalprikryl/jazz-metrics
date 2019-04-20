@@ -1,4 +1,4 @@
-﻿using Library.Models.Error;
+﻿using Library.Models.AppError;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +20,7 @@ namespace WebApp.Controllers
             var error = feature?.Error;
             if (error != null)
             {
-               var task = ErrorService.CreateError(new ErrorModel(error, MyUser?.UserId.ToString(), "global error handler"));
+               var task = ErrorService.CreateError(new AppErrorModel(error, MyUser?.UserId.ToString(), "global error handler"));
             }
 
             return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
