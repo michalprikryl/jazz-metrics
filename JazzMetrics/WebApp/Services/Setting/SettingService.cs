@@ -16,6 +16,8 @@ namespace WebApp.Services.Setting
         public const string AspiceProcessEntity = "aspiceprocess";
         public const string AspiceVersionEntity = "aspiceversion";
         public const string MetricTypeEntity = "metrictype";
+        public const string AppErrorEntity = "apperror";
+        public const string SettingEntity = "setting";
         public const string CompanyEntity = "company";
         public const string MetricEntity = "metric";
 

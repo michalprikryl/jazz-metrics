@@ -7,6 +7,7 @@ namespace Library.Models.AppError
     /// </summary>
     public class AppErrorModel
     {
+        public int Id { get; set; }
         /// <summary>
         /// cas vzniku chyby /// Time
         /// </summary>
@@ -32,13 +33,11 @@ namespace Library.Models.AppError
         /// </summary>
         public string Message { get; set; }
         /// <summary>
-        /// uzivatel, pod kterym chyba vznikla /// User
+        /// uzivatel, pod kterym chyba vznikla /// AppInfo
         /// </summary>
-        public string User { get; set; }
-        /// <summary>
-        /// typ exception (ApplicationException, Exception, IndexOutOfRangeException etc.)
-        /// </summary>
-        public string ExceptionType { get; set; }
+        public string AppInfo { get; set; }
+        public bool Solved { get; set; }
+        public bool Deleted { get; set; }
 
         /// <summary>
         /// kontruktor pro deserializaci objektu - NUTNY - jinak nelze objekt deserializovat
@@ -54,17 +53,15 @@ namespace Library.Models.AppError
         /// <param name="innerExceptionMessage">chybova zprava s popisem od inner exception naseho exception</param>
         /// <param name="message">zprava s dalsim popisem/zpravou (casto custom popis programora)</param>
         /// <param name="user">uzivatel, pod kterym chyba vznikla</param>
-        /// <param name="exceptionType">typ exception (ApplicationException, Exception, IndexOutOfRangeException etc.)</param>
         /// <param name="time">cas vzniku chyby</param>
-        public AppErrorModel(string module, string function, string exceptionMessage, string innerExceptionMessage, string message, string user, string exceptionType, DateTime? time = null)
+        public AppErrorModel(string module, string function, string exceptionMessage, string innerExceptionMessage, string message, string user, DateTime? time = null)
         {
             Module = module;
             Function = function;
             ExceptionMessage = exceptionMessage;
             InnerExceptionMessage = innerExceptionMessage;
             Message = message;
-            User = user;
-            ExceptionType = exceptionType;
+            AppInfo = user;
             Time = time ?? DateTime.Now;
         }
 
@@ -83,9 +80,8 @@ namespace Library.Models.AppError
             Function = function ?? $"{e.TargetSite.DeclaringType.Name} // {e.TargetSite.Name}";
             InnerExceptionMessage = e.InnerException?.Message ?? string.Empty;
             Message = message ?? string.Empty;
-            ExceptionType = e.GetType().Name;
             ExceptionMessage = e.Message;
-            User = userID ?? "--";
+            AppInfo = userID ?? "--";
         }
     }
 }

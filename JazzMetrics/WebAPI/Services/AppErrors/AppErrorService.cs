@@ -27,7 +27,10 @@ namespace WebAPI.Services.AppErrors
                 Message = dbModel.Message,
                 Module = dbModel.Module,
                 Time = dbModel.Time,
-                User = dbModel.AppInfo
+                AppInfo = dbModel.AppInfo,
+                Deleted = dbModel.Deleted,
+                Id = dbModel.Id,
+                Solved = dbModel.Solved
             };
         }
 
@@ -45,7 +48,7 @@ namespace WebAPI.Services.AppErrors
                 Module = request.Module ?? UNKNOWN,
                 Solved = false,
                 Time = request.Time ?? DateTime.Now,
-                AppInfo = request.User ?? UNKNOWN
+                AppInfo = request.AppInfo ?? UNKNOWN
             };
 
             await Database.AppError.AddAsync(appError);
@@ -121,6 +124,10 @@ namespace WebAPI.Services.AppErrors
                     if (string.Compare(item.PropertyName, "solved", true) == 0)
                     {
                         appError.Solved = Convert.ToBoolean(item.Value);
+                    }
+                    else if (string.Compare(item.PropertyName, "deleted", true) == 0)
+                    {
+                        appError.Deleted = Convert.ToBoolean(item.Value);
                     }
                 }
 

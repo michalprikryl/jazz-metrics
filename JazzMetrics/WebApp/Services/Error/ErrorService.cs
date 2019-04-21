@@ -25,7 +25,7 @@ namespace WebApp.Services.Error
         {
             BaseResponseModel result = new BaseResponseModel();
 
-            model.User = $"JazzMetrics - {Configuration["Version"]} -> {model.User}";
+            model.AppInfo = $"JazzMetrics - {Configuration["Version"]} -> {model.AppInfo}";
 
             await PostToAPI(SerializeObjectToJSON(model), async (httpResult) =>
             {

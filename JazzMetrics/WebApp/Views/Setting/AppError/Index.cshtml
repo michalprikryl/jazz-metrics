@@ -1,0 +1,59 @@
+﻿@model AppErrorListModel
+
+@{
+    ViewData["Title"] = "App errors";
+    var solved = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "This is error is solved! Click to change." };
+    var notSolved = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "This is error is NOT solved! Click to change." };
+}
+
+<partial name="Partials/_ErrorTable" />
+
+<div class="mb-3 d-flex flex-row align-items-center">
+    <span>List of application errors.</span>
+</div>
+
+@Html.AntiForgeryToken()
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Where</th>
+            <th scope="col">What</th>
+            <th scope="col">When</th>
+            <th scope="col">Who</th>
+            <th scope="col">Message</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.AppErrors != null && Model.AppErrors.Count > 0)
+        {
+            @foreach (var item in Model.AppErrors)
+            {
+                <tr>
+                    <th scope="row">@item.Id</th>
+                    <td>@item.Module/@item.Function</td>
+                    <td>
+                        @item.Exception
+                        <span class="fas fa-info" title="@item.InnerException"></span>
+                    </td>
+                    <td>@item.Time</td>
+                    <td>@item.AppInfo</td>
+                    <td>@item.Message</td>
+                    <td scope="col">
+                        <partial name="Partials/_Icon" model="@item.Solved ? solved : notSolved" />
+                        @{ string endpoint = $"/Setting/AppError/Delete/{item.Id}"; }
+                        <span class="fas fa-trash-alt pointer" title="Delete this error" onclick="deleteItem('@endpoint')"></span>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <th scope="row" colspan="4" class="text-center">There are no application errors!</th>
+            </tr>
+        }
+    </tbody>
+</table>

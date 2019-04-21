@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
 using WebApp.Models.Setting.AffectedField;
+using WebApp.Models.Setting.AppError;
+using WebApp.Models.Setting.Setting;
 using WebApp.Models.Setting.AspiceProcess;
 using WebApp.Models.Setting.AspiceVersion;
 using WebApp.Models.Setting.Company;
@@ -859,6 +861,67 @@ namespace WebApp.Controllers
         public async Task<IActionResult> CompanyUserDelete(int id)
         {
             return Json(await _crudService.PartialEdit(id, CreatePatchList(CreatePatchModel("companyId", null)), Token, UserService.UserEntity));
+        }
+        #endregion
+
+        #region App error
+        [HttpGet("AppError")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public async Task<IActionResult> AppError()
+        {
+            AppErrorListModel model = new AppErrorListModel();
+
+            var result = await _crudService.GetAll<AppErrorViewModel>(Token, SettingService.AppErrorEntity);
+            if (result.Success)
+            {
+                model.AppErrors = result.Values.Where(e => !e.Deleted).Select(e =>
+                    new AppErrorViewModel
+                    {
+                        Id = e.Id,
+                        AppInfo = e.AppInfo,
+                        Exception = e.Exception,
+                        Function = e.Function,
+                        InnerException = e.InnerException,
+                        Message = e.Message,
+                        Module = e.Module,
+                        Solved = e.Solved,
+                        Time = e.Time
+                    }).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("AppError/Index", model);
+        }
+        #endregion
+
+        #region Setting
+        [HttpGet("Setting")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public async Task<IActionResult> Setting()
+        {
+            SettingListModel model = new SettingListModel();
+
+            var result = await _crudService.GetAll<SettingViewModel>(Token, SettingService.SettingEntity);
+            if (result.Success)
+            {
+                model.Settings = result.Values.Select(s =>
+                    new SettingViewModel
+                    {
+                        Id = s.Id,
+                        SettingName = s.SettingName,
+                        SettingScope = s.SettingScope,
+                        Value = s.Value
+                    }).OrderBy(s => s.SettingScope).ThenBy(s => s.SettingName).ToList();
+            }
+            else
+            {
+                AddMessageToModel(model, result.Message);
+            }
+
+            return View("Setting/Index", model);
         }
         #endregion
     }
