@@ -31,10 +31,19 @@
                     <th scope="row">@item.Id</th>
                     <td>@item.SettingScope</td>
                     <td>@item.SettingName</td>
-                    <td>@item.Value</td>
+                    <td>
+                        <span>
+                            @item.Value
+                        </span>
+
+                        <div id="form-@item.Id" class="d-none flex-row align-items-center">
+                            <input class="form-control" id="input-@item.Id" type="text" value="@item.Value" />
+                            <span class="fas fa-save pointer ml-2" style="font-size: x-large" title="Save setting's value" onclick="saveSettingValue(@item.Id)"></span>
+                            <span class="fas fa-times pointer ml-2" style="font-size: x-large" title="Cancel" onclick="cancelEditing(@item.Id)"></span>
+                        </div>
+                    </td>
                     <td scope="col">
-                        @{ string endpoint = $"/Setting/AffectedField/Delete/{item.Id}"; }
-                        <span class="fas fa-trash-alt pointer" title="Delete affected field" onclick="deleteItem('@endpoint')"></span>
+                        <span class="fas fa-edit pointer" id="edit-@item.Id" title="Click to edit setting's value" onclick="editSettingValue(@item.Id)"></span>
                     </td>
                 </tr>
             }

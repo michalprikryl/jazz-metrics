@@ -22,7 +22,5 @@ namespace WebApp.Models.User
 
         [Display(Name = "New company name")]
         public string Company { get; set; }
-
-        public int? CompanyId { get; set; }
     }
 }

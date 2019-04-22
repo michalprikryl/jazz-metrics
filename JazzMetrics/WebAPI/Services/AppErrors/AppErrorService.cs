@@ -21,9 +21,9 @@ namespace WebAPI.Services.AppErrors
         {
             return new AppErrorModel
             {
-                ExceptionMessage = dbModel.Exception,
+                Exception = dbModel.Exception,
                 Function = dbModel.Function,
-                InnerExceptionMessage = dbModel.InnerException,
+                InnerException = dbModel.InnerException,
                 Message = dbModel.Message,
                 Module = dbModel.Module,
                 Time = dbModel.Time,
@@ -41,9 +41,9 @@ namespace WebAPI.Services.AppErrors
             AppError appError = new AppError
             {
                 Deleted = false,
-                Exception = request.ExceptionMessage ?? UNKNOWN,
+                Exception = request.Exception ?? UNKNOWN,
                 Function = request.Function ?? UNKNOWN,
-                InnerException = request.InnerExceptionMessage ?? UNKNOWN,
+                InnerException = request.InnerException ?? UNKNOWN,
                 Message = request.Message ?? UNKNOWN,
                 Module = request.Module ?? UNKNOWN,
                 Solved = false,

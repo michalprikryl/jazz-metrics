@@ -51,36 +51,17 @@ namespace WebApp.Controllers
             {
                 if (model.Password == model.ConfirmPassword)
                 {
-                    BaseResponseModelPost resultCompany = null;
-                    if (!string.IsNullOrEmpty(model.Company))
-                    {
-                        resultCompany = await _crudService.Create(new CompanyModel { Name = model.Company }, null, SettingService.CompanyEntity);
-                        model.CompanyId = resultCompany.Id;
-                    }
+                    BaseResponseModelPost result = await _crudService.Create(model, null, UserService.UserEntity);
 
-                    if (resultCompany == null || resultCompany.Success)
-                    {
-                        BaseResponseModelPost result = await _crudService.Create(model, null, UserService.UserEntity);
+                    AddMessageToModel(model, result.Message, !result.Success);
 
-                        if (!result.Success && resultCompany != null)
-                        {
-                            await _crudService.Drop(model.CompanyId.Value, null, SettingService.CompanyEntity);
-                        }
+                    AddViewModelToTempData(model);
 
-                        AddMessageToModel(model, result.Message, !result.Success);
-
-                        AddViewModelToTempData(model);
-
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        AddMessageToModel(model, resultCompany.Message);
-                    }
+                    return RedirectToAction("Login");
                 }
                 else
                 {
-                    AddMessageToModel(model, "Password and cofirmed password are not equal!");
+                    AddMessageToModel(model, "Password and confirmed password are not equal!");
                 }
             }
 

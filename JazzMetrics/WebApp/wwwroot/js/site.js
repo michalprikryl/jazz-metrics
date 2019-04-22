@@ -31,6 +31,17 @@ async function updateUser(endpoint) {
     result && await postToServer(endpoint, 'Changed!');
 }
 
+async function solveAppError(id, solve) {
+    const result = await swal({
+        title: 'Are you sure?',
+        text: `Do you really want to mark this error as ${solve === 'True' ? 'solved' : 'not solved'}?`,
+        icon: "warning",
+        buttons: ["Cancel", "Yes, mark it!"]
+    });
+
+    result && await postToServer('AppError/Solve', solve === 'True' ? 'Solved!' : 'NOT solved!', { id, solve });
+}
+
 async function postToServer(endpoint, resultName, body) {
     showProcessing();
 
@@ -112,3 +123,36 @@ function topFunction() {
         daysOfWeekHighlighted: "0,6"
     });
 }();
+
+async function showErrorInfo(error) {
+    showProcessing();
+
+    const promise = fetch('/Setting/AppError/Info', {
+        method: "POST",
+        body: JSON.stringify(error),
+        headers: {
+            'Content-Type': 'application/json',
+            "RequestVerificationToken": document.getElementsByName("__RequestVerificationToken")[0].value
+        }
+    });
+
+    const modal = new tingle.modal({
+        footer: true,
+        stickyFooter: false,
+        closeMethods: ['overlay', 'button', 'escape'],
+        closeLabel: "Close"
+    });
+
+    modal.addFooterBtn('Close', 'tingle-btn tingle-btn--danger', () => modal.close());
+
+    const response = (await Promise.all([promise]))[0];
+    if (response.status >= 200 && response.status <= 304) {
+        modal.setContent(await response.text());
+    } else {
+        modal.setContent('<h1>Error occured, try again later please.</h1>');
+    }
+
+    hideProcessing();
+
+    modal.open();
+}

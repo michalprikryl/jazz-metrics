@@ -895,6 +895,27 @@ namespace WebApp.Controllers
 
             return View("AppError/Index", model);
         }
+
+        [HttpPost("AppError/Solve")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public async Task<IActionResult> AppErrorSolve([FromBody]AppErrorUpdateModel model)
+        {
+            return Json(await _crudService.PartialEdit(model.Id, CreatePatchList(CreatePatchModel("solved", model.Solve.ToString())), Token, SettingService.AppErrorEntity));
+        }
+
+        [HttpPost("AppError/Delete/{id}")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public async Task<IActionResult> AppErrorDelete(int id)
+        {
+            return Json(await _crudService.Drop(id, Token, SettingService.AppErrorEntity));
+        }
+
+        [HttpPost("AppError/Info")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public IActionResult AppErrorInfo([FromBody]AppErrorViewModel model)
+        {
+            return PartialView("AppError/Partials/AppErrorInfo", model);
+        }
         #endregion
 
         #region Setting
@@ -922,6 +943,13 @@ namespace WebApp.Controllers
             }
 
             return View("Setting/Index", model);
+        }
+
+        [HttpPost("Setting/ChangeValue")]
+        [Authorize(Roles = RoleSuperAdmin)]
+        public async Task<IActionResult> SettingChangeValue([FromBody]SettingUpdateModel model)
+        {
+            return Json(await _crudService.PartialEdit(model.Id, CreatePatchList(CreatePatchModel("value", model.Value)), Token, SettingService.SettingEntity));
         }
         #endregion
     }

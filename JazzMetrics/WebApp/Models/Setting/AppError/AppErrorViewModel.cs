@@ -21,4 +21,10 @@ namespace WebApp.Models.Setting.AppError
         public bool Deleted { get; set; }
         public string AppInfo { get; set; }
     }
+
+    public class AppErrorUpdateModel
+    {
+        public int Id { get; set; }
+        public bool Solve { get; set; }
+    }
 }

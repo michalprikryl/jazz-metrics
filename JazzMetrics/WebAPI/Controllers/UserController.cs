@@ -25,13 +25,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModelPost>> GetByUsername(string username)
         {
             return await _userService.GetByUsername(username);
         }
 
         [HttpPost, AllowAnonymous]
-        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Post([FromBody]UserModel value)
         {
             return await _userService.Create(value);

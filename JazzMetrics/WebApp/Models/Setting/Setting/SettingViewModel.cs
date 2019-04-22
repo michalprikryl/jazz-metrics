@@ -14,4 +14,10 @@ namespace WebApp.Models.Setting.Setting
         public string SettingName { get; set; }
         public string Value { get; set; }
     }
+
+    public class SettingUpdateModel
+    {
+        public int Id { get; set; }
+        public string Value { get; set; }
+    }
 }

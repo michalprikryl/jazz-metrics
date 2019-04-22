@@ -42,6 +42,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = RoleSuperAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Patch(int id, [FromBody]List<PatchModel> values)
         {
             return await _appErrorService.PartialEdit(id, values);

@@ -1,0 +1,18 @@
+﻿@model AppErrorViewModel
+
+<h2>App Error #@Model.Id information</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="jumbotron col-12">
+            <h1 class="display-3">@Model.Module // @Model.Function</h1>
+            <p class="lead">Time: @Model.Time</p>
+            <hr class="my-4" />
+            <p class="lead">App info: @Model.AppInfo</p>
+            <p class="lead">Exception message: @Model.Exception</p>
+            <p class="lead">Inner exception message #2: @Model.InnerException</p>
+            <p class="lead">Message: @Model.InnerException</p>
+        </div>
+    </div>
+</div>
+

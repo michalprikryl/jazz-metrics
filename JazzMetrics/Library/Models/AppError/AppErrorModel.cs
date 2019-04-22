@@ -23,11 +23,11 @@ namespace Library.Models.AppError
         /// <summary>
         /// chybova zprava s popisem /// Exception
         /// </summary>
-        public string ExceptionMessage { get; set; }
+        public string Exception { get; set; }
         /// <summary>
         /// chybova zprava s popisem od inner exception naseho exception /// InnerException
         /// </summary>
-        public string InnerExceptionMessage { get; set; }
+        public string InnerException { get; set; }
         /// <summary>
         /// zprava s dalsim popisem/zpravou (casto custom popis programora) /// Message
         /// </summary>
@@ -58,8 +58,8 @@ namespace Library.Models.AppError
         {
             Module = module;
             Function = function;
-            ExceptionMessage = exceptionMessage;
-            InnerExceptionMessage = innerExceptionMessage;
+            Exception = exceptionMessage;
+            InnerException = innerExceptionMessage;
             Message = message;
             AppInfo = user;
             Time = time ?? DateTime.Now;
@@ -78,9 +78,9 @@ namespace Library.Models.AppError
             Time = DateTime.Now;
             Module = module ?? e.TargetSite.DeclaringType.FullName.Split('+')[0];
             Function = function ?? $"{e.TargetSite.DeclaringType.Name} // {e.TargetSite.Name}";
-            InnerExceptionMessage = e.InnerException?.Message ?? string.Empty;
+            InnerException = e.InnerException?.Message ?? string.Empty;
             Message = message ?? string.Empty;
-            ExceptionMessage = e.Message;
+            Exception = e.Message;
             AppInfo = userID ?? "--";
         }
     }

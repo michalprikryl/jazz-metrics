@@ -86,9 +86,14 @@ namespace WebAPI.Services.Users
                             CompanyId = request.CompanyId
                         };
 
+                        if (!string.IsNullOrEmpty(request.Company))
+                        {
+                            user.Company = new Company { Name = request.Company };
+                        }
+
                         user.Password = PasswordHelper.EncodePassword(request.Password, user.Salt);
 
-                        if (request.CompanyId.HasValue)
+                        if (user.CompanyId.HasValue || user.Company != null)
                         {
                             user.UserRole = await GetUserRole(MainController.RoleAdmin);
                         }
@@ -102,7 +107,7 @@ namespace WebAPI.Services.Users
                         await Database.SaveChangesAsync();
 
                         response.Id = user.Id;
-                        response.Message = "User was successfully created!";
+                        response.Message = string.IsNullOrEmpty(request.Company) ? "User was successfully created!" : "User and company were successfully created!";
                     }
                 }
             }
@@ -196,7 +201,7 @@ namespace WebAPI.Services.Users
                     {
                         if (user.UserRole.Name != MainController.RoleSuperAdmin)
                         {
-                            user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == MainController.RoleUser) || user.UserRole.Name == MainController.RoleAdmin 
+                            user.UserRole = (!string.IsNullOrEmpty(item.Value) && item.Value == MainController.RoleUser) || user.UserRole.Name == MainController.RoleAdmin
                                 ? await GetUserRole(MainController.RoleUser) : await GetUserRole(MainController.RoleAdmin);
                         }
                     }

@@ -29,19 +29,21 @@ namespace WebAPI.Controllers
             return await _companyService.GetAll(lazy);
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost]
         public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]CompanyModel model)
         {
             return await _companyService.Create(model);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Put(int id, [FromBody]CompanyModel model)
         {
             return await _companyService.Edit(model);
         }
 
-        [HttpDelete("{id}"), AllowAnonymous]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModel>> Delete(int id)
         {
             return await _companyService.Drop(id);

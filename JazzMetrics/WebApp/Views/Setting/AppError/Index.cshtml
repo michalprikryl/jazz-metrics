@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "App errors";
-    var solved = new ResultViewModel { Color = "chartreuse", CssClass = "fa-check", Message = "This is error is solved! Click to change." };
-    var notSolved = new ResultViewModel { Color = "tomato", CssClass = "fa-times", Message = "This is error is NOT solved! Click to change." };
 }
 
 <partial name="Partials/_ErrorTable" />
@@ -19,7 +17,6 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Where</th>
-            <th scope="col">What</th>
             <th scope="col">When</th>
             <th scope="col">Who</th>
             <th scope="col">Message</th>
@@ -34,17 +31,24 @@
                 <tr>
                     <th scope="row">@item.Id</th>
                     <td>@item.Module/@item.Function</td>
-                    <td>
-                        @item.Exception
-                        <span class="fas fa-info" title="@item.InnerException"></span>
-                    </td>
                     <td>@item.Time</td>
                     <td>@item.AppInfo</td>
                     <td>@item.Message</td>
                     <td scope="col">
-                        <partial name="Partials/_Icon" model="@item.Solved ? solved : notSolved" />
-                        @{ string endpoint = $"/Setting/AppError/Delete/{item.Id}"; }
-                        <span class="fas fa-trash-alt pointer" title="Delete this error" onclick="deleteItem('@endpoint')"></span>
+                        <div class="d-flex justify-content-between pt-1">
+                            <span class="fas fa-info pointer" title="Show more information" onclick='showErrorInfo(@Html.Raw(Json.Serialize(item)))'></span>
+                            @if (item.Solved)
+                            {
+                                <span class="fas fa-check pointer" style="color: chartreuse; font-size: larger" title="This is error is solved! Click to change." onclick="solveAppError(@item.Id, '@(!item.Solved)')"></span>
+                            }
+                            else
+                            {
+                                <span class="fas fa-times pointer" style="color: tomato; font-size: larger" title="This is error is NOT solved! Click to change." onclick="solveAppError(@item.Id, '@(!item.Solved)')"></span>
+                            }
+
+                            @{ string endpoint = $"/Setting/AppError/Delete/{item.Id}"; }
+                            <span class="fas fa-trash-alt pointer" title="Delete this application error" onclick="deleteItem('@endpoint')"></span>
+                        </div>
                     </td>
                 </tr>
             }
@@ -52,7 +56,7 @@
         else
         {
             <tr>
-                <th scope="row" colspan="4" class="text-center">There are no application errors!</th>
+                <th scope="row" colspan="6" class="text-center">There are no application errors!</th>
             </tr>
         }
     </tbody>

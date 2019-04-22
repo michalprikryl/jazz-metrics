@@ -16,6 +16,11 @@
 
         public string Password { get; set; }
 
+        /// <summary>
+        /// pro specialni potreby vytvoreni uzivatele a firmy najednou
+        /// </summary>
+        public string Company { get; set; }
+
         public bool Validate() => !string.IsNullOrEmpty(Password) && ValidateEdit();
 
         public bool ValidateEdit() => !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Firstname) && !string.IsNullOrEmpty(Lastname) && (!UseLdaplogin || !string.IsNullOrEmpty(LdapUrl));

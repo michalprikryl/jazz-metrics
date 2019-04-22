@@ -28,5 +28,11 @@
     "inputFiles": [
       "wwwroot/js/mutation-observer.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/setting-form.min.js",
+    "inputFiles": [
+      "wwwroot/js/setting-form.js"
+    ]
   }
 ]
