@@ -1,3 +1,12 @@
+/*
+USE JazzMetrics
+GO
+*/
+/*
+USE pri0115;
+GO
+*/
+
 CREATE TABLE [User]
 (
 	[ID] int NOT NULL IDENTITY(1,1),

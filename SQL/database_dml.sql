@@ -25,7 +25,7 @@ INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt]
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
     ('Franta', 'Novak', 'superadmin', 'novak@gmail.com', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)
 INSERT INTO [User] ([FirstName], LastName, [Username], Email, [Password], [Salt], [UserRoleID], LanguageID, UseLDAPLogin, CompanyId) VALUES 
-    ('Michal', 'Prikryl', 'm.p.from.h@seznam.cz', 'm.p.from.h@seznam.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)
+    ('Michal', 'Prikryl', 'michal.prikryl@post.cz', 'michal.prikryl@post.cz', 'E1-6D-06-27-BD-E5-80-61-91-A9-B0-00-87-BD-C1-97', 'ExwjSI4MXC', 1, 1, 0, 1)
 
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Number', 'Metric values are numbers of value/type groups of artefact.')
 INSERT INTO [MetricType] ([Name], [Description]) VALUES ('Coverage', 'Metric is percentage - coverage of some artefact with another artefact etc.')
@@ -72,23 +72,27 @@ Arguments:
 
 Purpose:
 The metrics provides information how many HWRS Requirements have no status or are  in Statuses  - Under construction., Ready to review, Reviewed. Implemented, Tested', 1, 9, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Under construction', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Ready to review', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Reviewed', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Implemented', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 1)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 1, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/6/dataservice?report=6&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M85', 'HWRS', 'HWRS to SYAR, SYRS Traceability', '--', 2, 9, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 2)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 2, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/2/dataservice?report=2&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M59', 'HWRS', 'No. of HW Requirements reviewed', 'Number of HWRS Requirements with status Reviewed
@@ -99,8 +103,10 @@ Arguments:
 
 Purpose:
 The metrics provides information how many HW requirements are in the status reviewed or further – how many HW requirements were reviewed.', 1, 9, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'LITERAL_NAME', 'REFERENCE_ID', null, null, null, 3)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 3, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/1/dataservice?report=1&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M28', 'SWRS', 'No. of Software Requirements - Statuses', 'Number of SWRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
@@ -111,10 +117,12 @@ Arguments:
 
 Purpose:
 Number of software  requirements – statuses shows how many software requirements are in the state of: no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested', 1, 6, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 4)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 4)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 4, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/110/dataservice?report=102&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M35', 'SWRS', 'No. of SW requirements reviewed', 'Number of SWRS Requirements with status Reviewed
@@ -125,8 +133,10 @@ Arguments:
 
 Purpose:
 The metrics provides information how many SW requirements are in the status reviewed or further – how many SW requirements were reviewed.', 1, 6, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'LITERAL_NAME', 'REFERENCE_ID', null, null, null, 5)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 5, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/5/dataservice?report=5&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M27', 'SYRS', 'No. of System Requirements - Statuses', 'Number of SYRS with no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested
@@ -137,17 +147,21 @@ Arguments:
 
 Purpose:
 Number of system requirements – statuses shows how many system requirements are in the state of: no Status or Status Under Construction, Ready to Review, Reviewed, Implemented, Tested', 1, 2, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 6)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 6)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 6, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/3/dataservice?report=3&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M56', 'SYRS', 'No. of System requirements linked to System test cases', '--', 1, 1, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'REFERENCE_ID1', 'LITERAL_NAME1', null, null, null, 7)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('', 'REFERENCE_ID1', 'LITERAL_NAME1', null, null, null, 7)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 7, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/16/dataservice?report=16&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M03', 'SYRS', 'Review Coverage: System Reqs.', 'Ratio of number of all SYRS Requirements to number of SYRS Requirements with Status Reviewed, Implemented or Tested
@@ -158,8 +172,10 @@ Arguments:
 
 Purpose:
 Review coverage system requirements shows how many of the system requirements were reviewed.', 2, 2, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'SYRS', 'NAME', 'Coverage', 8)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 8, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/7/dataservice?report=7&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M06', 'SWRS', 'Review Coverage: SW Reqs.', 'Ratio of number of all SWRS Requirements to number of SWRS Requirements with Status Reviewed, Implemented or Tested
@@ -170,8 +186,10 @@ Arguments:
 
 Purpose:
 Review coverage software requirements shows percentage how many of the software requirements were reviewed.', 2, 6, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'SWRS', 'NAME', 'Coverage', 9)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 9, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/7/dataservice?report=7&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 1, 20.000)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M60', 'HWRS', 'Review Coverage: HW Reqs.', 'Ratio of number of all HWRS Requirements to number of HWRS Requirements with Status Reviewed, Implemented or Tested
@@ -182,8 +200,10 @@ Arguments:
 
 Purpose:
 Review coverage software requirements shows percentage how many of the software requirements were reviewed.', 2, 9, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, 'HWRS', 'NAME', 'Coverage', 10)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 10, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/7/dataservice?report=7&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 1, 20.000)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M75', 'SWRS', 'SW Integration Test Case Coverage', 'SWRS “Interface Requirements” vs SWRS Interface Requirements with Tested by filled
@@ -193,8 +213,10 @@ Arguments:
 • Collection or Module – All SWRS Modules
 
 Purpose:', 3, 7, 2, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 11)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 11, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/17/dataservice?report=17&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M65', 'SYAR', 'Review coverage for SYAR', 'Ratio of SYAR Requirement and Interface Requirement to number of Requirement and Interface Requirement with Status “Reviewed” and higher.
@@ -205,8 +227,10 @@ Arguments:
 
 Purpose:
 The metrics shows coverage of Statuses “Reviewed” and higher in SYAR Requirements and Interface Requirements.', 2, 3, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Reviewed;Implemented;Tested', 'LITERAL_NAME', null, '*all*', '', 'Coverage', 12)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 12, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/4/dataservice?report=4&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M66', 'SYAR', 'SYAR Statuses', 'Number of SYAR Requirements and Interface Requirements in Statuses
@@ -217,10 +241,12 @@ Arguments:
 
 Purpose:
 The metrics provides information how many SYAR Requirements and Interface Requirements have no status or are in Statuses - Under construction, Ready to review, Reviewed, Implemented, Tested.', 1, 3, 1, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('Under Construction;Ready to Review;Reviewed;Implemented;Tested', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 13)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('', 'LITERAL_NAME', 'LITERAL_NAME1', null, null, null, 13)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 13, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/4/dataservice?report=4&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M78', 'SYAR', 'SYAR to SYRS Traceability', 'Percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS
@@ -233,10 +259,14 @@ Arguments:
 
 Purpose:
 The metrics shows percentage of total SYAR Requirement versus Requirements that have an uplink to SYRS.', 2, 3, 2, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 14)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 14, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/8/dataservice?report=8&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
 
 INSERT INTO [Metric] ([Identificator], [RequirementGroup], [Name], [Description], [MetricTypeID], [AspiceProcessID], [AffectedFieldID], [CompanyId], [Public]) VALUES 
     ('M26', 'SYRS', 'System Requirements Test Case Coverage', '--', 2, 2, 3, 1, 1)
-INSERT INTO [dbo].[MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
+INSERT INTO [MetricColumn] ([Value], [FieldName], [NumberFieldName], [DivisorValue], [DivisorFieldName], [CoverageName], [MetricID]) VALUES
     ('*any*', 'REFERENCE_ID1', null, '*all*', '', 'Coverage', 15)
+INSERT INTO [ProjectMetric] ([ProjectID], [MetricID], [CreateDate], [LastUpdateDate], [DataURL], [DataUsername], [DataPassword], [Warning], [MinimalWarningValue]) VALUES
+    (1, 15, GETDATE(), GETDATE(), 'https://158.196.141.113/rs/query/15/dataservice?report=15&limit=-1&basicAuthenticationEnabled=true', 'mprikryl', '=8GbzVGa', 0, null)
