@@ -98,38 +98,29 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var result = await _userService.AuthenticateUser(model);
+                if (result == null)
                 {
-                    var result = await _userService.AuthenticateUser(model);
-                    if (result == null)
-                    {
-                        model.MessageList.Add(new Tuple<string, bool>("Server is not accessible.", true));
-                    }
-                    else if (result.Success && result.Value.User != null && !string.IsNullOrEmpty(result.Value.Token))
-                    {
-                        Task login = UserLogin(result.Value.User, result.Value.Token);
+                    model.MessageList.Add(new Tuple<string, bool>("Server is not accessible.", true));
+                }
+                else if (result.Success && result.Value.User != null && !string.IsNullOrEmpty(result.Value.Token))
+                {
+                    Task login = UserLogin(result.Value.User, result.Value.Token);
 
-                        if (Url.IsLocalUrl(returnUrl))
-                        {
-                            return Redirect(returnUrl);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
                     }
                     else
                     {
-                        ModelState.Remove("Password");
-
-                        model.MessageList.Add(new Tuple<string, bool>(result.Message ?? "Incorrect username or password.", true));
+                        return RedirectToAction("Index", "Home");
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    model.MessageList.Add(new Tuple<string, bool>("Error occured during authorization, please try again.", true));
+                    ModelState.Remove("Password");
 
-                    await ErrorService.CreateError(new AppErrorModel(e, MyUser?.UserId.ToString() ?? "WA", module: "UserController", function: "Login"));
+                    model.MessageList.Add(new Tuple<string, bool>(result.Message ?? "Incorrect username or password.", true));
                 }
             }
 

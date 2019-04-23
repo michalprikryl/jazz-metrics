@@ -1,4 +1,5 @@
 ﻿using Library.Models.AppError;
+using Library.Networking.HttpException;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,22 @@ namespace WebApp.Controllers
             var error = feature?.Error;
             if (error != null)
             {
-               var task = ErrorService.CreateError(new AppErrorModel(error, MyUser?.UserId.ToString(), "global error handler"));
+                if (error is ForbiddenException)
+                {
+                    return RedirectToAction("AccessDenied", "User");
+                }
+                else if (error is NotFoundException)
+                {
+                    return RedirectToAction("NotFound");
+                }
+                else if (error is UnauthorizedException)
+                {
+                    return RedirectToAction("Logout", "User");
+                }
+                else
+                {
+                    var task = ErrorService.CreateError(new AppErrorModel(error, MyUser?.UserId.ToString(), "global error handler"));
+                }
             }
 
             return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });

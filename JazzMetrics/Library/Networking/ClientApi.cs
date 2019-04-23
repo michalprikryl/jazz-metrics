@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Library.Networking.HttpException;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -280,6 +281,19 @@ namespace Library.Networking
 
         private async Task SetResult(HttpResponseMessage result, Func<HttpResponseMessage, Task> method)
         {
+            if (result.StatusCode == HttpStatusCode.Forbidden) //403
+            {
+                throw new ForbiddenException();
+            }
+            else if (result.StatusCode == HttpStatusCode.Unauthorized) //401
+            {
+                throw new UnauthorizedException();
+            }
+            else if (result.StatusCode == HttpStatusCode.NotFound) //404
+            {
+                throw new NotFoundException();
+            }
+
             await method(result);
             HTTPResultOfLastRequest = $"{(int)result.StatusCode} - {Enum.GetName(typeof(HttpStatusCode), result.StatusCode)}";
         }
