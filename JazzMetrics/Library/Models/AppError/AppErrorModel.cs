@@ -36,7 +36,13 @@ namespace Library.Models.AppError
         /// uzivatel, pod kterym chyba vznikla /// AppInfo
         /// </summary>
         public string AppInfo { get; set; }
+        /// <summary>
+        /// zda je error vyreseny
+        /// </summary>
         public bool Solved { get; set; }
+        /// <summary>
+        /// zda je error smazany
+        /// </summary>
         public bool Deleted { get; set; }
 
         /// <summary>

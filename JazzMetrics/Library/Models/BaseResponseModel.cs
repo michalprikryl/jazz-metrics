@@ -16,24 +16,47 @@ namespace Library.Models
         /// </summary>
         public bool Success { get; set; }
 
+        /// <summary>
+        /// nastavuje Success na true
+        /// </summary>
         public BaseResponseModel()
         {
             Success = true;
         }
     }
 
+    /// <summary>
+    /// trida zaobalujici vraceny seznam
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BaseResponseModelGetAll<T> : BaseResponseModel
     {
+        /// <summary>
+        /// seznam objektu
+        /// </summary>
         public List<T> Values { get; set; }
     }
 
+    /// <summary>
+    /// trida zaobalujici vraceny objekt
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BaseResponseModelGet<T> : BaseResponseModel
     {
+        /// <summary>
+        /// objekt
+        /// </summary>
         public T Value { get; set; }
     }
 
+    /// <summary>
+    /// trida zaobalujici ID nove vytvorene entity v DB
+    /// </summary>
     public class BaseResponseModelPost : BaseResponseModel
     {
+        /// <summary>
+        /// ID nove vytvorene entity v DB
+        /// </summary>
         public int Id { get; set; }
     }
 }

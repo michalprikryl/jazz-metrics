@@ -53,7 +53,7 @@ namespace Library.Security
         /// <summary>
         /// vytvori MD5 hash ze stringu
         /// </summary>
-        /// <param name="pass"></param>
+        /// <param name="pass">string</param>
         /// <returns></returns>
         private static string EncodePasswordMd5(string pass)
         {
@@ -64,8 +64,18 @@ namespace Library.Security
             return BitConverter.ToString(encodedBytes);
         }
 
+        /// <summary>
+        /// vytvori tajny base64 z plaintextu
+        /// </summary>
+        /// <param name="plainText"></param>
+        /// <returns></returns>
         public static string Base64Encode(string plainText) => Convert.ToBase64String(Encoding.UTF8.GetBytes(plainText)).Reverse();
 
+        /// <summary>
+        /// vytvori plaintext z tajneho base64
+        /// </summary>
+        /// <param name="base64EncodedData"></param>
+        /// <returns></returns>
         public static string Base64Decode(string base64EncodedData) => Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedData.Reverse()));
     }
 }

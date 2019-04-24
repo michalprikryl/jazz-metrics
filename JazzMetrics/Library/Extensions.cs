@@ -14,6 +14,9 @@ namespace Library
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Claim pro userId
+        /// </summary>
         public const string UserIdClaim = "userid";
 
         /// <summary>
@@ -88,11 +91,29 @@ namespace Library
             return new string(array);
         }
 
+        /// <summary>
+        /// extension pro vyhledani prvniho prvku v DB tabulce
+        /// </summary>
+        /// <typeparam name="T">typ entity z DB</typeparam>
+        /// <param name="dbSet">tabulka z DB</param>
+        /// <param name="expression">vyraz pro hledani prvku v tabulce</param>
+        /// <param name="tracking">true -> pouzije se tracking (hlidani zmen hodnot properties)</param>
+        /// <returns></returns>
         public static async Task<T> FirstOrDefaultAsyncSpecial<T>(this IQueryable<T> dbSet, Expression<Func<T, bool>> expression, bool tracking) where T : class
         {
             return await (tracking ? dbSet.FirstOrDefaultAsync(expression) : dbSet.AsNoTracking().FirstOrDefaultAsync(expression));
         }
 
+        /// <summary>
+        /// extension pro vyhledani prvniho prvku v DB tabulce, vyuziva Eager loading
+        /// </summary>
+        /// <typeparam name="T">typ entity z DB</typeparam>
+        /// <typeparam name="U">typ navazne entity z DB</typeparam>
+        /// <param name="dbSet">tabulka z DB</param>
+        /// <param name="expression">vyraz pro hledani prvku v tabulce</param>
+        /// <param name="tracking">true -> pouzije se tracking (hlidani zmen hodnot properties)</param>
+        /// <param name="include">vyraz pro Eager loading</param>
+        /// <returns></returns>
         public static async Task<T> FirstOrDefaultAsyncSpecial<T, U>(this IQueryable<T> dbSet, Expression<Func<T, bool>> expression, bool tracking, Expression<Func<T, U>> include) where T : class
         {
             if (include != null && tracking)
@@ -113,6 +134,14 @@ namespace Library
             }
         }
 
+        /// <summary>
+        /// specialni vyvolani stazeni dat z DB -> nehlida upravy properties stazenych objektu + pridava moznost Eager loadingu
+        /// </summary>
+        /// <typeparam name="T">typ entity z DB</typeparam>
+        /// <typeparam name="U">typ navazne entity z DB</typeparam>
+        /// <param name="dbSet">tabulka z DB</param>
+        /// <param name="expression">vyraz pro hledani prvku v tabulce</param>
+        /// <returns></returns>
         public static async Task<List<T>> ToListAsyncSpecial<T, U>(this IQueryable<T> dbSet, Expression<Func<T, U>> expression) where T : class
         {
             if (expression == null)
@@ -125,6 +154,12 @@ namespace Library
             }
         }
 
+        /// <summary>
+        /// specialni vyvolani stazeni dat z DB -> nehlida upravy properties stazenych objektu
+        /// </summary>
+        /// <typeparam name="T">typ entity z DB</typeparam>
+        /// <param name="dbSet">tabulka z DB</param>
+        /// <returns></returns>
         public static async Task<List<T>> ToListAsyncSpecial<T>(this IQueryable<T> dbSet) where T : class
         {
             return await dbSet.AsNoTracking().ToListAsync();

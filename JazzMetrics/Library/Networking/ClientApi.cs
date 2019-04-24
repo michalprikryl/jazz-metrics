@@ -21,20 +21,24 @@ namespace Library.Networking
         /// URL serveru
         /// </summary>
         public string ServerUrl { get; set; }
+        /// <summary>
+        /// controller na serveru
+        /// </summary>
         public string Controller { get; set; }
         /// <summary>
         /// vysledek posledniho volani vzdalene sluzby
         /// </summary>
         public string HTTPResultOfLastRequest { get; private set; }
 
+        /// <summary>
+        /// pristup k appsettings.json
+        /// </summary>
         public IConfiguration Configuration { get; private set; }
 
-        public ClientApi(string serverUrl, string controller)
-        {
-            ServerUrl = serverUrl;
-            Controller = controller;
-        }
-
+        /// <summary>
+        /// nacita URL serveru z konfigu (appsettings.json)
+        /// </summary>
+        /// <param name="config">pristup k appsettings.json</param>
         public ClientApi(IConfiguration config)
         {
             Configuration = config;
@@ -46,7 +50,6 @@ namespace Library.Networking
         /// </summary>
         /// <param name="config">config</param>
         /// <param name="controller">controller, na ktery se posila</param>
-        /// <param name="jwt">jwt</param>
         public ClientApi(IConfiguration config, string controller)
         {
             Configuration = config;
@@ -54,19 +57,38 @@ namespace Library.Networking
             ServerUrl = config["ServerApiUrl"];
         }
 
+        /// <summary>
+        /// vytvori HTTP Basic hlavicku
+        /// </summary>
+        /// <param name="username">prihlasovaci jmeno</param>
+        /// <param name="password">heslo</param>
+        /// <returns></returns>
         public static string GetHttpBasicHeader(string username, string password) => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
 
+        /// <summary>
+        /// posle HTTP POST pozadavek
+        /// </summary>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <param name="mediaType">typ dat</param>
+        /// <returns></returns>
         protected async Task PostToAPI(Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             await PostToAPI(string.Empty, method, controller, endpoint, jwt, mediaType);
         }
 
         /// <summary>
-        /// posle HTTP POST pozadavek na dany controller
+        /// posle HTTP POST pozadavek
         /// </summary>
-        /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
+        /// <param name="content">telo pozadavku</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <param name="mediaType">typ dat</param>
+        /// <returns></returns>
         protected async Task PostToAPI(string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
@@ -82,11 +104,16 @@ namespace Library.Networking
         }
 
         /// <summary>
-        /// posle HTTP PUT pozadavek na dany controller
+        /// posle HTTP PUT pozadavek
         /// </summary>
-        /// <param name="content">content pozadavku ve formatu danem dalsim parametrem</param>
+        /// <param name="id">ID entity</param>
+        /// <param name="content">telo pozadavku</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
-        /// <param name="mediaType">jaky chci urcit media type pozadavku - defaultne "application/json"</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <param name="mediaType">typ dat</param>
+        /// <returns></returns>
         protected async Task PutToAPI(int id, string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
@@ -106,6 +133,17 @@ namespace Library.Networking
             }
         }
 
+        /// <summary>
+        /// posle HTTP PUT pozadavek
+        /// </summary>
+        /// <param name="id">ID entity</param>
+        /// <param name="model">data pozadavku</param>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <param name="mediaType">typ dat</param>
+        /// <returns></returns>
         protected async Task PatchToAPI(int id, List<PatchModel> model, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(SerializeObjectToJSON(model), Encoding.UTF8, mediaType);
@@ -126,10 +164,14 @@ namespace Library.Networking
         }
 
         /// <summary>
-        /// posle HTTP DELETE pozadavek na dany controller
+        /// posle HTTP DELETE pozadavek
         /// </summary>
-        /// <param name="id">id entity, kterou chci smazat</param>
+        /// <param name="id">ID entity</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task DeleteToAPI(int? id, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             if (!string.IsNullOrEmpty(endpoint))
@@ -150,10 +192,15 @@ namespace Library.Networking
         }
 
         /// <summary>
-        /// posle HTTP DELETE pozadavek na dany controller (s daty v tele pozadavku!)
+        /// posle HTTP DELETE pozadavek (s daty v tele pozadavku!)
         /// </summary>
-        /// <param name="id">id entity, kterou chci smazat</param>
+        /// <param name="content">telo pozadavku</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <param name="mediaType">typ dat</param>
+        /// <returns></returns>
         protected async Task DeleteToAPI(string content, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null, string mediaType = "application/json")
         {
             StringContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
@@ -175,36 +222,86 @@ namespace Library.Networking
             }
         }
 
+        /// <summary>
+        /// posle HTTP GET pozadavek
+        /// </summary>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI(string.Empty, method, controller, endpoint, jwt);
         }
 
+        /// <summary>
+        /// posle HTTP GET pozadavek
+        /// </summary>
+        /// <param name="id">ID entity</param>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(int id, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI($"/{id}", method, controller, endpoint, jwt);
         }
 
         /// <summary>
-        /// posle HTTP GET pozadavek na dany controller
+        /// posle HTTP GET pozadavek
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="parameters">parametry pridane k URL adrese</param>
         /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI(GetParametersString(parameters), method, controller, endpoint, jwt);
         }
 
+        /// <summary>
+        /// posle HTTP GET pozadavek
+        /// </summary>
+        /// <param name="id">ID entity</param>
+        /// <param name="parameters">parametry pridane k URL adrese</param>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(int id, List<Tuple<string, string>> parameters, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI($"/{id}{GetParametersString(parameters)}", method, controller, endpoint, jwt);
         }
 
+        /// <summary>
+        /// posle HTTP GET pozadavek
+        /// </summary>
+        /// <param name="id">ID entity</param>
+        /// <param name="entity">entita pod hlavni entitou</param>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(int id, string entity, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             await GetToAPI($"/{id}/{entity}", method, controller, endpoint, jwt);
         }
 
+        /// <summary>
+        /// posle HTTP GET pozadavek
+        /// </summary>
+        /// <param name="queryString">kompletni query string URL adresy</param>
+        /// <param name="method">metoda, kterou chci spustit po ziskani dat z API</param>
+        /// <param name="controller">controller, na ktery chci pozadavek poslat</param>
+        /// <param name="endpoint">endpoint controlleru, na ktery chci pozadavek poslat</param>
+        /// <param name="jwt">JWT pro pristup</param>
+        /// <returns></returns>
         protected async Task GetToAPI(string queryString, Func<HttpResponseMessage, Task> method, string controller = null, string endpoint = "", string jwt = null)
         {
             if (!string.IsNullOrEmpty(endpoint))
@@ -222,6 +319,11 @@ namespace Library.Networking
             }
         }
 
+        /// <summary>
+        /// vytvori string z parametru URL -> query string
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         protected string GetParametersString(List<Tuple<string, string>> parameters)
         {
             StringBuilder builder = new StringBuilder();
@@ -242,16 +344,33 @@ namespace Library.Networking
             return builder.ToString();
         }
 
+        /// <summary>
+        /// vytvori parametr pro GET
+        /// </summary>
+        /// <param name="name">nazev</param>
+        /// <param name="value">ciselna hodnota</param>
+        /// <returns></returns>
         protected Tuple<string, string> GetParameter(string name, int value)
         {
             return GetParameter(name, value.ToString());
         }
 
+        /// <summary>
+        /// vytvori parametr pro GET
+        /// </summary>
+        /// <param name="name">nazev</param>
+        /// <param name="value">hodnota</param>
+        /// <returns></returns>
         protected Tuple<string, string> GetParameter(string name, string value)
         {
             return new Tuple<string, string>(name, value);
         }
 
+        /// <summary>
+        /// vytvori seznam prametru
+        /// </summary>
+        /// <param name="parameters">jednotlive parametry</param>
+        /// <returns></returns>
         protected List<Tuple<string, string>> GetParametersList(params Tuple<string, string>[] parameters)
         {
             return parameters.ToList();
@@ -270,7 +389,8 @@ namespace Library.Networking
         /// <summary>
         /// prida dalsi hlavicky
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="client">http client</param>
+        /// <param name="jwt">JWT pro pristup</param>
         private void AdditionalHeaders(HttpClient client, string jwt)
         {
             if (!string.IsNullOrEmpty(jwt))
@@ -279,6 +399,12 @@ namespace Library.Networking
             }
         }
 
+        /// <summary>
+        /// nastaveni vysledku -> metoda volana vzdy pro prijeti vysledku
+        /// </summary>
+        /// <param name="result">vysledek volani</param>
+        /// <param name="method">metoda pro spusteni</param>
+        /// <returns></returns>
         private async Task SetResult(HttpResponseMessage result, Func<HttpResponseMessage, Task> method)
         {
             if (result.StatusCode == HttpStatusCode.Forbidden) //403
