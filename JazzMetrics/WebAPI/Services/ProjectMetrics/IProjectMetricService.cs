@@ -10,6 +10,5 @@ namespace WebAPI.Services.ProjectMetrics
     public interface IProjectMetricService : ICrudOperations<ProjectMetricModel, ProjectMetric>
     {
         Task<BaseResponseModelGetAll<ProjectMetricLogModel>> GetProjectMetricLogs(int id);
-        Task<BaseResponseModelGetAll<ProjectMetricModel>> GetAllByProjectId(int projectId, bool lazy);
     }
 }

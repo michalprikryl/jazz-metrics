@@ -3,6 +3,7 @@ using Database.DAO;
 using Library;
 using Library.Models;
 using Library.Models.AppError;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace WebAPI.Services.Helper
         private readonly IEmailService _emailService;
         private readonly ISettingService _settingService;
         private readonly IAppErrorService _appErrorService;
+
+        private CurrentUser _currentUser;
 
         public HelperService(JazzMetricsContext db, IEmailService email, ISettingService setting, IAppErrorService appErrorService) : base(db)
         {
@@ -69,19 +72,25 @@ namespace WebAPI.Services.Helper
 
         public CurrentUser GetCurrentUser(int userId)
         {
-            User user = Database.User.FirstOrDefault(u => u.Id == userId);
-            if (user != null)
+            if (_currentUser == null)
             {
-                return new CurrentUser
+                User user = Database.User.Include(u => u.UserRole).FirstOrDefault(u => u.Id == userId);
+                if (user != null)
                 {
-                    Id = user.Id,
-                    CompanyId = user.CompanyId
-                };
+                    _currentUser = new CurrentUser
+                    {
+                        Id = user.Id,
+                        CompanyId = user.CompanyId,
+                        RoleName = user.UserRole.Name
+                    };
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
-            {
-                return null;
-            }
+
+            return _currentUser;
         }
     }
 }

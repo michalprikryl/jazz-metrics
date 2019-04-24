@@ -1,6 +1,4 @@
-﻿using Library.Models.MetricColumn;
-
-namespace Library.Models.ProjectMetricSnapshots
+﻿namespace Library.Models.ProjectMetricSnapshots
 {
     public class ProjectMetricColumnValueModel
     {
@@ -8,7 +6,5 @@ namespace Library.Models.ProjectMetricSnapshots
         public decimal Value { get; set; }
         public int ProjectMetricSnapshotId { get; set; }
         public int MetricColumnId { get; set; }
-
-        public virtual MetricColumnModel MetricColumn { get; set; }
     }
 }

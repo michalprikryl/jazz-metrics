@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Library
 {
@@ -81,6 +86,48 @@ namespace Library
             char[] array = text.ToCharArray();
             Array.Reverse(array);
             return new string(array);
+        }
+
+        public static async Task<T> FirstOrDefaultAsyncSpecial<T>(this IQueryable<T> dbSet, Expression<Func<T, bool>> expression, bool tracking) where T : class
+        {
+            return await (tracking ? dbSet.FirstOrDefaultAsync(expression) : dbSet.AsNoTracking().FirstOrDefaultAsync(expression));
+        }
+
+        public static async Task<T> FirstOrDefaultAsyncSpecial<T, U>(this IQueryable<T> dbSet, Expression<Func<T, bool>> expression, bool tracking, Expression<Func<T, U>> include) where T : class
+        {
+            if (include != null && tracking)
+            {
+                return await dbSet.Include(include).FirstOrDefaultAsync(expression);
+            }
+            else if (tracking)
+            {
+                return await dbSet.FirstOrDefaultAsync(expression);
+            }
+            else if (include != null)
+            {
+                return await dbSet.Include(include).AsNoTracking().FirstOrDefaultAsync(expression);
+            }
+            else
+            {
+                return await dbSet.AsNoTracking().FirstOrDefaultAsync(expression);
+            }
+        }
+
+        public static async Task<List<T>> ToListAsyncSpecial<T, U>(this IQueryable<T> dbSet, Expression<Func<T, U>> expression) where T : class
+        {
+            if (expression == null)
+            {
+                return await dbSet.AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                return await dbSet.Include(expression).AsNoTracking().ToListAsync();
+            }
+        }
+
+        public static async Task<List<T>> ToListAsyncSpecial<T>(this IQueryable<T> dbSet) where T : class
+        {
+            return await dbSet.AsNoTracking().ToListAsync();
         }
     }
 }

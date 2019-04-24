@@ -1,6 +1,4 @@
 ﻿using Library.Models;
-using Library.Models.AppError;
-using Library.Models.Company;
 using Library.Models.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,7 +11,6 @@ using WebApp.Models.User;
 using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Language;
-using WebApp.Services.Setting;
 using WebApp.Services.Users;
 
 namespace WebApp.Controllers

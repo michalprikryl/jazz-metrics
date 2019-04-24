@@ -21,7 +21,7 @@ namespace WebApp.Controllers
         {
             HomeViewModel model = new HomeViewModel();
 
-            var result = await _crudService.GetAll<ProjectModel>(Token, ProjectService.ProjectEntity, false);
+            var result = await _crudService.GetAll<ProjectModel>(Token, ProjectService.ProjectEntity);
             if (result.Success)
             {
                 model.Projects = result.Values.Select(p =>

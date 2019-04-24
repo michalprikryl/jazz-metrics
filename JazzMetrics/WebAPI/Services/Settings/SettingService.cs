@@ -1,11 +1,13 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.Settings;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Services.Email;
 using WebAPI.Services.Helpers;
@@ -33,14 +35,10 @@ namespace WebAPI.Services.Settings
 
         public async Task<BaseResponseModelGetAll<SettingModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGetAll<SettingModel> { Values = new List<SettingModel>() };
-
-            foreach (var item in await Database.Setting.ToListAsync())
+            return new BaseResponseModelGetAll<SettingModel>
             {
-                response.Values.Add(ConvertToModel(item));
-            }
-
-            return response;
+                Values = await Database.Setting.Select(s => ConvertToModel(s)).ToListAsyncSpecial()
+            };
         }
 
         public Task<BaseResponseModelPost> Create(SettingModel request)
@@ -81,7 +79,7 @@ namespace WebAPI.Services.Settings
             return response;
         }
 
-        public async Task<Setting> Load(int id, BaseResponseModel response)
+        public async Task<Setting> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
             Setting setting = await Database.Setting.FirstOrDefaultAsync(a => a.Id == id);
             if (setting == null)

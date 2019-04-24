@@ -1,9 +1,9 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.AffectedFields;
 using Library.Networking;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace WebAPI.Services.AffectedFields
         {
             return new BaseResponseModelGetAll<AffectedFieldModel>
             {
-                Values = (await Database.AffectedField.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
+                Values = await Database.AffectedField.Select(a => ConvertToModel(a)).ToListAsyncSpecial()
             };
         }
 
@@ -27,7 +27,7 @@ namespace WebAPI.Services.AffectedFields
         {
             var response = new BaseResponseModelGet<AffectedFieldModel>();
 
-            AffectedField affectedField = await Load(id, response);
+            AffectedField affectedField = await Load(id, response, false);
             if (affectedField != null)
             {
                 response.Value = ConvertToModel(affectedField);
@@ -120,9 +120,9 @@ namespace WebAPI.Services.AffectedFields
             throw new System.NotImplementedException();
         }
 
-        public async Task<AffectedField> Load(int id, BaseResponseModel response)
+        public async Task<AffectedField> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            AffectedField affectedField = await Database.AffectedField.FirstOrDefaultAsync(a => a.Id == id);
+            AffectedField affectedField = await Database.AffectedField.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking);
             if (affectedField == null)
             {
                 response.Success = false;

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.Controllers;
 using WebAPI.Services.Helper;
@@ -108,7 +109,7 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            Project project = await Load(id, response);
+            Project project = await Load(id, response, true, false);
             if (project != null)
             {
                 if (project.ProjectMetric.Count == 0)
@@ -161,31 +162,36 @@ namespace WebAPI.Services.Projects
         {
             var response = new BaseResponseModelGet<ProjectModel>();
 
-            Project project = await Load(id, response);
+            Project project = await Load(id, response, true, lazy);
             if (project != null)
             {
                 response.Value = ConvertToModel(project);
 
                 if (!lazy)
                 {
-                    response.Value.ProjectUsers = GetProjectUsers(project.ProjectUser);
-                    response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
+                    response.Value.ProjectUsers = GetProjectUsers(project.ProjectUser, true);
+                    response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric, true);
                 }
             }
 
             return response;
         }
 
+        /// <summary>
+        /// pro ziskani dat na projektovou nastenku
+        /// </summary>
+        /// <param name="id">ID projektu</param>
+        /// <returns></returns>
         public async Task<BaseResponseModelGet<ProjectModel>> Get(int id)
         {
             var response = new BaseResponseModelGet<ProjectModel>();
 
-            Project project = await Load(id, response);
+            Project project = await LoadProjectForDashboard(id, response);
             if (project != null)
             {
                 response.Value = ConvertToModel(project);
 
-                response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric);
+                response.Value.ProjectMetrics = GetProjectMetrics(project.ProjectMetric, true, true);
 
                 for (int i = 0; i < response.Value.ProjectMetrics.Count; i++)
                 {
@@ -200,7 +206,7 @@ namespace WebAPI.Services.Projects
         {
             var response = new BaseResponseModelGetAll<ProjectModel> { Values = new List<ProjectModel>() };
 
-            foreach (var item in await LoadUsersProjects())
+            foreach (var item in await LoadUsersProjects(lazy))
             {
                 ProjectModel project = ConvertToModel(item);
 
@@ -220,7 +226,7 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModel response = new BaseResponseModel { Message = "Update of all projects metrics ended successfully. For more detailed result check project metric log." };
 
-            foreach (var item in await Database.Project.ToListAsync())
+            foreach (var item in await Database.Project.Include(p => p.ProjectMetric).ToListAsync())
             {
                 await CreateSnapshots(item.Id, item);
             }
@@ -232,7 +238,7 @@ namespace WebAPI.Services.Projects
         {
             BaseResponseModel response = new BaseResponseModel { Message = "Update of all project metrics ended successfully. For more detailed result check project metric log." };
 
-            project = project ?? await Load(id, response);
+            project = project ?? await Load(id, response, true, false);
             if (project != null)
             {
                 foreach (var item in project.ProjectMetric)
@@ -269,9 +275,10 @@ namespace WebAPI.Services.Projects
             return response;
         }
 
-        public async Task<Project> Load(int id, BaseResponseModel response)
+        public async Task<Project> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            Project project = await Database.Project.FirstOrDefaultAsync(a => a.Id == id);
+            var query = lazy ? Database.Project.AsQueryable() : Database.Project.Include(p => p.ProjectMetric).ThenInclude(pm => pm.Metric);
+            Project project = await query.FirstOrDefaultAsyncSpecial(a => a.Id == id, true, u => u.ProjectUser); //vzdy musi byt true, aby se korektne nacetli uzivatele projektu - viz nize
             if (project == null)
             {
                 response.Success = false;
@@ -279,9 +286,8 @@ namespace WebAPI.Services.Projects
             }
             else
             {
-                User user = await Database.User.FirstAsync(u => u.Id == CurrentUser.Id);
-                if ((user.UserRole.Name == MainController.RoleUser && project.ProjectUser.All(p => p.UserId != CurrentUser.Id)) ||
-                    (user.UserRole.Name != MainController.RoleUser && project.ProjectUser.All(u => u.User.CompanyId != user.CompanyId)))
+                if ((CurrentUser.RoleName == MainController.RoleUser && project.ProjectUser.All(p => p.UserId != CurrentUser.Id)) ||
+                    (CurrentUser.RoleName != MainController.RoleUser && project.ProjectUser.All(u => u.User.CompanyId != CurrentUser.CompanyId)))
                 {
                     project = null;
                     response.Success = false;
@@ -292,17 +298,27 @@ namespace WebAPI.Services.Projects
             return project;
         }
 
-        public async Task<IEnumerable<Project>> LoadUsersProjects()
+        public async Task<IEnumerable<Project>> LoadUsersProjects(bool lazy)
         {
-            User user = await Database.User.FirstAsync(u => u.Id == CurrentUser.Id);
-            if (user.UserRole.Name == MainController.RoleUser)
+            IQueryable<Project> userProjects;
+            if (CurrentUser.RoleName == MainController.RoleUser)
             {
-                return user.ProjectUser.Select(u => u.Project);
+                userProjects = Database.ProjectUser
+                    .Where(u => u.UserId == CurrentUser.Id)
+                        .Select(u => u.Project);
             }
             else
             {
-                return (await Database.Project.ToListAsync()).Where(p => p.ProjectUser.Any(u => u.User.CompanyId == user.CompanyId));
+                userProjects = Database.Project
+                    .Where(p => p.ProjectUser.Any(u => u.User.CompanyId == CurrentUser.CompanyId));
             }
+
+            if (!lazy)
+            {
+                userProjects = userProjects.Include(p => p.ProjectMetric).Include(p => p.ProjectUser);
+            }
+
+            return await userProjects.ToListAsync();
         }
 
         public Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
@@ -310,19 +326,58 @@ namespace WebAPI.Services.Projects
             throw new NotImplementedException();
         }
 
-        private List<ProjectUserModel> GetProjectUsers(ICollection<ProjectUser> users) => users.Select(u =>
+        private async Task<Project> LoadProjectForDashboard(int id, BaseResponseModelGet<ProjectModel> response)
+        {
+            Project project = await Database.Project
+                .Include(p => p.ProjectMetric).ThenInclude(pm => pm.Metric).ThenInclude(m => m.MetricType)
+                .Include(p => p.ProjectMetric).ThenInclude(pm => pm.Metric).ThenInclude(m => m.MetricColumn)
+                .Include(p => p.ProjectMetric).ThenInclude(pm => pm.ProjectMetricSnapshot).ThenInclude(pms => pms.ProjectMetricColumnValue)
+                    .FirstOrDefaultAsyncSpecial(a => a.Id == id, true);
+            if (project == null)
+            {
+                response.Success = false;
+                response.Message = "Unknown project!";
+            }
+            else
+            {
+                if ((CurrentUser.RoleName == MainController.RoleUser && project.ProjectUser.All(p => p.UserId != CurrentUser.Id)) ||
+                    (CurrentUser.RoleName != MainController.RoleUser && project.ProjectUser.All(u => u.User.CompanyId != CurrentUser.CompanyId)))
+                {
+                    project = null;
+                    response.Success = false;
+                    response.Message = "You don't have access to this project!";
+                }
+            }
+
+            return project;
+        }
+
+        private List<ProjectUserModel> GetProjectUsers(ICollection<ProjectUser> users, bool userProps = false) => users.Select(u =>
             {
                 ProjectUserModel projectUser = _projectUserService.ConvertToModel(u);
-                projectUser.User = _userService.ConvertToModel(u.User);
+
+                if (userProps)
+                {
+                    projectUser.User = _userService.ConvertToModel(u.User);
+                }
+
                 return projectUser;
             }).ToList();
 
-        private List<ProjectMetricModel> GetProjectMetrics(ICollection<ProjectMetric> metrics) => metrics.Select(m =>
+        private List<ProjectMetricModel> GetProjectMetrics(ICollection<ProjectMetric> metrics, bool metricProps = false, bool dashboard = false) => metrics.Select(m =>
             {
                 ProjectMetricModel projectMetric = _projectMetricService.ConvertToModel(m);
-                projectMetric.Metric = _metricService.ConvertToModel(m.Metric);
-                projectMetric.Metric.Columns = _metricService.GetMetricColumns(m.Metric.MetricColumn);
-                projectMetric.Metric.MetricType = _metricTypeService.ConvertToModel(m.Metric.MetricType);
+
+                if (metricProps)
+                {
+                    projectMetric.Metric = _metricService.ConvertToModel(m.Metric);
+                    if (dashboard)
+                    {
+                        projectMetric.Metric.Columns = _metricService.GetMetricColumns(m.Metric.MetricColumn);
+                        projectMetric.Metric.MetricType = _metricTypeService.ConvertToModel(m.Metric.MetricType);
+                    }
+                }
+
                 return projectMetric;
             }).ToList();
 

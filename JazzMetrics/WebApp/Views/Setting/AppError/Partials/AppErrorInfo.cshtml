@@ -11,7 +11,7 @@
             <p class="lead">App info: @Model.AppInfo</p>
             <p class="lead">Exception message: @Model.Exception</p>
             <p class="lead">Inner exception message #2: @Model.InnerException</p>
-            <p class="lead">Message: @Model.InnerException</p>
+            <p class="lead">Message: @(string.IsNullOrEmpty(Model.InnerException) ? "--" : Model.InnerException)</p>
         </div>
     </div>
 </div>

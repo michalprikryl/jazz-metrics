@@ -1,12 +1,14 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.Company;
 using Library.Models.Users;
 using Library.Networking;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.Services.Helpers;
 using WebAPI.Services.Users;
@@ -23,7 +25,7 @@ namespace WebAPI.Services.Companies
         {
             var response = new BaseResponseModelGetAll<CompanyModel> { Values = new List<CompanyModel>() };
 
-            foreach (var item in await Database.Company.ToListAsync())
+            foreach (var item in await Database.Company.ToListAsyncSpecial(c => c.User))
             {
                 CompanyModel company = ConvertToModel(item);
 
@@ -42,7 +44,7 @@ namespace WebAPI.Services.Companies
         {
             var response = new BaseResponseModelGet<CompanyModel>();
 
-            Company company = await Load(id, response);
+            Company company = await Load(id, response, false, lazy);
             if (company != null)
             {
                 response.Value = ConvertToModel(company);
@@ -112,7 +114,7 @@ namespace WebAPI.Services.Companies
         {
             BaseResponseModel response = new BaseResponseModel();
 
-            Company company = await Load(id, response);
+            Company company = await Load(id, response, true, false);
             if (company != null)
             {
                 if (company.User.Count == 0)
@@ -135,12 +137,12 @@ namespace WebAPI.Services.Companies
 
         public Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public async Task<Company> Load(int id, BaseResponseModel response)
+        public async Task<Company> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            Company company = await Database.Company.FirstOrDefaultAsync(a => a.Id == id);
+            Company company = await Database.Company.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking, !lazy ? (Expression<Func<Company, ICollection<User>>>)(c => c.User) : null);
             if (company == null)
             {
                 response.Success = false;

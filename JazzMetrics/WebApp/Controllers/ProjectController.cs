@@ -305,7 +305,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{id}/Metric/{projectMetricId}/Log")]
-        public async Task<IActionResult> ProjectMetricAdd(int id, int projectMetricId)
+        public async Task<IActionResult> ProjectMetricLog(int id, int projectMetricId)
         {
             ProjectMetricLogViewModel model = new ProjectMetricLogViewModel
             {

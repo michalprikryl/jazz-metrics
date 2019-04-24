@@ -1,9 +1,9 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.AspiceVersions;
 using Library.Networking;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace WebAPI.Services.AspiceVersions
         {
             return new BaseResponseModelGetAll<AspiceVersionModel>
             {
-                Values = (await Database.AspiceVersion.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
+                Values = await Database.AspiceVersion.Select(a => ConvertToModel(a)).ToListAsyncSpecial()
             };
         }
 
@@ -27,7 +27,7 @@ namespace WebAPI.Services.AspiceVersions
         {
             var response = new BaseResponseModelGet<AspiceVersionModel>();
 
-            AspiceVersion aspiceVersion = await Load(id, response);
+            AspiceVersion aspiceVersion = await Load(id, response, false);
             if (aspiceVersion != null)
             {
                 response.Value = ConvertToModel(aspiceVersion);
@@ -122,9 +122,9 @@ namespace WebAPI.Services.AspiceVersions
             throw new System.NotImplementedException();
         }
 
-        public async Task<AspiceVersion> Load(int id, BaseResponseModel response)
+        public async Task<AspiceVersion> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            AspiceVersion aspiceVersion = await Database.AspiceVersion.FirstOrDefaultAsync(a => a.Id == id);
+            AspiceVersion aspiceVersion = await Database.AspiceVersion.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking);
             if (aspiceVersion == null)
             {
                 response.Success = false;

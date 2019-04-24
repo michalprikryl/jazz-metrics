@@ -13,7 +13,7 @@ namespace WebAPI.Services.Helpers
         Task<BaseResponseModel> Edit(T request);
         Task<BaseResponseModel> Drop(int id);
         Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request);
-        Task<U> Load(int id, BaseResponseModel response);
+        Task<U> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true);
         T ConvertToModel(U dbModel);
     }
 }

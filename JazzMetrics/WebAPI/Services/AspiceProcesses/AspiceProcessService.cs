@@ -1,11 +1,14 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.AspiceProcesses;
 using Library.Models.AspiceVersions;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.Services.AspiceVersions;
 using WebAPI.Services.Helpers;
@@ -22,7 +25,7 @@ namespace WebAPI.Services.AspiceProcesses
         {
             var response = new BaseResponseModelGetAll<AspiceProcessModel> { Values = new List<AspiceProcessModel>() };
 
-            foreach (var item in await Database.AspiceProcess.ToListAsync())
+            foreach (var item in await Database.AspiceProcess.ToListAsyncSpecial(a => a.AspiceVersion))
             {
                 AspiceProcessModel aspiceProcess = ConvertToModel(item);
 
@@ -41,7 +44,7 @@ namespace WebAPI.Services.AspiceProcesses
         {
             var response = new BaseResponseModelGet<AspiceProcessModel>();
 
-            AspiceProcess aspiceProcess = await Load(id, response);
+            AspiceProcess aspiceProcess = await Load(id, response, false, lazy);
             if (aspiceProcess != null)
             {
                 response.Value = ConvertToModel(aspiceProcess);
@@ -149,9 +152,9 @@ namespace WebAPI.Services.AspiceProcesses
             throw new System.NotImplementedException();
         }
 
-        public async Task<AspiceProcess> Load(int id, BaseResponseModel response)
+        public async Task<AspiceProcess> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            AspiceProcess aspiceProcess = await Database.AspiceProcess.FirstOrDefaultAsync(a => a.Id == id);
+            AspiceProcess aspiceProcess = await Database.AspiceProcess.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking, !lazy ? (Expression<Func<AspiceProcess, AspiceVersion>>)(a => a.AspiceVersion) : null);
             if (aspiceProcess == null)
             {
                 response.Success = false;

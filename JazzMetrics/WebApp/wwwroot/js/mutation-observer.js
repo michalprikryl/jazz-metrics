@@ -26,7 +26,7 @@ class ClassWatcher {
      * */
     init() {
         /**
-         * callback vyvolany pri zmene - nejde pouzit jako field pole, pouze v chrome, ve firefoxu je to experimental feature
+         * callback vyvolany pri zmene - nejde pouzit jako field, pouze v chrome, ve firefoxu je to experimental feature
          * @param {Array} mutationsList list zmen nad elementem
          */
         const mutationCallback = mutationsList => {

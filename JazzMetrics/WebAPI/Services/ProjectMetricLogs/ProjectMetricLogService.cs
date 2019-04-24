@@ -47,7 +47,7 @@ namespace WebAPI.Services.ProjectMetricLogs
             throw new NotImplementedException();
         }
 
-        public Task<ProjectMetricLog> Load(int id, BaseResponseModel response)
+        public Task<ProjectMetricLog> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
             throw new NotImplementedException();
         }

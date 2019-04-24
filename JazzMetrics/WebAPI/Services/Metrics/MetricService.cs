@@ -11,6 +11,7 @@ using Library.Networking;
 using Library.Services.Jazz;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace WebAPI.Services.Metrics
         {
             var response = new BaseResponseModelGetAll<MetricModel> { Values = new List<MetricModel>() };
 
-            foreach (var item in await Database.Metric.Where(m => m.Public || m.CompanyId == CurrentUser.CompanyId).ToListAsync())
+            foreach (var item in await GetAllMetrics(lazy))
             {
                 MetricModel metric = ConvertToModel(item);
 
@@ -65,7 +66,7 @@ namespace WebAPI.Services.Metrics
         {
             var response = new BaseResponseModelGet<MetricModel>();
 
-            Metric metric = await Load(id, response);
+            Metric metric = await Load(id, response, false, lazy);
             if (metric != null)
             {
                 response.Value = ConvertToModel(metric);
@@ -160,7 +161,7 @@ namespace WebAPI.Services.Metrics
                                     metric.RequirementGroup = request.RequirementGroup;
                                     metric.AspiceProcessId = request.AspiceProcessId;
                                     metric.AffectedFieldId = request.AffectedFieldId;
-                                    //metric.MetricTypeId = request.MetricTypeId; -- nelze menit z duvodu, ze by potom nesedely hodnoty columns - musi se mazat columns
+                                    //metric.MetricTypeId = request.MetricTypeId; --> nelze menit z duvodu, ze by potom nesedely hodnoty columns - musi se mazat columns
                                     metric.Public = CurrentUser.CompanyId.HasValue ? request.Public : true;
 
                                     //smazane
@@ -237,12 +238,13 @@ namespace WebAPI.Services.Metrics
 
         public Task<BaseResponseModel> PartialEdit(int id, List<PatchModel> request)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public async Task<Metric> Load(int id, BaseResponseModel response)
+        public async Task<Metric> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            Metric metric = await Database.Metric.FirstOrDefaultAsync(m => m.Id == id && (m.CompanyId == CurrentUser.CompanyId || m.Public));
+            var metrics = lazy ? Database.Metric.AsQueryable() : Database.Metric.Include(m => m.AffectedField).Include(m => m.MetricType).Include(m => m.AspiceProcess);
+            Metric metric = await metrics.FirstOrDefaultAsyncSpecial(m => m.Id == id && (m.CompanyId == CurrentUser.CompanyId || m.Public), tracking, m => m.MetricColumn);
             if (metric == null)
             {
                 response.Success = false;
@@ -250,6 +252,18 @@ namespace WebAPI.Services.Metrics
             }
 
             return metric;
+        }
+
+        private async Task<List<Metric>> GetAllMetrics(bool lazy)
+        {
+            var metrics = Database.Metric.Where(m => m.Public || m.CompanyId == CurrentUser.CompanyId);
+
+            if (!lazy)
+            {
+                metrics = metrics.Include(m => m.AffectedField).Include(m => m.MetricType).Include(m => m.AspiceProcess);
+            }
+
+            return await metrics.ToListAsyncSpecial(m => m.MetricColumn);
         }
 
         private async Task CreateMetricColumn(Metric metric, MetricColumnModel model)

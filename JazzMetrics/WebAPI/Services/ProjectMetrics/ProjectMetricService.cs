@@ -174,25 +174,6 @@ namespace WebAPI.Services.ProjectMetrics
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponseModelGetAll<ProjectMetricModel>> GetAllByProjectId(int projectId, bool lazy)
-        {
-            var response = new BaseResponseModelGetAll<ProjectMetricModel> { Values = new List<ProjectMetricModel>() };
-
-            foreach (var item in await Database.ProjectMetric.Where(p => p.ProjectId == projectId).ToListAsync())
-            {
-                ProjectMetricModel projectMetric = ConvertToModel(item);
-
-                if (!lazy)
-                {
-                    projectMetric.Snapshots = GetSnapshots(item.ProjectMetricSnapshot);
-                }
-
-                response.Values.Add(projectMetric);
-            }
-
-            return response;
-        }
-
         public async Task<BaseResponseModelGetAll<ProjectMetricLogModel>> GetProjectMetricLogs(int id)
         {
             var response = new BaseResponseModelGetAll<ProjectMetricLogModel>() { Values = new List<ProjectMetricLogModel>() };
@@ -206,7 +187,7 @@ namespace WebAPI.Services.ProjectMetrics
             return response;
         }
 
-        public async Task<ProjectMetric> Load(int id, BaseResponseModel response)
+        public async Task<ProjectMetric> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
             ProjectMetric projectMetric = await Database.ProjectMetric.FirstOrDefaultAsync(a => a.Id == id);
             if (projectMetric == null)

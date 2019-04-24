@@ -59,13 +59,12 @@ namespace WebAPI.Services.ProjectUsers
             {
                 if (await Database.ProjectUser.AllAsync(p => p.ProjectId == request.ProjectId && p.UserId != request.UserId))
                 {
-                    ProjectUser projectUser =
-                        new ProjectUser
-                        {
-                            JoinDate = DateTime.Now,
-                            UserId = request.UserId,
-                            ProjectId = request.ProjectId
-                        };
+                    ProjectUser projectUser = new ProjectUser
+                    {
+                        JoinDate = DateTime.Now,
+                        UserId = request.UserId,
+                        ProjectId = request.ProjectId
+                    };
 
                     await Database.ProjectUser.AddAsync(projectUser);
 
@@ -121,9 +120,10 @@ namespace WebAPI.Services.ProjectUsers
             throw new NotImplementedException();
         }
 
-        public async Task<ProjectUser> Load(int id, BaseResponseModel response)
+        public async Task<ProjectUser> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            ProjectUser projectUser = await Database.ProjectUser.FirstOrDefaultAsync(a => a.Id == id && a.User.CompanyId.HasValue && a.User.CompanyId == CurrentUser.CompanyId);
+            ProjectUser projectUser = await Database.ProjectUser.Include(p => p.User).ThenInclude(p => p.UserRole).AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == id && a.User.CompanyId.HasValue && a.User.CompanyId == CurrentUser.CompanyId);
             if (projectUser == null)
             {
                 response.Success = false;

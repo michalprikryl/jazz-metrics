@@ -10,16 +10,16 @@ namespace WebAPI.Services.Test
 {
     public class TestService : BaseDatabase, ITestService
     {
-        private readonly IConfiguration _config;
+        private readonly IConfiguration _configuration;
 
-        public TestService(JazzMetricsContext db, IConfiguration config) : base(db)
+        public TestService(JazzMetricsContext db, IConfiguration configuration) : base(db)
         {
-            _config = config;
+            _configuration = configuration;
         }
 
         public TestModel RunTest()
         {
-            TestModel model = new TestModel { ConnectionDB = true, ApiVersion = _config["Version"] };
+            TestModel model = new TestModel { ConnectionDB = true, ApiVersion = _configuration["Version"] };
 
             try
             {

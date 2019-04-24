@@ -24,13 +24,6 @@ namespace WebAPI.Controllers
             return await _projectMetricService.Get(id, lazy);
         }
 
-        [HttpGet]
-        [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
-        public async Task<ActionResult<BaseResponseModelGetAll<ProjectMetricModel>>> GetByProjectId(int projectId, bool lazy = true)
-        {
-            return await _projectMetricService.GetAllByProjectId(projectId, lazy);
-        }
-
         [HttpPost]
         [Authorize(Roles = RoleSuperAdmin + "," + RoleAdmin)]
         public async Task<ActionResult<BaseResponseModelPost>> Post([FromBody]ProjectMetricModel model)

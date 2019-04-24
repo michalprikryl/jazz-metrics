@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -39,14 +40,10 @@ namespace WebAPI.Services.Users
 
         public async Task<BaseResponseModelGetAll<UserModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGetAll<UserModel> { Values = new List<UserModel>() };
-
-            foreach (var item in await Database.User.ToListAsync())
+            return new BaseResponseModelGetAll<UserModel>
             {
-                response.Values.Add(ConvertToModel(item));
-            }
-
-            return response;
+                Values = await Database.User.Select(u => ConvertToModel(u)).ToListAsyncSpecial()
+            };
         }
 
         public async Task<BaseResponseModelGet<UserModel>> Get(int id, bool lazy)
@@ -245,9 +242,9 @@ namespace WebAPI.Services.Users
             return response;
         }
 
-        public async Task<User> Load(int id, BaseResponseModel response)
+        public async Task<User> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            User user = await Database.User.FirstOrDefaultAsync(a => a.Id == id);
+            User user = await Database.User.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking);
             if (user == null)
             {
                 response.Success = false;
@@ -271,7 +268,7 @@ namespace WebAPI.Services.Users
                 LanguageId = dbModel.LanguageId,
                 CompanyId = dbModel.CompanyId,
                 UserRoleId = dbModel.UserRoleId,
-                Admin = dbModel.UserRole.Name.Contains("admin", StringComparison.OrdinalIgnoreCase)
+                Admin = dbModel.UserRoleId != 3 //dbModel.UserRole.Name.Contains("admin", StringComparison.OrdinalIgnoreCase) --> druha moznost, ale je nutne nacist role..
             };
         }
 
@@ -279,7 +276,7 @@ namespace WebAPI.Services.Users
         {
             BaseResponseModelPost response = new BaseResponseModelPost();
 
-            User user = await Database.User.FirstOrDefaultAsync(a => a.Username == username);
+            User user = await Database.User.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username);
             if (user == null)
             {
                 response.Success = false;
@@ -307,7 +304,7 @@ namespace WebAPI.Services.Users
                 model.Username = model.Username.Trim();
                 model.Password = model.Password.Trim();
 
-                User user = await Database.User.FirstOrDefaultAsync(u => u.Username == model.Username);
+                User user = await Database.User.Include(u => u.UserRole).AsNoTracking().FirstOrDefaultAsync(u => u.Username == model.Username);
                 if (user != null)
                 {
                     if ((user.UseLdaplogin && CheckLdapLogin(user.LdapUrl, model.Username, model.Password)) || ComparePasswords(user, model.Password))
@@ -425,10 +422,7 @@ namespace WebAPI.Services.Users
             };
         }
 
-        private bool ComparePasswords(User user, string sentPasswd)
-        {
-            return user.Password == PasswordHelper.EncodePassword(sentPasswd, user.Salt);
-        }
+        private bool ComparePasswords(User user, string sentPasswd) => user.Password == PasswordHelper.EncodePassword(sentPasswd, user.Salt);
 
         private async Task<UserRole> GetUserRole(string name) => await Database.UserRole.FirstAsync(r => r.Name == name);
 

@@ -449,14 +449,14 @@ namespace WebApp.Controllers
 
             Task select = GetAspiceVersions(model);
 
-            var result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity, false);
+            var result = await _crudService.Get<AspiceProcessModel>(id, Token, SettingService.AspiceProcessEntity);
             if (result.Success)
             {
                 model.Id = id;
                 model.Name = result.Value.Name;
                 model.Shortcut = result.Value.Shortcut;
                 model.Description = result.Value.Description;
-                model.AspiceVersionId = result.Value.AspiceVersion.Id.ToString();
+                model.AspiceVersionId = result.Value.AspiceVersionId.ToString();
             }
             else
             {
@@ -623,7 +623,7 @@ namespace WebApp.Controllers
 
             Task select = GetMetricSelects(model);
 
-            var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false);
+            var result = await _crudService.Get<MetricModel>(id, Token, SettingService.MetricEntity, false); //lazy kvuli columns
             if (result.Success)
             {
                 if (result.Value.CompanyId == MyUser.CompanyId)
@@ -634,9 +634,9 @@ namespace WebApp.Controllers
                     model.Description = result.Value.Description;
                     model.RequirementGroup = result.Value.RequirementGroup;
                     model.Identificator = result.Value.Identificator;
-                    model.MetricTypeId = result.Value.MetricType.Id.ToString();
-                    model.AspiceProcessId = result.Value.AspiceProcess.Id.ToString();
-                    model.AffectedFieldId = result.Value.AffectedField.Id.ToString();
+                    model.MetricTypeId = result.Value.MetricTypeId.ToString();
+                    model.AspiceProcessId = result.Value.AspiceProcessId.ToString();
+                    model.AffectedFieldId = result.Value.AffectedFieldId.ToString();
 
                     model.LoadMetricColumns(result.Value.Columns);
                 }

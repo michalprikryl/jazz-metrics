@@ -14,12 +14,12 @@ namespace WebAPI.Services.Email
 {
     public class EmailService : BaseDatabase, IEmailService
     {
-        internal static readonly string EmailSettingScope = "EmailSetting";
-        private static readonly string EmailSettingSender = "Sender";
-        private static readonly string EmailSettingHost = "Host";
-        private static readonly string EmailSettingPort = "Port";
-        private static readonly string EmailSettingUsername = "Username";
-        private static readonly string EmailSettingPassword = "Password";
+        internal const string EmailSettingScope = "EmailSetting";
+        private const string EmailSettingSender = "Sender";
+        private const string EmailSettingHost = "Host";
+        private const string EmailSettingPort = "Port";
+        private const string EmailSettingUsername = "Username";
+        private const string EmailSettingPassword = "Password";
 
         private readonly ILogService _logService;
         private readonly ISettingService _settingService;

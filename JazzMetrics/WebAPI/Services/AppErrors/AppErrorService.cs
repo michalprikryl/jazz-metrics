@@ -1,11 +1,13 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.AppError;
 using Library.Networking;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Services.Helpers;
 
@@ -90,17 +92,13 @@ namespace WebAPI.Services.AppErrors
 
         public async Task<BaseResponseModelGetAll<AppErrorModel>> GetAll(bool lazy)
         {
-            var response = new BaseResponseModelGetAll<AppErrorModel> { Values = new List<AppErrorModel>() };
-
-            foreach (var item in await Database.AppError.ToListAsync())
+            return new BaseResponseModelGetAll<AppErrorModel>
             {
-                response.Values.Add(ConvertToModel(item));
-            }
-
-            return response;
+                Values = await Database.AppError.Select(a => ConvertToModel(a)).ToListAsyncSpecial()
+            };
         }
 
-        public async Task<AppError> Load(int id, BaseResponseModel response)
+        public async Task<AppError> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
             AppError appError = await Database.AppError.FirstOrDefaultAsync(a => a.Id == id);
             if (appError == null)

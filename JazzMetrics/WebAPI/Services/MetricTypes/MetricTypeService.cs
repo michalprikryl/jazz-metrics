@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.DAO;
+using Library;
 using Library.Models;
 using Library.Models.MetricType;
 using Library.Networking;
@@ -19,7 +20,7 @@ namespace WebAPI.Services.MetricTypes
         {
             return new BaseResponseModelGetAll<MetricTypeModel>
             {
-                Values = (await Database.MetricType.ToListAsync()).Select(a => ConvertToModel(a)).ToList()
+                Values = await Database.MetricType.Select(a => ConvertToModel(a)).ToListAsync()
             };
         }
 
@@ -27,7 +28,7 @@ namespace WebAPI.Services.MetricTypes
         {
             var response = new BaseResponseModelGet<MetricTypeModel>();
 
-            MetricType metricType = await Load(id, response);
+            MetricType metricType = await Load(id, response, false, lazy);
             if (metricType != null)
             {
                 response.Value = ConvertToModel(metricType);
@@ -120,9 +121,9 @@ namespace WebAPI.Services.MetricTypes
             throw new System.NotImplementedException();
         }
 
-        public async Task<MetricType> Load(int id, BaseResponseModel response)
+        public async Task<MetricType> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            MetricType metricType = await Database.MetricType.FirstOrDefaultAsync(m => m.Id == id);
+            MetricType metricType = await Database.MetricType.FirstOrDefaultAsyncSpecial(m => m.Id == id, tracking);
             if (metricType == null)
             {
                 response.Success = false;

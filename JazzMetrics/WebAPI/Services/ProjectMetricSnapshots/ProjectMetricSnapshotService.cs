@@ -14,9 +14,7 @@ namespace WebAPI.Services.ProjectMetricSnapshots
 {
     public class ProjectMetricSnapshotService : BaseDatabase, IProjectMetricSnapshotService
     {
-        private readonly IMetricService _metricService;
-
-        public ProjectMetricSnapshotService(JazzMetricsContext db, IMetricService metricService) : base(db) => _metricService = metricService;
+        public ProjectMetricSnapshotService(JazzMetricsContext db) : base(db) { }
 
         public ProjectMetricSnapshotModel ConvertToModel(ProjectMetricSnapshot dbModel)
         {
@@ -33,8 +31,7 @@ namespace WebAPI.Services.ProjectMetricSnapshots
                     Id = v.Id,
                     Value = v.Value,
                     MetricColumnId = v.MetricColumnId,
-                    ProjectMetricSnapshotId = v.ProjectMetricSnapshotId,
-                    MetricColumn = _metricService.ConvertMetricColumn(v.MetricColumn)
+                    ProjectMetricSnapshotId = v.ProjectMetricSnapshotId
                 }).ToList();
 
             return snapshot;
@@ -65,7 +62,7 @@ namespace WebAPI.Services.ProjectMetricSnapshots
             throw new NotImplementedException();
         }
 
-        public Task<ProjectMetricSnapshot> Load(int id, BaseResponseModel response)
+        public Task<ProjectMetricSnapshot> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
             throw new NotImplementedException();
         }
