@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Models.Token;
 using Library.Models.User;
 using Library.Networking;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,18 @@ namespace WebApp.Services.Users
             {
                 result = JsonConvert.DeserializeObject<BaseResponseModelPost>(await httpResult.Content.ReadAsStringAsync());
             }, jwt: jwt);
+
+            return result;
+        }
+
+        public async Task<TokenModel> RefreshToken(TokenRequestModel model, string jwt)
+        {
+            TokenModel result = null;
+
+            await PostToAPI(SerializeObjectToJSON(model), async httpResult =>
+            {
+                result = JsonConvert.DeserializeObject<TokenModel>(await httpResult.Content.ReadAsStringAsync());
+            }, "token", jwt: jwt);
 
             return result;
         }

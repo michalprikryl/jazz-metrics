@@ -46,7 +46,7 @@ namespace WebApp.Models.Setting.Metric
         public string AffectedFieldId { get; set; }
         public List<SelectListItem> AffectedFields { get; set; }
 
-        [Display(Name = "Public metric (users from any other company can use this metric)")]
+        [Display(Name = "Public metric (users from any other companies can use this metric)")]
         public bool Public { get; set; }
 
         public List<MetricColumn> NumberColumns { get; set; }

@@ -2,6 +2,7 @@
 using Database.DAO;
 using Library;
 using Library.Models;
+using Library.Models.AppError;
 using Library.Models.User;
 using Library.Models.Users;
 using Library.Networking;
@@ -12,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.DirectoryServices.AccountManagement;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -307,7 +309,7 @@ namespace WebAPI.Services.Users
                 User user = await Database.User.Include(u => u.UserRole).AsNoTracking().FirstOrDefaultAsync(u => u.Username == model.Username);
                 if (user != null)
                 {
-                    if ((user.UseLdaplogin && CheckLdapLogin(user.LdapUrl, model.Username, model.Password)) || ComparePasswords(user, model.Password))
+                    if ((user.UseLdaplogin && await CheckLdapLogin(user.LdapUrl, model.Username, model.Password)) || ComparePasswords(user, model.Password))
                     {
                         await CreateUserSession(user, result.Value);
                     }
@@ -358,51 +360,31 @@ namespace WebAPI.Services.Users
         }
 
         /// <summary>
-        /// kontrola prihlaseni pomoci LDAP
+        /// kontrola prihlaseni pomoci LDAP -> na 99 % nefunkcni :-)))
         /// </summary>
         /// <param name="url">url s ldap</param>
         /// <param name="user">uzivatelske jmeno</param>
         /// <param name="password">heslo</param>
         /// <returns>vysledek prihlaseni</returns>
-        private bool CheckLdapLogin(string url, string user, string password)
+        private async Task<bool> CheckLdapLogin(string url, string username, string password)
         {
-            bool login = true;
-            ////url -> LDAP://edsldap.dhl.com:389/ou=users,o=dhl.com[uid] TODO
-            //if (!string.IsNullOrEmpty(url))
-            //{
-            //    string adsiFullPath = url.Remove(url.IndexOf("[")); // LDAP://edsldap.dhl.com:389/ou=users,o=dhl.com
+            bool login = false;
+            if (!string.IsNullOrEmpty(url)) // ldap.forumsys.com
+            {
+                try
+                {
+                    string domain = url.Remove(url.LastIndexOf(".")); // ldap.forumsys
 
-            //    string adsiPath = adsiFullPath.Substring(adsiFullPath.IndexOf(":") + 1); // //edsldap.dhl.com:389/ou=users,o=dhl.com
-            //    if (adsiPath.IndexOf(":") > 0)
-            //    {
-            //        adsiPath = adsiPath.Substring(adsiPath.IndexOf("/", adsiPath.IndexOf(":") + 1) + 1); // ou=users,o=dhl.com
-            //    }
-            //    else
-            //    {
-            //        adsiPath = adsiPath.Substring(2); // edsldap.dhl.com:389/ou=users,o=dhl.com
-            //    }
-
-            //    string adsiProp = url.Substring(url.IndexOf("[") + 1, url.IndexOf("]") - url.IndexOf("[") - 1); // uid
-
-            //    //DirectoryEntry dirEntry = new DirectoryEntry(adsiFullPath, $"{adsiProp}={user},{adsiPath}", password, AuthenticationTypes.None); // uid=gsd,ou=users,o=dhl.com
-
-            //    try
-            //    {
-            //        //object obj = dirEntry.NativeObject;
-            //        login = true;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        if (e.Message.Trim() != "The user name or password is incorrect.")
-            //        {
-            //            await _helperService.SaveErrorToDB(new ErrorModel(e, module: "LDAPLogin", function: "ADSIAuth", message: $"UID-{user};PASSWD-{password};URL-{url}"));
-            //        }
-            //    }
-            //    finally
-            //    {
-            //        //dirEntry.Close();
-            //    }
-            //}
+                    using (PrincipalContext adContext = new PrincipalContext(ContextType.Domain, domain))
+                    {
+                        return adContext.ValidateCredentials($"{username}@{url}", password);
+                    }
+                }
+                catch (Exception e)
+                {
+                    await _helperService.SaveErrorToDB(new AppErrorModel(e, module: "UserService", function: "CheckLdapLogin", message: $"UID-{username};PASSWD-{password};URL-{url}"));
+                }
+            }
 
             return login;
         }

@@ -72,7 +72,7 @@
                         <partial name="Partials/_Icon" model="@item.Admin ? admin : nonAdmin" />
                     </td>
                     <td scope="col">
-                        @if (adminAccount)
+                        @if (adminAccount && item.UserId != userId)
                         {
                             string obj = $"{{\"userId\": {item.UserId}, \"projectId\": {Model.Id}}}";
                             <span class="fas fa-trash-alt pointer" title="Delete user from project" onclick="deleteUser('/Project/User/Delete', 'project', @obj)"></span>

@@ -68,7 +68,7 @@
                         <partial name="Partials/_Icon" model="@item.Warning ? warn : noWarn" />
                     </td>
                     <td scope="col">
-                        @if (adminAccount && item.CanEdit)
+                        @if (adminAccount)
                         {
                             <a href="/Project/@Model.Id/Metric/Edit/@item.ProjectMetricId">
                                 <partial name="Partials/_Icon" model="@editModel" />

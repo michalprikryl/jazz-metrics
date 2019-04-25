@@ -23,12 +23,12 @@
       "wwwroot/js/metric-form.js"
     ]
   },
-  {
+  /*{ //NEJDE
     "outputFileName": "wwwroot/js/mutation-observer.min.js",
     "inputFiles": [
       "wwwroot/js/mutation-observer.js"
     ]
-  },
+  },*/
   {
     "outputFileName": "wwwroot/js/setting-form.min.js",
     "inputFiles": [

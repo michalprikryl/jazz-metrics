@@ -57,7 +57,7 @@ namespace WebAPI.Services.ProjectMetrics
 
             if (request.Validate())
             {
-                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response))
+                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response) && TestURL(request.DataUrl, response))
                 {
                     ProjectMetric projectMetric = new ProjectMetric
                     {
@@ -121,7 +121,7 @@ namespace WebAPI.Services.ProjectMetrics
 
             if (request.Validate())
             {
-                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response))
+                if (await CheckMetric(request, response) && await CheckProject(request.ProjectId, response) && TestURL(request.DataUrl, response))
                 {
                     ProjectMetric projectMetric = await Load(request.Id, response);
                     if (projectMetric != null)
@@ -189,7 +189,7 @@ namespace WebAPI.Services.ProjectMetrics
 
         public async Task<ProjectMetric> Load(int id, BaseResponseModel response, bool tracking = true, bool lazy = true)
         {
-            ProjectMetric projectMetric = await Database.ProjectMetric.FirstOrDefaultAsync(a => a.Id == id);
+            ProjectMetric projectMetric = await Database.ProjectMetric.FirstOrDefaultAsyncSpecial(a => a.Id == id, tracking, pm => pm.Metric);
             if (projectMetric == null)
             {
                 response.Success = false;
@@ -197,7 +197,7 @@ namespace WebAPI.Services.ProjectMetrics
             }
             else
             {
-                if (projectMetric.Metric.CompanyId != CurrentUser.CompanyId)
+                if (!projectMetric.Metric.Public && projectMetric.Metric.CompanyId != CurrentUser.CompanyId)
                 {
                     projectMetric = null;
                     response.Success = false;
@@ -248,6 +248,21 @@ namespace WebAPI.Services.ProjectMetrics
             {
                 response.Success = false;
                 response.Message = "Unknown project!";
+
+                return false;
+            }
+        }
+
+        private bool TestURL(string url, BaseResponseModel response)
+        {
+            if(Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == "http" || uriResult.Scheme == "https"))
+            {
+                return true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Bad URL format!";
 
                 return false;
             }

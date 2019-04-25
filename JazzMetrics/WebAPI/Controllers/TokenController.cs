@@ -1,4 +1,5 @@
 ﻿using Library;
+using Library.Models.Token;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebAPI.Services.Helper;
@@ -18,9 +19,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> Post()
+        public async Task<ActionResult<TokenModel>> Post([FromBody]TokenRequestModel model)
         {
-            return new { Token = await _userService.BuildToken(User.GetId(), User.GetUserRole()) };
+            return new TokenModel
+            {
+                Token = await _userService.BuildToken(model.UserId, model.UserRole)
+            };
         }
     }
 }

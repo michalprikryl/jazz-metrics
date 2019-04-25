@@ -23,6 +23,7 @@ using WebApp.Services.Crud;
 using WebApp.Services.Error;
 using WebApp.Services.Setting;
 using WebApp.Services.Users;
+using Library.Models.Token;
 
 namespace WebApp.Controllers
 {
@@ -806,7 +807,10 @@ namespace WebApp.Controllers
                 var user = MyUser;
                 user.CompanyId = result.Id;
                 user.Role = RoleAdmin;
-                await UserLogin(user, Token);
+
+                TokenModel refresh = await _userService.RefreshToken(new TokenRequestModel { UserId = user.UserId, UserRole = RoleAdmin }, Token);
+
+                await UserLogin(user, refresh.Token);
 
                 AddMessageToModel(viewModel, result.Message, !result.Success);
             }

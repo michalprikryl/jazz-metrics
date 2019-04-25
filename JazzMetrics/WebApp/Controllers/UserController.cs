@@ -52,9 +52,12 @@ namespace WebApp.Controllers
 
                     AddMessageToModel(model, result.Message, !result.Success);
 
-                    AddViewModelToTempData(model);
+                    if (result.Success)
+                    {
+                        AddViewModelToTempData(model);
 
-                    return RedirectToAction("Login");
+                        return RedirectToAction("Login");
+                    }
                 }
                 else
                 {
