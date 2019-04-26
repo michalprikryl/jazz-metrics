@@ -8,10 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Services.Helpers;
-using WebAPI.Services.Metrics;
 
 namespace WebAPI.Services.ProjectMetricSnapshots
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou ProjectMetricSnapshot
+    /// </summary>
     public class ProjectMetricSnapshotService : BaseDatabase, IProjectMetricSnapshotService
     {
         public ProjectMetricSnapshotService(JazzMetricsContext db) : base(db) { }

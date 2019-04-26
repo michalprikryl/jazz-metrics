@@ -5,10 +5,13 @@ using System.Linq;
 
 namespace WebAPI.Services.Log
 {
+    /// <summary>
+    /// servis pro logovani
+    /// </summary>
     public class LogService : ILogService
     {
         /// <summary>
-        /// nazev souboru s error logem - slouzi pro zapis chyby v pripade, kdy se nepodarilo odeslat email s chybou (EmailSender.cs)
+        /// nazev souboru s error logem - slouzi pro zapis chyby v pripade, kdy se nepodarilo odeslat email s chybou (HelperService.cs)
         /// </summary>
         public static string ERROR_LOG = "error_log.txt";
 

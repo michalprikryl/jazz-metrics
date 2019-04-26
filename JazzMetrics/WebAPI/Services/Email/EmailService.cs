@@ -12,16 +12,43 @@ using WebAPI.Services.Settings;
 
 namespace WebAPI.Services.Email
 {
+    /// <summary>
+    /// servis pro praci s emaily - rozesilani
+    /// </summary>
     public class EmailService : BaseDatabase, IEmailService
     {
+        /// <summary>
+        /// scope v DB tabulce Setting
+        /// </summary>
         internal const string EmailSettingScope = "EmailSetting";
+        /// <summary>
+        /// odesilatel v DB tabulce Setting
+        /// </summary>
         private const string EmailSettingSender = "Sender";
+        /// <summary>
+        /// hostitel mailove schranky v DB tabulce Setting
+        /// </summary>
         private const string EmailSettingHost = "Host";
+        /// <summary>
+        /// port pro email v DB tabulce Setting
+        /// </summary>
         private const string EmailSettingPort = "Port";
+        /// <summary>
+        /// uzivatelske jmeno pro email v DB tabulce Setting
+        /// </summary>
         private const string EmailSettingUsername = "Username";
+        /// <summary>
+        /// heslo pro email v DB tabulce Setting
+        /// </summary>
         private const string EmailSettingPassword = "Password";
 
+        /// <summary>
+        /// servis pro logovani
+        /// </summary>
         private readonly ILogService _logService;
+        /// <summary>
+        /// servis pro ziskani dat z DB tabulky Setting
+        /// </summary>
         private readonly ISettingService _settingService;
 
         public EmailService(JazzMetricsContext db, ISettingService setting, ILogService log) : base(db)

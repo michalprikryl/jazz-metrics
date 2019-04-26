@@ -14,6 +14,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Settings
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou Setting
+    /// </summary>
     public class SettingService : BaseDatabase, ISettingService
     {
         public SettingService(JazzMetricsContext db) : base(db) { }

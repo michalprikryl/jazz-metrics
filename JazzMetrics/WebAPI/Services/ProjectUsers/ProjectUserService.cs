@@ -15,6 +15,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.ProjectUsers
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou ProjectUser
+    /// </summary>
     public class ProjectUserService : BaseDatabase, IProjectUserService
     {
         public CurrentUser CurrentUser { get; set; }

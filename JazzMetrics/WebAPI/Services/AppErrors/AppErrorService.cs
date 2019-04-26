@@ -13,8 +13,14 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AppErrors
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou AppError
+    /// </summary>
     public class AppErrorService : BaseDatabase, IAppErrorService
     {
+        /// <summary>
+        /// pro zapis do DB
+        /// </summary>
         public const string UNKNOWN = "unknown";
 
         public AppErrorService(JazzMetricsContext db) : base(db) { }

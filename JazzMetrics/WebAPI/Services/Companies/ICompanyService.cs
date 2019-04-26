@@ -4,7 +4,8 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Companies
 {
-    public interface ICompanyService : ICrudOperations<CompanyModel, Company>
-    {
-    }
+    /// <summary>
+    /// interface pro servis pro praci s DB tabulkou Company
+    /// </summary>
+    public interface ICompanyService : ICrudOperations<CompanyModel, Company> { }
 }

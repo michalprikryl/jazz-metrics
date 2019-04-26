@@ -8,6 +8,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Test
 {
+    /// <summary>
+    /// servis pro testovani pripojeni k DB
+    /// </summary>
     public class TestService : BaseDatabase, ITestService
     {
         private readonly IConfiguration _configuration;

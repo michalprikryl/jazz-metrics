@@ -4,7 +4,8 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.ProjectMetricSnapshots
 {
-    public interface IProjectMetricSnapshotService : ICrudOperations<ProjectMetricSnapshotModel, ProjectMetricSnapshot>
-    {
-    }
+    /// <summary>
+    /// interface pro servis pro praci s DB tabulkou ProjectMetricSnapshot
+    /// </summary>
+    public interface IProjectMetricSnapshotService : ICrudOperations<ProjectMetricSnapshotModel, ProjectMetricSnapshot> { }
 }

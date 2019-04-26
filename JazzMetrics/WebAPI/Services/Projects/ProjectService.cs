@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.Controllers;
 using WebAPI.Services.Helper;
@@ -28,6 +27,9 @@ using WebAPI.Services.Users;
 
 namespace WebAPI.Services.Projects
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou Project
+    /// </summary>
     public class ProjectService : BaseDatabase, IProjectService
     {
         private readonly IJazzService _jazzService;

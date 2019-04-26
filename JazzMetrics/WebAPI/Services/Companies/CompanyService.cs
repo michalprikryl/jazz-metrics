@@ -15,8 +15,14 @@ using WebAPI.Services.Users;
 
 namespace WebAPI.Services.Companies
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou Company
+    /// </summary>
     public class CompanyService : BaseDatabase, ICompanyService
     {
+        /// <summary>
+        /// servis pro praci s User
+        /// </summary>
         private readonly IUserService _userService;
 
         public CompanyService(JazzMetricsContext db, IUserService userService) : base(db) => _userService = userService;

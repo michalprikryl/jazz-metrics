@@ -12,6 +12,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.MetricTypes
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou MetricType
+    /// </summary>
     public class MetricTypeService : BaseDatabase, IMetricTypeService
     {
         public MetricTypeService(JazzMetricsContext db) : base(db) { }

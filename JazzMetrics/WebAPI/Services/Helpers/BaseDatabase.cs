@@ -12,6 +12,10 @@ namespace WebAPI.Services.Helpers
         /// </summary>
         protected readonly JazzMetricsContext Database;
 
+        /// <summary>
+        /// konstruktor, ktery ulozi databazovy kontext do property
+        /// </summary>
+        /// <param name="db">DB kontext</param>
         public BaseDatabase(JazzMetricsContext db)
         {
             Database = db;

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Services.ProjectMetricLogs
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou ProjectMetricLog
+    /// </summary>
     public class ProjectMetricLogService : IProjectMetricLogService
     {
         public ProjectMetricLogModel ConvertToModel(ProjectMetricLog dbModel)

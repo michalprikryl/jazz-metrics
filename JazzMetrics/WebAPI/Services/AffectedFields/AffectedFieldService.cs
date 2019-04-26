@@ -11,6 +11,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AffectedFields
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou AffectedField
+    /// </summary>
     public class AffectedFieldService : BaseDatabase, IAffectedFieldService
     {
         public AffectedFieldService(JazzMetricsContext db) : base(db) { }

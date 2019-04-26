@@ -8,6 +8,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.Language
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou Language
+    /// </summary>
     public class LanguageService : BaseDatabase, ILanguageService
     {
         public LanguageService(JazzMetricsContext db) : base(db) { }

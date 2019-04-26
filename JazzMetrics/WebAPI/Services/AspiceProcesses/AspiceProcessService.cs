@@ -15,8 +15,14 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AspiceProcesses
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou AffectedField
+    /// </summary>
     public class AspiceProcessService : BaseDatabase, IAspiceProcessService
     {
+        /// <summary>
+        /// servis pro praci s AspiceVersion
+        /// </summary>
         private readonly IAspiceVersionService _aspiceVersionService;
 
         public AspiceProcessService(JazzMetricsContext db, IAspiceVersionService aspiceVersionService) : base(db) => _aspiceVersionService = aspiceVersionService;

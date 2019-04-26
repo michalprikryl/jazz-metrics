@@ -23,6 +23,9 @@ using WebAPI.Services.MetricTypes;
 
 namespace WebAPI.Services.Metrics
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou Metrics
+    /// </summary>
     public class MetricService : BaseDatabase, IMetricService, IUser
     {
         private readonly IMetricTypeService _metricTypeService;

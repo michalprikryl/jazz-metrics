@@ -20,6 +20,9 @@ using WebAPI.Services.ProjectMetricSnapshots;
 
 namespace WebAPI.Services.ProjectMetrics
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou ProjectMetrics
+    /// </summary>
     public class ProjectMetricService : BaseDatabase, IProjectMetricService, IUser
     {
         private readonly IProjectMetricLogService _logService;

@@ -11,8 +11,14 @@ using WebAPI.Services.Helper;
 
 namespace WebAPI.Middleware
 {
+    /// <summary>
+    /// middleware pro zachyceni chyb
+    /// </summary>
     public class ErrorHandlingMiddleware
     {
+        /// <summary>
+        /// dalsi middleware
+        /// </summary>
         private readonly RequestDelegate _next;
 
         public ErrorHandlingMiddleware(RequestDelegate next)
@@ -32,6 +38,14 @@ namespace WebAPI.Middleware
             }
         }
 
+        /// <summary>
+        /// handler chyby
+        /// </summary>
+        /// <param name="helperService">servis pro ulozeni chyb</param>
+        /// <param name="context">aktualni HTTP kontext</param>
+        /// <param name="exception">zachycena vyjimka</param>
+        /// <param name="version">verze aplikace</param>
+        /// <returns></returns>
         private static Task HandleExceptionAsync(IHelperService helperService, HttpContext context, Exception exception, string version)
         {
             Task error = helperService.SaveErrorToDB(new AppErrorModel(exception, $"JazzMetricsAPI - {version} -> {context.User.GetId()}", "global error handler"));

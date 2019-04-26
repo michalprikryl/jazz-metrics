@@ -11,6 +11,9 @@ using WebAPI.Services.Helpers;
 
 namespace WebAPI.Services.AspiceVersions
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou AspiceVersion
+    /// </summary>
     public class AspiceVersionService : BaseDatabase, IAspiceVersionService
     {
         public AspiceVersionService(JazzMetricsContext db) : base(db) { }

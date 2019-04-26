@@ -49,11 +49,11 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(); //pro CORS
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => //nastaveni JWT
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -69,8 +69,9 @@ namespace WebAPI
 
             services.AddHttpContextAccessor(); //pristup k identite v kontruktoru pomoci IHttpContextAccessor 
 
-            services.AddDbContext<JazzMetricsContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringName)));
+            services.AddDbContext<JazzMetricsContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringName))); //nastaveni DB kontextu
 
+            //pridani jednotlivych servisu pro DI
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IJazzService, JazzService>();
             services.AddScoped<IUserService, UserService>();
@@ -97,13 +98,13 @@ namespace WebAPI
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseHsts();
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware)); //aplikace middleware pro zachytavani chyb
 
-            app.UseAuthentication();
+            app.UseAuthentication(); 
             app.UseHttpsRedirection();
             app.UseCors(options => options
-                        .WithOrigins("https://localhost:5002", "http://localhost:5003", "https://jazz-metrics.azurewebsites.net")
-                        //.AllowAnyOrigin()
+                        //.WithOrigins("https://localhost:5002", "http://localhost:5003", "https://jazz-metrics.azurewebsites.net")
+                        .AllowAnyOrigin() //vypnute pro nasazeni je nutne upravit na danou domenu
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

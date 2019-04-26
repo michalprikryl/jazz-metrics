@@ -27,6 +27,9 @@ using WebAPI.Services.Settings;
 
 namespace WebAPI.Services.Users
 {
+    /// <summary>
+    /// servis pro praci s DB tabulkou User
+    /// </summary>
     public class UserService : BaseDatabase, IUserService
     {
         private readonly IConfiguration _config;

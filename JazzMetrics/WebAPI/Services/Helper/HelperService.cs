@@ -16,17 +16,35 @@ using WebAPI.Services.Settings;
 namespace WebAPI.Services.Helper
 {
     /// <summary>
-    /// staticka trida pro praci s chybama
+    /// servis pro praci s chybami
     /// </summary>
     public class HelperService : BaseDatabase, IHelperService
     {
+        /// <summary>
+        /// nazev nastaveni v DB tabulce Setting
+        /// </summary>
         private static readonly string ErrorEmailName = "Email";
+        /// <summary>
+        /// scope nastaveni v tabulce Setting
+        /// </summary>
         private static readonly string ErrorEmailScope = "ErrorEmail";
 
+        /// <summary>
+        /// servis pro praci s emaily
+        /// </summary>
         private readonly IEmailService _emailService;
+        /// <summary>
+        /// servis pro praci s entitou Setting
+        /// </summary>
         private readonly ISettingService _settingService;
+        /// <summary>
+        /// servis pro praci s entitou AppError
+        /// </summary>
         private readonly IAppErrorService _appErrorService;
 
+        /// <summary>
+        /// aktualne prihlaseny uzivatel (dle JWT)
+        /// </summary>
         private CurrentUser _currentUser;
 
         public HelperService(JazzMetricsContext db, IEmailService email, ISettingService setting, IAppErrorService appErrorService) : base(db)
@@ -37,10 +55,10 @@ namespace WebAPI.Services.Helper
         }
 
         /// <summary>
-        /// ulozi chybu do db, pokud zapsani do DB selze, zasle mail s chybou na email dany dle web.configu (element 'error-email')
+        /// ulozi chybu do db, pokud zapsani do DB selze, zasle mail s chybou na email dany dle DB
         /// </summary>
         /// <param name="value">prijaty objekt, obsahujici info o chybe</param>
-        /// <param name="saveException">opakovany zapis chyby po vyjimce</param>
+        /// <param name="exceptionRound">opakovany zapis chyby po vyjimce</param>
         /// <returns>objekt s informaci o vysledku</returns>
         public async Task<BaseResponseModel> SaveErrorToDB(AppErrorModel value, int exceptionRound = 1)
         {
@@ -70,6 +88,11 @@ namespace WebAPI.Services.Helper
             return model;
         }
 
+        /// <summary>
+        /// nacte uzivatele dle ID
+        /// </summary>
+        /// <param name="userId">ID uzivatele z DB</param>
+        /// <returns></returns>
         public CurrentUser GetCurrentUser(int userId)
         {
             if (_currentUser == null)
