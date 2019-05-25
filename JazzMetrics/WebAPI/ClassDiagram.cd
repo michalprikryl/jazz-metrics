@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WebAPI.Controllers.AffectedFieldController" Collapsed="true">
+    <Position X="8.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAQAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\AffectedFieldController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.AppErrorController" Collapsed="true">
+    <Position X="15" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABABAAAAAAACAEAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\AppErrorController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.AspiceProcessController" Collapsed="true">
+    <Position X="19.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAABAAAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\AspiceProcessController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.AspiceVersionController" Collapsed="true">
+    <Position X="24" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAJAAAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\AspiceVersionController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.CompanyController" Collapsed="true">
+    <Position X="28.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAACAEAAAAAAAgAAAAAAAg=</HashCode>
+      <FileName>Controllers\CompanyController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.LanguageController" Collapsed="true">
+    <Position X="33" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\LanguageController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.LoginController" Collapsed="true">
+    <Position X="37.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAAAA=</HashCode>
+      <FileName>Controllers\LoginController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.MainController" Collapsed="true">
+    <Position X="25.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAQAAAAAAAAAAAABAAAAAAAAAAE=</HashCode>
+      <FileName>Controllers\MainController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.MetricController" Collapsed="true">
+    <Position X="10.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAABAAAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\MetricController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.MetricTypeController" Collapsed="true">
+    <Position X="17.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\MetricTypeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.ProjectController" Collapsed="true">
+    <Position X="21.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgABAAAAAAAAACAEAAAAAAAAAACAACBg=</HashCode>
+      <FileName>Controllers\ProjectController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.ProjectMetricController" Collapsed="true">
+    <Position X="26.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAABAAAAAAAAACAEAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\ProjectMetricController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.ProjectUserController" Collapsed="true">
+    <Position X="30.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAIAAAAAACAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ProjectUserController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.SettingController" Collapsed="true">
+    <Position X="35.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAFAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\SettingController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.TestController" Collapsed="true">
+    <Position X="39.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Controllers\TestController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.TokenController" Collapsed="true">
+    <Position X="42" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Controllers\TokenController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Controllers.UserController" Collapsed="true">
+    <Position X="12.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAACCAAAQAAAAAAEAAAAAAg=</HashCode>
+      <FileName>Controllers\UserController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Middleware.ErrorHandlingMiddleware" Collapsed="true">
+    <Position X="27.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Middleware\ErrorHandlingMiddleware.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Services.AffectedFields.AffectedFieldService" Collapsed="true">
+    <Position X="17.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\AffectedFields\AffectedFieldService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.AppErrors.AppErrorService" Collapsed="true">
+    <Position X="28.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAABAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\AppErrors\AppErrorService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.AspiceProcesses.AspiceProcessService" Collapsed="true">
+    <Position X="37.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAgAAAAAAQAAJAAAAAAAAAAAAAAEACEgABAAIAAAA=</HashCode>
+      <FileName>Services\AspiceProcesses\AspiceProcessService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.AspiceVersions.AspiceVersionService" Collapsed="true">
+    <Position X="8.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\AspiceVersions\AspiceVersionService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Companies.CompanyService" Collapsed="true">
+    <Position X="19.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgAFAAAAAAA=</HashCode>
+      <FileName>Services\Companies\CompanyService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Email.EmailService" Collapsed="true">
+    <Position X="31" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAACBAAYBAAgAAAAAAAAAAQAAAAQA=</HashCode>
+      <FileName>Services\Email\EmailService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Helper.HelperService" Collapsed="true">
+    <Position X="40" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAQCEABEAAAAAQAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Services\Helper\HelperService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Helpers.BaseDatabase" Collapsed="true">
+    <Position X="26.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Helpers\BaseDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Services.Language.LanguageService" Collapsed="true">
+    <Position X="33.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Services\Language\LanguageService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Log.LogService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Logging\LogService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WebAPI.Services.Metrics.MetricService" Collapsed="true">
+    <Position X="10.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAggACIAoCQAAhAQAAAAAAACgAAAEBCFgAJAAAAgAA=</HashCode>
+      <FileName>Services\Metrics\MetricService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.MetricTypes.MetricTypeService" Collapsed="true">
+    <Position X="22" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\MetricTypes\MetricTypeService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.ProjectMetricLogs.ProjectMetricLogService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\ProjectMetricLogs\ProjectMetricLogService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WebAPI.Services.ProjectMetrics.ProjectMetricService" Collapsed="true">
+    <Position X="42.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAIAQAABABAEAAIAQAAAQAEAKEgADAABAAAA=</HashCode>
+      <FileName>Services\ProjectMetrics\ProjectMetricService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.ProjectMetricSnapshots.ProjectMetricSnapshotService" Collapsed="true">
+    <Position X="13" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\ProjectMetricSnapshots\ProjectMetricSnapshotService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Projects.ProjectService" Collapsed="true">
+    <Position X="24.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAggAQAgMARAABAAIAAAAgACAIAAGACUgAFCAAgAAA=</HashCode>
+      <FileName>Services\Projects\ProjectService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.ProjectUsers.ProjectUserService" Collapsed="true">
+    <Position X="35.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAIAQAABAAAAAAAAAAAgQAEACkgABAAAAAAA=</HashCode>
+      <FileName>Services\ProjectUsers\ProjectUserService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Settings.SettingService" Collapsed="true">
+    <Position X="44.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAIAAAAAAAMACEgABAAAAAAA=</HashCode>
+      <FileName>Services\Settings\SettingService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Test.TestService" Collapsed="true">
+    <Position X="15.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Services\Test\TestService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Services.Users.UserService" Collapsed="true">
+    <Position X="26.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAIgAAAAAAQQAFAAAAAIgACAAgAAEBCWgABAIAAAEA=</HashCode>
+      <FileName>Services\Users\UserService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WebAPI.Program" Collapsed="true">
+    <Position X="31.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebAPI.Startup" Collapsed="true">
+    <Position X="29.5" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAIAAAAgAAACAAAAAA=</HashCode>
+      <FileName>Startup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="WebAPI.Services.AffectedFields.IAffectedFieldService" Collapsed="true">
+    <Position X="19.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\AffectedFields\IAffectedFieldService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.AppErrors.IAppErrorService" Collapsed="true">
+    <Position X="28.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\AppErrors\IAppErrorService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.AspiceProcesses.IAspiceProcessService" Collapsed="true">
+    <Position X="35" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\AspiceProcesses\IAspiceProcessService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.AspiceVersions.IAspiceVersionService" Collapsed="true">
+    <Position X="10.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\AspiceVersions\IAspiceVersionService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Companies.ICompanyService" Collapsed="true">
+    <Position X="21.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Companies\ICompanyService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Email.IEmailService" Collapsed="true">
+    <Position X="27.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Email\IEmailService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Helper.IHelperService" Collapsed="true">
+    <Position X="29.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Helper\IHelperService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Helpers.ICrudOperations&lt;T, U&gt;" Collapsed="true">
+    <Position X="22.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAQAABAAAAAAAAAAAAAAEACEgABAAAAAAA=</HashCode>
+      <FileName>Services\Helpers\ICrudOperations.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Helpers.IUser" Collapsed="true">
+    <Position X="10.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Helpers\IUser.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Language.ILanguageService" Collapsed="true">
+    <Position X="31.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Services\Language\ILanguageService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Log.ILogService" Collapsed="true">
+    <Position X="27.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Logging\ILogService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Metrics.IMetricService" Collapsed="true">
+    <Position X="37.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Metrics\IMetricService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.MetricTypes.IMetricTypeService" Collapsed="true">
+    <Position X="12.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\MetricTypes\IMetricTypeService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.ProjectMetricLogs.IProjectMetricLogService" Collapsed="true">
+    <Position X="23.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ProjectMetricLogs\IProjectMetricLogService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.ProjectMetrics.IProjectMetricService" Collapsed="true">
+    <Position X="30.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Services\ProjectMetrics\IProjectMetricService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.ProjectMetricSnapshots.IProjectMetricSnapshotService" Collapsed="true">
+    <Position X="39.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ProjectMetricSnapshots\IProjectMetricSnapshotService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Projects.IProjectService" Collapsed="true">
+    <Position X="22.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Projects\IProjectService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.ProjectUsers.IProjectUserService" Collapsed="true">
+    <Position X="19.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Services\ProjectUsers\IProjectUserService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Settings.ISettingService" Collapsed="true">
+    <Position X="32.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Settings\ISettingService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Test.ITestService" Collapsed="true">
+    <Position X="29.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Test\ITestService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WebAPI.Services.Users.IUserService" Collapsed="true">
+    <Position X="17" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAACAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\Users\IUserService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
